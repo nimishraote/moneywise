@@ -171,7 +171,7 @@ export default function OnboardingPage() {
                     className="rounded-full border border-white/15 bg-white/6 px-5 py-3 text-sm font-semibold text-white"
                   >
                     Back
-                  </button> 
+                  </button>
 
                   <button
                     onClick={handleNext}
