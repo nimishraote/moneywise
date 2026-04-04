@@ -1,216 +1,155 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
-import EditorialPhotoBand from "@/components/ui/editorial-photo-band";
 import JourneyNav from "@/components/ui/journey-nav";
-import {
-  ArrowLeft,
-  ChevronDown,
-  ChevronUp,
-  BookOpen,
-  ExternalLink,
-  CheckCircle2,
-} from "lucide-react";
-import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
-import { getLearnPageContent } from "@/lib/content/lesson-content";
+import EditorialPhotoBand from "@/components/ui/editorial-photo-band";
+import type { AssessmentInput } from "@/lib/types/assessment";
 import {
   defaultAssessmentInput,
   getStoredAssessment,
 } from "@/lib/storage/moneywise-storage";
-import type { AssessmentInput } from "@/lib/types/assessment";
+import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
+import {
+  getLearnPageContent,
+  getPersonaLead,
+  moduleTitles,
+} from "@/lib/content/lesson-content";
 
 export default function LessonOnePage() {
-  const router = useRouter();
   const [answers, setAnswers] = useState<AssessmentInput>(defaultAssessmentInput);
-  const [openConcepts, setOpenConcepts] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     setAnswers(getStoredAssessment());
   }, []);
 
   const plan = useMemo(() => buildPersonalizedPlan(answers), [answers]);
-  const content = useMemo(
-    () => getLearnPageContent(plan.recommendedPath.modules[0], plan.persona),
-    [plan]
-  );
 
-  function toggleConcept(id: string) {
-    setOpenConcepts((current) => ({
-      ...current,
-      [id]: !current[id],
-    }));
-  }
+  const topModule = plan.recommendedPath.modules[0];
+
+  const content = useMemo(() => getLearnPageContent(topModule), [topModule]);
+
+  const personaLead = useMemo(
+    () => getPersonaLead(plan.persona, topModule),
+    [plan.persona, topModule]
+  );
 
   return (
     <AppShell>
       <div className="relative overflow-hidden bg-[#120f1e] text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.24),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(168,85,247,0.18),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(251,146,60,0.10),_transparent_20%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.18),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(168,85,247,0.14),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(251,191,36,0.08),_transparent_20%)]" />
         <div className="relative">
-          <JourneyNav activeStep="learn" />
-          <div className="mx-auto max-w-5xl px-6 py-10 md:px-10 lg:px-14">
+          <JourneyNav activeStep="lesson" />
+          <div className="mx-auto max-w-6xl px-6 py-10 md:px-10 lg:px-14">
             <div className="mb-8">
               <div className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-100">
-                Learn
+                Your first lesson
               </div>
               <div className="mt-5 overflow-hidden rounded-[30px] border border-white/10">
                 <EditorialPhotoBand imageKey="lesson" short />
               </div>
-              <h2
-                className="mt-3 text-4xl font-semibold tracking-tight"
+              <h1
+                className="mt-4 text-4xl font-semibold tracking-tight"
                 style={{ fontFamily: "Georgia, serif" }}
               >
-                {content.heroTitle}
-              </h2>
+                {moduleTitles[topModule]}
+              </h1>
               <p className="mt-4 text-base leading-8 text-slate-300">
                 {content.heroBody}
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => router.push("/plan")}
-              className="mb-6 inline-flex items-center gap-3 text-sm text-slate-300"
-            >
-              <ArrowLeft className="h-4 w-4" /> Back to plan
-            </button>
+            <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
+              <div className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-200">
+                Why this lesson is showing up first
+              </div>
+              <p className="mt-4 text-sm leading-8 text-slate-300">
+                {personaLead}
+              </p>
+            </div>
 
-            <div className="space-y-10">
-              {content.steps.map((step, stepIndex) => (
-                <div
+            <div className="mt-6 space-y-6">
+              {content.steps.map((step) => (
+                <section
                   key={step.id}
-                  className="rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07)_0%,rgba(255,255,255,0.04)_100%)] p-6 shadow-2xl backdrop-blur md:p-8"
+                  className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8"
                 >
-                  <div className="mb-6 flex items-center gap-4 border-b border-white/10 pb-5">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-amber-300/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.18)_0%,rgba(196,181,253,0.10)_100%)] text-amber-200">
-                      <BookOpen className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-semibold uppercase tracking-[0.20em] text-amber-200">
-                        Step {stepIndex + 1} of {content.steps.length}
-                      </div>
-                      <div className="mt-1 text-2xl font-semibold text-white">
-                        {step.title}
-                      </div>
-                    </div>
+                  <div className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-100">
+                    {step.title}
                   </div>
-
-                  <p className="text-base leading-8 text-slate-300">
+                  <p className="mt-3 text-sm leading-8 text-slate-300">
                     {step.intro}
                   </p>
 
-                  <div className="mt-6 space-y-4">
-                    {step.concepts.map((concept) => {
-                      const isOpen = Boolean(openConcepts[concept.id]);
-
-                      return (
-                        <div
-                          key={concept.id}
-                          className="rounded-[24px] border border-white/10 bg-slate-950/30"
-                        >
-                          <button
-                            onClick={() => toggleConcept(concept.id)}
-                            className="flex w-full items-start justify-between gap-4 px-5 py-5 text-left"
-                          >
-                            <div>
-                              <div className="text-lg font-semibold text-white">
-                                {concept.title}
-                              </div>
-                              <div className="mt-1 text-sm text-amber-100">
-                                {concept.shortLabel}
-                              </div>
-                              <div className="mt-2 text-sm leading-7 text-slate-300">
-                                {concept.summary}
-                              </div>
-                            </div>
-
-                            <div className="mt-1 text-slate-300">
-                              {isOpen ? (
-                                <ChevronUp className="h-5 w-5" />
-                              ) : (
-                                <ChevronDown className="h-5 w-5" />
-                              )}
-                            </div>
-                          </button>
-
-                          {isOpen && (
-                            <div className="border-t border-white/10 px-5 py-5">
-                              <div className="rounded-[20px] border border-white/10 bg-white/5 p-5">
-                                <div className="space-y-4 text-sm leading-8 text-slate-300">
-                                  {concept.narrative.map((paragraph, index) => (
-                                    <p key={`${concept.id}-${index}`}>{paragraph}</p>
-                                  ))}
-                                </div>
-
-                                <div className="mt-5 rounded-[18px] border border-white/10 bg-[linear-gradient(135deg,rgba(251,191,36,0.12)_0%,rgba(255,255,255,0.05)_100%)] p-4">
-                                  <div className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-200">
-                                    Key takeaway
-                                  </div>
-                                  <div className="mt-2 text-sm leading-7 text-slate-100">
-                                    {concept.takeaway}
-                                  </div>
-                                </div>
-
-                                {concept.actionSteps && concept.actionSteps.length > 0 ? (
-                                  <div className="mt-5 rounded-[18px] border border-emerald-300/15 bg-[linear-gradient(135deg,rgba(16,185,129,0.10)_0%,rgba(255,255,255,0.04)_100%)] p-4">
-                                    <div className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-300">
-                                      Do this next
-                                    </div>
-                                    <div className="mt-3 space-y-3">
-                                      {concept.actionSteps.map((item) => (
-                                        <div
-                                          key={item}
-                                          className="flex gap-3 text-sm leading-7 text-slate-100"
-                                        >
-                                          <CheckCircle2 className="mt-1 h-4 w-4 flex-none text-emerald-300" />
-                                          <span>{item}</span>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                ) : null}
-
-                                {concept.extraReadingUrl && concept.extraReadingLabel ? (
-                                  <div className="mt-5">
-                                    <a
-                                      href={concept.extraReadingUrl}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-100 transition hover:bg-white/10"
-                                    >
-                                      {concept.extraReadingLabel}
-                                      <ExternalLink className="h-4 w-4" />
-                                    </a>
-                                  </div>
-                                ) : null}
-                              </div>
-                            </div>
-                          )}
+                  <div className="mt-6 space-y-5">
+                    {step.concepts.map((concept) => (
+                      <div
+                        key={concept.id}
+                        className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5"
+                      >
+                        <div className="text-lg font-semibold text-white">
+                          {concept.title}
                         </div>
-                      );
-                    })}
+                        <div className="mt-1 text-sm text-violet-200">
+                          {concept.shortLabel}
+                        </div>
+                        <p className="mt-3 text-sm leading-8 text-slate-300">
+                          {concept.summary}
+                        </p>
+
+                        <div className="mt-4 space-y-3">
+                          {concept.narrative.map((paragraph, index) => (
+                            <p
+                              key={`${concept.id}-${index}`}
+                              className="text-sm leading-8 text-slate-300"
+                            >
+                              {paragraph}
+                            </p>
+                          ))}
+                        </div>
+
+                        <div className="mt-4 rounded-2xl border border-emerald-300/15 bg-emerald-200/8 p-4 text-sm leading-7 text-emerald-100">
+                          <span className="font-semibold text-emerald-200">
+                            Main takeaway:{" "}
+                          </span>
+                          {concept.takeaway}
+                        </div>
+
+                        {concept.actionSteps && concept.actionSteps.length > 0 && (
+                          <div className="mt-4">
+                            <div className="text-sm font-semibold text-white">
+                              Try this now
+                            </div>
+                            <div className="mt-3 space-y-3">
+                              {concept.actionSteps.map((action, index) => (
+                                <div
+                                  key={`${concept.id}-action-${index}`}
+                                  className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm leading-7 text-slate-200"
+                                >
+                                  {index + 1}. {action}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {concept.extraReadingUrl && concept.extraReadingLabel && (
+                          <div className="mt-4">
+                            <a
+                              href={concept.extraReadingUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-sm font-semibold text-amber-200 underline underline-offset-4"
+                            >
+                              {concept.extraReadingLabel}
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                </div>
+                </section>
               ))}
-
-              <div className="flex justify-between">
-                <button
-                  type="button"
-                  onClick={() => router.push("/plan")}
-                  className="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white"
-                >
-                  Back
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => router.push("/dashboard")}
-                  className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
-                >
-                  Go to progress
-                </button>
-              </div>
             </div>
           </div>
         </div>
