@@ -25,14 +25,23 @@ export default function LessonOnePage() {
     [answers]
   );
 
+  const goBackToPlan = () => {
+    router.push("/plan");
+  };
+
+  const goToPracticalStep = () => {
+    router.push("/lesson2");
+  };
+
   return (
     <AppShell>
       <div className="relative overflow-hidden bg-[#120f1e] text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.24),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(168,85,247,0.18),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(251,191,36,0.08)_20%,_transparent_20%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.24),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(168,85,247,0.18),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(251,191,36,0.08),_transparent_20%)]" />
         <div className="relative px-6 py-10 md:px-10 lg:px-14">
           <div className="mx-auto max-w-4xl">
             <button
-              onClick={() => router.push("/plan")}
+              type="button"
+              onClick={goBackToPlan}
               className="mb-6 inline-flex items-center gap-3 text-sm text-slate-300"
             >
               <ArrowLeft className="h-4 w-4" /> Back to plan
@@ -110,14 +119,16 @@ export default function LessonOnePage() {
 
               <div className="flex justify-between">
                 <button
-                  onClick={() => router.push("/plan")}
+                  type="button"
+                  onClick={goBackToPlan}
                   className="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white"
                 >
                   Back
                 </button>
 
                 <button
-                  onClick={() => router.push("/lesson2")}
+                  type="button"
+                  onClick={goToPracticalStep}
                   className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
                 >
                   Continue to practical step
