@@ -39,7 +39,7 @@ export default function LessonOnePage() {
       <div className="relative overflow-hidden bg-[#120f1e] text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.18),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(168,85,247,0.14),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(251,191,36,0.08),_transparent_20%)]" />
         <div className="relative">
-          <JourneyNav activeStep="lesson" />
+          <JourneyNav activeStep="learn" />
           <div className="mx-auto max-w-6xl px-6 py-10 md:px-10 lg:px-14">
             <div className="mb-8">
               <div className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-100">
