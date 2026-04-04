@@ -12,11 +12,21 @@ import {
   saveAssessment,
 } from "@/lib/storage/moneywise-storage";
 
-type QuestionConfig = {
-  key: keyof AssessmentInput;
+type SingleQuestionConfig = {
+  key: Exclude<keyof AssessmentInput, "topPriority">;
   label: string;
   options: string[];
+  type?: "single";
 };
+
+type MultiQuestionConfig = {
+  key: "topPriority";
+  label: string;
+  options: string[];
+  type: "multi";
+};
+
+type QuestionConfig = SingleQuestionConfig | MultiQuestionConfig;
 
 type AssessmentStep = {
   section: string;
@@ -28,10 +38,12 @@ function ChoiceButton({
   active,
   option,
   onClick,
+  multi = false,
 }: {
   active: boolean;
   option: string;
   onClick: () => void;
+  multi?: boolean;
 }) {
   return (
     <button
@@ -44,15 +56,58 @@ function ChoiceButton({
     >
       <div className="flex items-center gap-3">
         <div
-          className={`h-4 w-4 rounded-full border ${
+          className={`h-4 w-4 rounded-sm border ${
             active ? "border-slate-950 bg-slate-950" : "border-slate-500"
-          }`}
+          } ${multi ? "rounded-sm" : "rounded-full"}`}
         />
         <span>{option}</span>
       </div>
       {active && <Check className="h-4 w-4" />}
     </button>
   );
+}
+
+function getPriorityOptions(input: AssessmentInput): string[] {
+  const isTeen =
+    input.lifeStage === "Pre-college / high school" ||
+    input.ageRange === "14 to 17";
+
+  const isStudent =
+    input.lifeStage === "College student" ||
+    input.lifeStage === "Mostly supported by family";
+
+  if (isTeen) {
+    return [
+      "Learning the basic 101 of money",
+      "Bank accounts and debit cards",
+      "Budgeting and spending control",
+      "Saving money",
+      "Credit cards and how they work",
+      "How investing works in very simple terms",
+    ];
+  }
+
+  if (isStudent) {
+    return [
+      "Learning the basic 101 of money",
+      "Budgeting and spending control",
+      "Saving money",
+      "Credit cards and how they work",
+      "Emergency fund basics",
+      "How investing works in very simple terms",
+    ];
+  }
+
+  return [
+    "Learning the basic 101 of money",
+    "Budgeting and spending control",
+    "Saving money",
+    "Credit cards and how they work",
+    "Debt and repayment basics",
+    "Emergency fund basics",
+    "How investing works in very simple terms",
+    "Paychecks, taxes, and first-job money basics",
+  ];
 }
 
 function getAssessmentSteps(input: AssessmentInput): AssessmentStep[] {
@@ -279,16 +334,9 @@ function getAssessmentSteps(input: AssessmentInput): AssessmentStep[] {
     questions: [
       {
         key: "topPriority",
-        label: "What do you most want help with right now?",
-        options: [
-          "Saving",
-          "Budgeting",
-          "Credit cards",
-          "Debt",
-          "Stocks and investing",
-          "Learning the basic 101 of money",
-          "Staying consistent",
-        ],
+        label: "Pick all the areas you want help with right now.",
+        options: getPriorityOptions(input),
+        type: "multi",
       },
     ],
   };
@@ -318,8 +366,20 @@ export default function AssessmentPage() {
   const steps = useMemo(() => getAssessmentSteps(answers), [answers]);
   const step = steps[stepIndex];
 
-  function setAnswer(key: keyof AssessmentInput, value: string) {
+  function setAnswer(key: Exclude<keyof AssessmentInput, "topPriority">, value: string) {
     setAnswers((current) => ({ ...current, [key]: value }));
+  }
+
+  function togglePriority(value: string) {
+    setAnswers((current) => {
+      const exists = current.topPriority.includes(value);
+      return {
+        ...current,
+        topPriority: exists
+          ? current.topPriority.filter((item) => item !== value)
+          : [...current.topPriority, value],
+      };
+    });
   }
 
   function handleBack() {
@@ -338,9 +398,12 @@ export default function AssessmentPage() {
     setStepIndex((current) => current + 1);
   }
 
-  const canContinue = step.questions.every((question) =>
-    Boolean(answers[question.key])
-  );
+  const canContinue = step.questions.every((question) => {
+    if (question.type === "multi") {
+      return answers.topPriority.length > 0;
+    }
+    return Boolean(answers[question.key]);
+  });
 
   return (
     <AppShell>
@@ -398,19 +461,31 @@ export default function AssessmentPage() {
                           {question.label}
                         </div>
                         <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-300">
-                          Choose one
+                          {question.type === "multi" ? "Choose all that fit" : "Choose one"}
                         </div>
                       </div>
 
                       <div className="mt-4 grid gap-3">
-                        {question.options.map((option) => (
-                          <ChoiceButton
-                            key={option}
-                            option={option}
-                            active={answers[question.key] === option}
-                            onClick={() => setAnswer(question.key, option)}
-                          />
-                        ))}
+                        {question.options.map((option) => {
+                          const active =
+                            question.type === "multi"
+                              ? answers.topPriority.includes(option)
+                              : answers[question.key] === option;
+
+                          return (
+                            <ChoiceButton
+                              key={option}
+                              option={option}
+                              active={active}
+                              multi={question.type === "multi"}
+                              onClick={() =>
+                                question.type === "multi"
+                                  ? togglePriority(option)
+                                  : setAnswer(question.key, option)
+                              }
+                            />
+                          );
+                        })}
                       </div>
                     </div>
                   ))}

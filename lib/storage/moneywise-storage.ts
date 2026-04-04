@@ -29,7 +29,7 @@ export const defaultAssessmentInput: AssessmentInput = {
   basicsCredit: "",
   basicsBudgeting: "",
 
-  topPriority: "",
+  topPriority: [],
 };
 
 function canUseStorage() {

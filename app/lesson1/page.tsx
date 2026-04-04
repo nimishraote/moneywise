@@ -11,6 +11,7 @@ import {
   ChevronUp,
   BookOpen,
   ExternalLink,
+  CheckCircle2,
 } from "lucide-react";
 import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
 import { getLearnPageContent } from "@/lib/content/lesson-content";
@@ -75,27 +76,27 @@ export default function LessonOnePage() {
               <ArrowLeft className="h-4 w-4" /> Back to plan
             </button>
 
-            <div className="space-y-8">
+            <div className="space-y-10">
               {content.steps.map((step, stepIndex) => (
                 <div
                   key={step.id}
-                  className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8"
+                  className="rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07)_0%,rgba(255,255,255,0.04)_100%)] p-6 shadow-2xl backdrop-blur md:p-8"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-amber-300/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.16)_0%,rgba(196,181,253,0.10)_100%)] text-amber-200">
-                      <BookOpen className="h-5 w-5" />
+                  <div className="mb-6 flex items-center gap-4 border-b border-white/10 pb-5">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border border-amber-300/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.18)_0%,rgba(196,181,253,0.10)_100%)] text-amber-200">
+                      <BookOpen className="h-6 w-6" />
                     </div>
                     <div>
-                      <div className="text-lg font-semibold text-white">
-                        {step.title}
+                      <div className="text-xs font-semibold uppercase tracking-[0.20em] text-amber-200">
+                        Step {stepIndex + 1} of {content.steps.length}
                       </div>
-                      <div className="text-sm text-slate-400">
-                        Part {stepIndex + 1} of {content.steps.length}
+                      <div className="mt-1 text-2xl font-semibold text-white">
+                        {step.title}
                       </div>
                     </div>
                   </div>
 
-                  <p className="mt-5 text-base leading-8 text-slate-300">
+                  <p className="text-base leading-8 text-slate-300">
                     {step.intro}
                   </p>
 
@@ -151,7 +152,26 @@ export default function LessonOnePage() {
                                   </div>
                                 </div>
 
-                                {concept.extraReadingUrl && concept.extraReadingLabel && (
+                                {concept.actionSteps && concept.actionSteps.length > 0 ? (
+                                  <div className="mt-5 rounded-[18px] border border-emerald-300/15 bg-[linear-gradient(135deg,rgba(16,185,129,0.10)_0%,rgba(255,255,255,0.04)_100%)] p-4">
+                                    <div className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-300">
+                                      Do this next
+                                    </div>
+                                    <div className="mt-3 space-y-3">
+                                      {concept.actionSteps.map((item) => (
+                                        <div
+                                          key={item}
+                                          className="flex gap-3 text-sm leading-7 text-slate-100"
+                                        >
+                                          <CheckCircle2 className="mt-1 h-4 w-4 flex-none text-emerald-300" />
+                                          <span>{item}</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ) : null}
+
+                                {concept.extraReadingUrl && concept.extraReadingLabel ? (
                                   <div className="mt-5">
                                     <a
                                       href={concept.extraReadingUrl}
@@ -163,7 +183,7 @@ export default function LessonOnePage() {
                                       <ExternalLink className="h-4 w-4" />
                                     </a>
                                   </div>
-                                )}
+                                ) : null}
                               </div>
                             </div>
                           )}

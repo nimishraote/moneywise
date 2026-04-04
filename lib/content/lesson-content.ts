@@ -19,6 +19,7 @@ export type LessonConcept = {
   summary: string;
   narrative: string[];
   takeaway: string;
+  actionSteps?: string[];
   extraReadingLabel?: string;
   extraReadingUrl?: string;
 };
@@ -62,6 +63,11 @@ function money101Content(): LearnPageContent {
             ],
             takeaway:
               "A bank account helps you store, receive, use, and track your money in one place.",
+            actionSteps: [
+              "Check whether you already have a bank account, or ask a parent or trusted adult what account you currently use.",
+              "Look at your current balance and say out loud how much money is there right now.",
+              "Write down one sentence on where your money usually comes from and where it usually goes.",
+            ],
             extraReadingLabel: "Read more about bank accounts",
             extraReadingUrl:
               "https://consumer.gov/managing-your-money/opening-checking-or-savings-account",
@@ -80,6 +86,11 @@ function money101Content(): LearnPageContent {
             ],
             takeaway:
               "Debit uses your money. Credit uses borrowed money.",
+            actionSteps: [
+              "Write one sentence for debit and one sentence for credit in your own words.",
+              "Look at any card you use and ask yourself whether it uses your money or borrowed money.",
+              "Make one rule: do not use a card unless you know which kind it is.",
+            ],
             extraReadingLabel: "Read more about debit and credit cards",
             extraReadingUrl:
               "https://consumer.gov/managing-your-money/using-credit-cards",
@@ -98,6 +109,11 @@ function money101Content(): LearnPageContent {
             ],
             takeaway:
               "Looking sooner is usually kinder than looking later.",
+            actionSteps: [
+              "Pick two days this week when you will check your balance.",
+              "After you check, write down one thing you noticed.",
+              "Do not judge yourself. Just practice looking clearly.",
+            ],
           },
         ],
       },
@@ -121,6 +137,11 @@ function money101Content(): LearnPageContent {
             ],
             takeaway:
               "A budget is not about guilt. It is about clarity.",
+            actionSteps: [
+              "Write down how much money comes in this month.",
+              "Write down your 3 biggest spending buckets.",
+              "Subtract those main costs first so you can see what is actually left.",
+            ],
             extraReadingLabel: "Read more about simple budgeting",
             extraReadingUrl:
               "https://consumer.gov/managing-your-money/making-budget",
@@ -139,6 +160,11 @@ function money101Content(): LearnPageContent {
             ],
             takeaway:
               "Saving is one of the simplest ways to reduce future pressure.",
+            actionSteps: [
+              "Pick one very small amount you can save this week.",
+              "Choose the day when you will do it.",
+              "Treat that small amount as a real habit, not as something too tiny to matter.",
+            ],
           },
           {
             id: "emergency-fund",
@@ -154,6 +180,11 @@ function money101Content(): LearnPageContent {
             ],
             takeaway:
               "Emergency money is for real pressure, not random spending.",
+            actionSteps: [
+              "Write down one kind of emergency that could realistically happen in your life.",
+              "Decide where emergency money would live so you do not mix it with normal spending.",
+              "Start with a small first amount instead of waiting for a perfect number.",
+            ],
           },
         ],
       },
@@ -177,6 +208,11 @@ function money101Content(): LearnPageContent {
             ],
             takeaway:
               "Interest changes the real cost of borrowing and the real value of saving.",
+            actionSteps: [
+              "Write one sentence on where interest can help you and where it can hurt you.",
+              "If you use a credit card, remind yourself that unpaid balances can grow.",
+              "If you save, remember that time can help smaller amounts build.",
+            ],
           },
           {
             id: "credit",
@@ -192,6 +228,11 @@ function money101Content(): LearnPageContent {
             ],
             takeaway:
               "Credit is not extra money. It is borrowed money with responsibility attached.",
+            actionSteps: [
+              "Make one rule: do not put something on credit unless you could already cover it.",
+              "If you already use credit, check the balance instead of avoiding it.",
+              "Focus on understanding first, then using it more.",
+            ],
           },
           {
             id: "investing",
@@ -207,6 +248,11 @@ function money101Content(): LearnPageContent {
             ],
             takeaway:
               "Investing is about growth over time, but it works best when the basics are already clear.",
+            actionSteps: [
+              "Do not rush to buy anything yet if the basics still feel fuzzy.",
+              "Learn what a stock, fund, and market are before using real money.",
+              "Separate learning from acting too quickly.",
+            ],
           },
         ],
       },
@@ -240,6 +286,11 @@ function investingBasicsContent(): LearnPageContent {
             ],
             takeaway:
               "A stock is not free money. It is a small piece of a company.",
+            actionSteps: [
+              "Write what a stock is in one sentence using your own words.",
+              "Do not buy anything yet if that sentence still feels unclear.",
+              "Focus on understanding the building block first.",
+            ],
           },
           {
             id: "index-fund",
@@ -255,6 +306,11 @@ function investingBasicsContent(): LearnPageContent {
             ],
             takeaway:
               "A wider mix usually feels calmer than one single company.",
+            actionSteps: [
+              "Explain to yourself why one stock is different from a wider fund.",
+              "Notice that wider mix often means less dependence on one company.",
+              "Use this idea before making any real investing move.",
+            ],
           },
           {
             id: "stock-market",
@@ -270,6 +326,11 @@ function investingBasicsContent(): LearnPageContent {
             ],
             takeaway:
               "The market moves every day because people keep changing what they think things are worth.",
+            actionSteps: [
+              "Do not expect prices to move in a straight line.",
+              "Learn why movement happens before treating movement as danger.",
+              "Build understanding before reacting emotionally to price changes.",
+            ],
           },
         ],
       },
@@ -293,6 +354,11 @@ function investingBasicsContent(): LearnPageContent {
             ],
             takeaway:
               "Prices move because people react and re-price things all the time.",
+            actionSteps: [
+              "Do not treat every price move like an emergency.",
+              "Ask what changed in expectations before jumping to conclusions.",
+              "Train yourself to pause before reacting.",
+            ],
           },
           {
             id: "single-stock-vs-mix",
@@ -308,6 +374,11 @@ function investingBasicsContent(): LearnPageContent {
             ],
             takeaway:
               "The more concentrated you are, the more one company can hurt you.",
+            actionSteps: [
+              "Do not confuse one exciting company with a safe beginner choice.",
+              "Learn the cost of concentration before going all in on one name.",
+              "If you are a beginner, wider usually means calmer.",
+            ],
           },
           {
             id: "risk",
@@ -323,6 +394,11 @@ function investingBasicsContent(): LearnPageContent {
             ],
             takeaway:
               "Risk does not mean guaranteed loss. It means the value can move.",
+            actionSteps: [
+              "Do not invest money you may need soon.",
+              "Start with smaller amounts while learning how movement feels.",
+              "Expect some movement instead of assuming every drop means failure.",
+            ],
           },
         ],
       },
@@ -346,6 +422,11 @@ function investingBasicsContent(): LearnPageContent {
             ],
             takeaway:
               "Do not let excitement decide your first move.",
+            actionSteps: [
+              "Choose learning over rushing.",
+              "Use a small amount if you ever decide to start, not money that would create panic if it moved.",
+              "Let your first move be manageable, not dramatic.",
+            ],
           },
           {
             id: "money-you-might-need-soon",
@@ -361,6 +442,11 @@ function investingBasicsContent(): LearnPageContent {
             ],
             takeaway:
               "Money you may need soon should stay easy to reach and more stable.",
+            actionSteps: [
+              "Keep rent, bill, and emergency money separate from investing money.",
+              "Do not chase growth with money you may need soon.",
+              "Protect stability first.",
+            ],
           },
           {
             id: "first-rule",
@@ -376,6 +462,11 @@ function investingBasicsContent(): LearnPageContent {
             ],
             takeaway:
               "If you cannot explain it simply, you probably should not rush into it.",
+            actionSteps: [
+              "Make this your first rule: understand before acting.",
+              "If the concept is still fuzzy, keep learning instead of buying.",
+              "Use clarity as the signal, not excitement.",
+            ],
           },
         ],
       },
@@ -409,6 +500,11 @@ function budgetingContent(): LearnPageContent {
             ],
             takeaway:
               "A budget is not about guilt. It is about fewer surprises.",
+            actionSteps: [
+              "Write down how much money comes in this month.",
+              "Write down your fixed costs first, like rent, food, and transport.",
+              "Only after that, decide what is left for the rest.",
+            ],
             extraReadingLabel: "Read more about simple budgeting",
             extraReadingUrl:
               "https://consumer.gov/managing-your-money/making-budget",
@@ -427,6 +523,11 @@ function budgetingContent(): LearnPageContent {
             ],
             takeaway:
               "Big pressure often comes from repeated small choices.",
+            actionSteps: [
+              "Look back at the last 7 days and circle repeated spending.",
+              "Find one small habit that happens more often than you realized.",
+              "Cut just one money leak first instead of trying to cut everything.",
+            ],
           },
           {
             id: "check-money",
@@ -442,6 +543,11 @@ function budgetingContent(): LearnPageContent {
             ],
             takeaway:
               "Looking sooner is usually kinder than looking later.",
+            actionSteps: [
+              "Pick two days each week when you will check your balance.",
+              "When you check, write down one thing you notice.",
+              "Do not try to fix everything during the check. First just look clearly.",
+            ],
           },
         ],
       },
@@ -465,6 +571,11 @@ function budgetingContent(): LearnPageContent {
             ],
             takeaway:
               "Cover the basics first. Then decide what matters next.",
+            actionSteps: [
+              "Write your top 3 needs first.",
+              "Then list your wants separately.",
+              "Use this split before making future spending decisions.",
+            ],
           },
           {
             id: "saving-rule",
@@ -480,6 +591,11 @@ function budgetingContent(): LearnPageContent {
             ],
             takeaway:
               "Small and repeatable is better than big and unstable.",
+            actionSteps: [
+              "Pick one small amount you can save this week.",
+              "Choose the exact day when it happens.",
+              "Keep the amount realistic enough that you can repeat it next week too.",
+            ],
           },
           {
             id: "weekly-checkin",
@@ -495,6 +611,11 @@ function budgetingContent(): LearnPageContent {
             ],
             takeaway:
               "A little review now can prevent a bigger problem later.",
+            actionSteps: [
+              "Set one weekly check-in time right now.",
+              "At that check-in, review balance, recent spending, and one thing to adjust.",
+              "Keep the review short so it stays repeatable.",
+            ],
           },
         ],
       },
@@ -518,6 +639,11 @@ function budgetingContent(): LearnPageContent {
             ],
             takeaway:
               "A plan you can keep is better than a plan that looks ideal.",
+            actionSteps: [
+              "Keep your first plan simple enough to survive a normal week.",
+              "Do not make 10 money rules at once.",
+              "Choose the rule you are most likely to follow, not the one that sounds hardest.",
+            ],
           },
           {
             id: "what-to-fix-first",
@@ -533,6 +659,11 @@ function budgetingContent(): LearnPageContent {
             ],
             takeaway:
               "Fix the pressure point first.",
+            actionSteps: [
+              "Choose one area that causes the most pressure.",
+              "Make one rule for that area only.",
+              "Stay with that first fix before layering on new changes.",
+            ],
           },
           {
             id: "what-success-looks-like",
@@ -548,6 +679,11 @@ function budgetingContent(): LearnPageContent {
             ],
             takeaway:
               "Clearer is better, even before perfect.",
+            actionSteps: [
+              "Measure success by awareness and consistency.",
+              "Notice whether money feels a little clearer this week than last week.",
+              "Keep going even if the progress looks small.",
+            ],
           },
         ],
       },
@@ -581,6 +717,11 @@ function creditContent(): LearnPageContent {
             ],
             takeaway:
               "Debit uses your money. Credit uses borrowed money.",
+            actionSteps: [
+              "Write one sentence for debit and one sentence for credit.",
+              "Check which type of card you actually use most.",
+              "Do not use a card casually until you know which type it is.",
+            ],
           },
           {
             id: "what-is-credit-card",
@@ -596,6 +737,11 @@ function creditContent(): LearnPageContent {
             ],
             takeaway:
               "A credit card is borrowed money, not free money.",
+            actionSteps: [
+              "Say this out loud once: credit is borrowed money.",
+              "Do not treat your credit limit like extra spending power.",
+              "Only use credit for amounts you could already cover.",
+            ],
           },
           {
             id: "what-is-interest",
@@ -611,6 +757,11 @@ function creditContent(): LearnPageContent {
             ],
             takeaway:
               "If you carry the balance, the item usually costs more than it first looked like.",
+            actionSteps: [
+              "If you use credit, remind yourself that unpaid balances can grow.",
+              "Pay attention to full balance, not just minimum payment.",
+              "Build the habit of thinking about real total cost, not just today's purchase.",
+            ],
           },
         ],
       },
@@ -634,6 +785,11 @@ function creditContent(): LearnPageContent {
             ],
             takeaway:
               "Good use means controlled use, not heavy use.",
+            actionSteps: [
+              "Use your card only for spending you can explain and cover.",
+              "Aim to pay on time every cycle.",
+              "Keep your first rule simple so you can actually follow it.",
+            ],
           },
           {
             id: "bad-use",
@@ -649,6 +805,11 @@ function creditContent(): LearnPageContent {
             ],
             takeaway:
               "If the payback plan is unclear, slow down.",
+            actionSteps: [
+              "Pause before charging anything you do not know how to repay.",
+              "Check balances instead of avoiding them.",
+              "Treat unclear repayment as a warning sign.",
+            ],
           },
           {
             id: "credit-score-basic",
@@ -664,6 +825,11 @@ function creditContent(): LearnPageContent {
             ],
             takeaway:
               "A credit score reflects habits over time, not one perfect moment.",
+            actionSteps: [
+              "Think of score as habit history, not as personal value.",
+              "Build better habits first instead of worrying about perfection.",
+              "Stay focused on the basics: understand, control, and pay on time.",
+            ],
           },
         ],
       },
@@ -687,6 +853,11 @@ function creditContent(): LearnPageContent {
             ],
             takeaway:
               "Your real limit is what you can truly cover.",
+            actionSteps: [
+              "Adopt this as your default rule going forward.",
+              "Do not let the credit limit decide what feels possible.",
+              "Let your real account balance decide what is safe.",
+            ],
           },
           {
             id: "pay-on-time",
@@ -702,6 +873,11 @@ function creditContent(): LearnPageContent {
             ],
             takeaway:
               "Set up systems so memory is not the whole plan.",
+            actionSteps: [
+              "Set one reminder or system today.",
+              "Do not rely only on memory.",
+              "Make on-time payment a repeatable habit, not a hope.",
+            ],
           },
           {
             id: "when-not-to-use-credit",
@@ -717,6 +893,11 @@ function creditContent(): LearnPageContent {
             ],
             takeaway:
               "Do not use credit to hide a problem you have not looked at yet.",
+            actionSteps: [
+              "Pause if credit starts feeling like a rescue tool.",
+              "Look at the real money problem underneath first.",
+              "Use clarity before credit expansion.",
+            ],
           },
         ],
       },
@@ -750,6 +931,11 @@ function savingContent(): LearnPageContent {
             ],
             takeaway:
               "Small savings still change how money feels.",
+            actionSteps: [
+              "Choose one small amount you can save this week.",
+              "Decide where that savings will live.",
+              "Start now instead of waiting for a perfect month.",
+            ],
           },
           {
             id: "emergency-fund",
@@ -765,6 +951,11 @@ function savingContent(): LearnPageContent {
             ],
             takeaway:
               "Emergency money is for real pressure, not random spending.",
+            actionSteps: [
+              "List one realistic emergency that could happen in your life.",
+              "Start a separate spot for that money if you can.",
+              "Protect it from normal spending.",
+            ],
           },
           {
             id: "starting-small",
@@ -780,6 +971,11 @@ function savingContent(): LearnPageContent {
             ],
             takeaway:
               "Small is not pointless if it keeps happening.",
+            actionSteps: [
+              "Choose consistency over size.",
+              "Set a number you can repeat next week too.",
+              "Judge yourself on habit, not on impressiveness.",
+            ],
           },
         ],
       },
@@ -803,6 +999,11 @@ function savingContent(): LearnPageContent {
             ],
             takeaway:
               "Time can matter as much as size.",
+            actionSteps: [
+              "Do not wait for a bigger future version of yourself.",
+              "Start the habit now, even if the amount is small.",
+              "Let time work with you instead of against you.",
+            ],
           },
           {
             id: "consistency",
@@ -818,6 +1019,11 @@ function savingContent(): LearnPageContent {
             ],
             takeaway:
               "Steady habits beat dramatic bursts.",
+            actionSteps: [
+              "Pick a rule you can live with.",
+              "Repeat it on the same day or schedule.",
+              "Do not confuse one intense month with a real system.",
+            ],
           },
           {
             id: "long-term-view",
@@ -833,6 +1039,11 @@ function savingContent(): LearnPageContent {
             ],
             takeaway:
               "Some of the best money habits feel quiet at first.",
+            actionSteps: [
+              "Stop judging progress only by this week.",
+              "Notice whether the habit is becoming more normal.",
+              "Give good habits enough time to matter.",
+            ],
           },
         ],
       },
@@ -856,6 +1067,11 @@ function savingContent(): LearnPageContent {
             ],
             takeaway:
               "A clear rule beats a vague goal.",
+            actionSteps: [
+              "Choose one amount.",
+              "Choose one day.",
+              "Turn saving into a repeated action, not a vague intention.",
+            ],
           },
           {
             id: "where-to-keep-it",
@@ -871,6 +1087,11 @@ function savingContent(): LearnPageContent {
             ],
             takeaway:
               "Money is easier to protect when it has a clearer home.",
+            actionSteps: [
+              "Decide where your savings money will live.",
+              "Keep it mentally separate from spending money.",
+              "Protect its job by not mixing it casually.",
+            ],
           },
           {
             id: "how-to-measure-progress",
@@ -886,6 +1107,11 @@ function savingContent(): LearnPageContent {
             ],
             takeaway:
               "A setback is not the same as starting over.",
+            actionSteps: [
+              "Track whether the habit happened, not whether it looked perfect.",
+              "Look for steadiness from week to week.",
+              "Keep going after imperfect weeks instead of resetting everything.",
+            ],
           },
         ],
       },

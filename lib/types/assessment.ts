@@ -21,7 +21,7 @@ export type AssessmentInput = {
   basicsCredit: string;
   basicsBudgeting: string;
 
-  topPriority: string;
+  topPriority: string[];
 };
 
 export type MoneywiseProfile = {

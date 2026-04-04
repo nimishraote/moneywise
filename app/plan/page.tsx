@@ -93,7 +93,7 @@ export default function PlanPage() {
       answers.basicsInterest ||
       answers.basicsCredit ||
       answers.basicsBudgeting ||
-      answers.topPriority;
+      answers.topPriority.length > 0;
 
     if (hasEnoughInput) loadSummary();
 
@@ -160,19 +160,6 @@ export default function PlanPage() {
                   {plan.focus.body}
                 </p>
               </div>
-
-              {plan.strengths.length > 0 && (
-                <div className="mt-5 rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
-                  <div className="text-sm font-semibold text-white">
-                    What stood out in your check-in
-                  </div>
-                  <ul className="mt-3 space-y-2 text-sm leading-7 text-slate-300">
-                    {plan.strengths.map((item) => (
-                      <li key={item}>• {item}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
 
               {summaryLoading && (
                 <div className="mt-4 text-sm text-slate-400">

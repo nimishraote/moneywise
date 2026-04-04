@@ -83,34 +83,64 @@ function knowledgeIsLow(input: AssessmentInput) {
   return lowCount >= 3;
 }
 
-function detectTopModule(input: AssessmentInput): RecommendedModule {
-  if (input.topPriority === "Learning the basic 101 of money") {
-    return "money-101-foundations";
+function rankRequestedModules(input: AssessmentInput): RecommendedModule[] {
+  const picks = input.topPriority || [];
+  const ranked: RecommendedModule[] = [];
+
+  const add = (module: RecommendedModule) => {
+    if (!ranked.includes(module)) ranked.push(module);
+  };
+
+  if (picks.includes("Learning the basic 101 of money")) {
+    add("money-101-foundations");
   }
 
-  if (input.topPriority === "Stocks and investing") {
-    if (
+  if (
+    picks.includes("Bank accounts and debit cards") ||
+    picks.includes("Credit cards and how they work")
+  ) {
+    add(
+      input.basicsCredit === "No" ? "money-101-foundations" : "credit-scores-and-credit-cards"
+    );
+  }
+
+  if (
+    picks.includes("Budgeting and spending control") ||
+    picks.includes("Debt and repayment basics")
+  ) {
+    add("budgeting-and-cash-flow");
+  }
+
+  if (
+    picks.includes("Saving money") ||
+    picks.includes("Emergency fund basics")
+  ) {
+    add("saving-starting-early-and-long-term-impact");
+  }
+
+  if (
+    picks.includes("How investing works in very simple terms") ||
+    picks.includes("Stocks and investing")
+  ) {
+    add(
       input.basicsStocks === "No" ||
-      input.basicsStockMarket === "No" ||
-      input.basicsIndexFunds === "No"
-    ) {
-      return "money-101-foundations";
-    }
-    return "investing-basics-and-first-stocks";
+        input.basicsIndexFunds === "No" ||
+        input.basicsStockMarket === "No"
+        ? "money-101-foundations"
+        : "investing-basics-and-first-stocks"
+    );
   }
 
-  if (input.topPriority === "Credit cards") {
-    if (input.basicsCredit === "No") return "money-101-foundations";
-    return "credit-scores-and-credit-cards";
+  if (picks.includes("Paychecks, taxes, and first-job money basics")) {
+    add("money-101-foundations");
   }
 
-  if (input.topPriority === "Budgeting") {
-    return "budgeting-and-cash-flow";
-  }
+  return ranked;
+}
 
-  if (input.topPriority === "Saving") {
-    return "saving-starting-early-and-long-term-impact";
-  }
+function detectTopModule(input: AssessmentInput): RecommendedModule {
+  const ranked = rankRequestedModules(input);
+  if (ranked.length > 0) return ranked[0];
 
   if (knowledgeIsVeryLow(input)) {
     return "money-101-foundations";
@@ -140,9 +170,12 @@ function detectTopModule(input: AssessmentInput): RecommendedModule {
 }
 
 function getOrderedModules(
+  input: AssessmentInput,
   top: RecommendedModule,
   persona: UserPersona
 ): RecommendedModule[] {
+  const requested = rankRequestedModules(input);
+
   let ordered: RecommendedModule[] = [
     "money-101-foundations",
     "budgeting-and-cash-flow",
@@ -161,29 +194,8 @@ function getOrderedModules(
     ];
   }
 
-  return [top, ...ordered.filter((item) => item !== top)];
-}
-
-function buildStrengths(input: AssessmentInput): string[] {
-  const strengths: string[] = [];
-
-  if (input.topPriority) {
-    strengths.push("You were clear about what kind of help you want right now.");
-  }
-
-  if (input.moneyHabitStyle) {
-    strengths.push("You gave honest signal about your current money habits.");
-  }
-
-  if (input.stressLevel) {
-    strengths.push("You were honest about how money feels right now.");
-  }
-
-  if (knowledgeIsLow(input)) {
-    strengths.push("You were honest about what still feels new or unclear.");
-  }
-
-  return strengths.slice(0, 3);
+  const merged = [top, ...requested, ...ordered];
+  return [...new Set(merged)];
 }
 
 function buildEncouragement(
@@ -257,10 +269,10 @@ export function buildPersonalizedPlan(input: AssessmentInput): PersonalizedPlan 
   return {
     persona,
     encouragement: buildEncouragement(input, persona),
-    strengths: buildStrengths(input),
+    strengths: [],
     focus: buildFocus(topModule),
     recommendedPath: {
-      modules: getOrderedModules(topModule, persona),
+      modules: getOrderedModules(input, topModule, persona),
     },
   };
 }
