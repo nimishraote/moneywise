@@ -32,10 +32,7 @@ export default function PlanPage() {
     if (profile?.firstName) setFirstName(profile.firstName);
   }, []);
 
-  const plan: PersonalizedPlan = useMemo(
-    () => buildPersonalizedPlan(answers),
-    [answers]
-  );
+  const plan: PersonalizedPlan = useMemo(() => buildPersonalizedPlan(answers), [answers]);
 
   const headingName = firstName ? `, ${firstName}` : "";
   const recommendedTopModule = plan.recommendedPath.modules[0];
@@ -57,7 +54,7 @@ export default function PlanPage() {
             assessment: answers,
             profile: { firstName: profile?.firstName ?? "" },
             recommendedModule: recommendedTopModule,
-            recommendedModuleTitle: recommendedTopModuleTitle,
+            recommendedModuleTitle,
           }),
         });
 
@@ -103,7 +100,7 @@ export default function PlanPage() {
   }, [answers, recommendedTopModule, recommendedTopModuleTitle]);
 
   const summaryTitle = aiSummary?.title || plan.encouragement.title;
-  const summaryParagraphOne = aiSummary?.paragraphOne || plan.encouragement.body;
+  const summaryParagraphOne = aiSummary?.paragraphOne || plan.snapshot.body;
   const summaryParagraphTwo = aiSummary?.paragraphTwo || plan.focus.body;
 
   return (
@@ -124,11 +121,10 @@ export default function PlanPage() {
                 className="mt-3 text-4xl font-semibold tracking-tight"
                 style={{ fontFamily: "Georgia, serif" }}
               >
-                A calmer place to start{headingName}
+                A more personal place to start{headingName}
               </h2>
               <p className="mt-4 text-base leading-8 text-slate-300">
-                This page pulls the signal from your check-in into one clearer
-                place to begin.
+                This plan should reflect your real situation, not a generic beginner path.
               </p>
             </div>
 
@@ -137,84 +133,103 @@ export default function PlanPage() {
                 Your main takeaway and best place to start
               </div>
 
-              <h3 className="mt-3 text-2xl font-semibold text-white">
-                {summaryTitle}
-              </h3>
+              <h3 className="mt-3 text-2xl font-semibold text-white">{summaryTitle}</h3>
 
-              <p className="mt-4 text-sm leading-8 text-slate-300">
-                {summaryParagraphOne}
-              </p>
+              <p className="mt-4 text-sm leading-8 text-slate-300">{summaryParagraphOne}</p>
 
-              <p className="mt-4 text-sm leading-8 text-slate-300">
-                {summaryParagraphTwo}
-              </p>
+              <p className="mt-4 text-sm leading-8 text-slate-300">{summaryParagraphTwo}</p>
 
               <div className="mt-5 rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
-                <div className="text-sm font-semibold text-white">
-                  Best place to start now
-                </div>
+                <div className="text-sm font-semibold text-white">Best place to start now</div>
                 <div className="mt-2 text-base leading-8 text-slate-200">
                   {recommendedTopModuleTitle}
                 </div>
                 <p className="mt-3 text-sm leading-8 text-slate-300">
-                  {plan.focus.body}
+                  {plan.firstLessonReason}
                 </p>
               </div>
 
               {summaryLoading && (
-                <div className="mt-4 text-sm text-slate-400">
-                  Personalizing your summary...
-                </div>
+                <div className="mt-4 text-sm text-slate-400">Personalizing your summary...</div>
               )}
             </div>
 
-            <div className="mt-6 rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <div className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-100">
-                    Your next 3 steps
-                  </div>
-                  <div className="mt-2 text-sm text-slate-400">
-                    Keep this simple. Learn, pick one rule, then stay steady.
-                  </div>
+            <div className="mt-6 grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
+              <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
+                <div className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-100">
+                  Your top focus areas
                 </div>
-                <a
-                  href="/lesson1"
-                  className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
-                >
-                  Start learning
-                </a>
+                <div className="mt-5 space-y-4">
+                  {plan.focusAreas.map((area, index) => (
+                    <div
+                      key={`${area.title}-${index}`}
+                      className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5"
+                    >
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="text-sm font-semibold text-white">
+                          {index + 1}. {area.title}
+                        </div>
+                        <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-300">
+                          Priority
+                        </div>
+                      </div>
+                      <p className="mt-3 text-sm leading-7 text-slate-300">{area.whyNow}</p>
+                      <div className="mt-3 rounded-2xl border border-amber-300/15 bg-amber-200/8 p-4 text-sm leading-7 text-amber-100">
+                        <span className="font-semibold text-amber-200">Action now: </span>
+                        {area.actionNow}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <div className="mt-5 grid gap-4 md:grid-cols-3">
-                <div className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
-                  <div className="text-sm font-semibold text-white">
-                    1. Learn the right basics first
+              <div className="space-y-6">
+                <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
+                  <div className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-100">
+                    What you are already doing well
                   </div>
-                  <p className="mt-2 text-sm leading-7 text-slate-300">
-                    Start with the topic that matches your stage and your
-                    current level of understanding.
-                  </p>
+                  <div className="mt-4 space-y-3">
+                    {plan.strengths.map((strength) => (
+                      <div
+                        key={strength}
+                        className="rounded-[22px] border border-white/10 bg-slate-950/30 p-4 text-sm leading-7 text-slate-200"
+                      >
+                        {strength}
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
-                  <div className="text-sm font-semibold text-white">
-                    2. Build one clear rule
+                <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                      <div className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-100">
+                        Your next 3 actions
+                      </div>
+                      <div className="mt-2 text-sm text-slate-400">
+                        These should be small enough to do, not just admire.
+                      </div>
+                    </div>
+                    <a
+                      href="/lesson1"
+                      className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
+                    >
+                      Start learning
+                    </a>
                   </div>
-                  <p className="mt-2 text-sm leading-7 text-slate-300">
-                    The goal is not to fix everything. It is to leave with one
-                    simple rule you can actually use.
-                  </p>
-                </div>
 
-                <div className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
-                  <div className="text-sm font-semibold text-white">
-                    3. Keep it steady
+                  <div className="mt-5 space-y-4">
+                    {plan.immediateActions.map((action, index) => (
+                      <div
+                        key={action}
+                        className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5"
+                      >
+                        <div className="text-sm font-semibold text-white">
+                          {index + 1}. {action}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <p className="mt-2 text-sm leading-7 text-slate-300">
-                    Progress matters more than perfection. Small consistency is
-                    what builds confidence.
-                  </p>
                 </div>
               </div>
             </div>
