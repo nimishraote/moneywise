@@ -21,7 +21,10 @@ function buildFallbackSummary(
     "Money can feel confusing when nobody has explained it simply. The good news is that you are looking at it now instead of waiting until it feels bigger.";
   let paragraphTwo = `The best place to start is ${input.recommendedModuleTitle.toLowerCase()}. It gives you a clearer base for calmer and smarter decisions from here.`;
 
-  if (input.assessment.topPriority === "Learning the basic 101 of money") {
+  const topPriorities = input.assessment.topPriority || [];
+  const wantsMoney101 = topPriorities.includes("Learning the basic 101 of money");
+
+  if (wantsMoney101) {
     title = `You do not need advanced finance first${namePart}.`;
     paragraphOne =
       "Right now, the most useful thing is to make the basics feel clear and less intimidating. That usually means understanding the building blocks before trying to jump into harder topics.";
