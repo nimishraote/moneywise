@@ -16,9 +16,4 @@ export type PersonalizedPlan = {
   recommendedPath: {
     modules: RecommendedModule[];
   };
-  firstStep: {
-    label: string;
-    body: string;
-  };
-  nextActions: string[];
 };
