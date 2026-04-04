@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "MoneyWise Starter",
-  description: "Starter UI for the MoneyWise financial literacy app",
+  title: "MoneyWise",
+  description: "A financial literacy app for young adults",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

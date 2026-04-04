@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import MoneyWiseLogo from "@/components/ui/moneywise-logo";
 
 export default function AppShell({
   children,
@@ -18,15 +19,18 @@ export default function AppShell({
           <footer
             className={`border-t px-6 py-4 text-sm ${
               footerDark
-                ? "border-white/10 bg-slate-950 text-slate-300"
+                ? "border-amber-200/10 bg-slate-950 text-slate-300"
                 : "border-slate-200 bg-white text-slate-500"
             }`}
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <span className="font-semibold">MoneyWise</span>
-                <span className="mx-2">•</span>
-                <span>Built as a concept by Nimish Raote</span>
+              <div className="flex items-center gap-3">
+                <MoneyWiseLogo compact className="shrink-0" />
+                <div>
+                  <span className="font-semibold text-white">MoneyWise</span>
+                  <span className="mx-2 text-slate-500">•</span>
+                  <span>Built as a concept by Nimish Raote</span>
+                </div>
               </div>
 
               <div className="flex items-center gap-4">

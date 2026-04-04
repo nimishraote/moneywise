@@ -60,21 +60,43 @@ export function getLessonOneContent(
         persona === "teen-supported" || persona === "student-dependent"
           ? "This lesson is about making investing feel less intimidating. You do not need to start by picking winning stocks. You need to understand the basics first, so future decisions feel calmer and smarter."
           : "This lesson is about making investing feel less intimidating. Before you put real money into stocks, it helps to understand risk, time horizon, and why simple long-term investing often beats random choices.",
-      sectionOneTitle: "What you are actually choosing between",
-      sectionOneSubtitle: "Risk and return basics",
+      sectionOneTitle: "Start with the basics first",
+      sectionOneSubtitle: "What investing actually means",
       sectionOneBody:
-        "Before buying anything, it helps to understand the difference between saving, investing, and speculating. These are not the same thing, and they should not be treated like they are.",
-      sectionOneVisualTitle: "A clearer picture of the choices",
+        "Before thinking about stocks, it helps to understand the core ideas. Investing is putting money into something that can grow over time, while accepting that values can move up and down along the way.",
+      sectionOneVisualTitle: "Core investing building blocks",
       sectionOneVisualCards: [
         {
           label: "Savings",
-          value: "Low risk",
-          detail: "Stable, but usually slower growth over time.",
+          value: "Stability first",
+          detail: "Usually steadier, but slower growth over time.",
+        },
+        {
+          label: "Investing",
+          value: "Growth with movement",
+          detail: "Can grow more, but values can rise and fall.",
+        },
+        {
+          label: "Risk",
+          value: "Normal, not failure",
+          detail: "Short-term swings are part of investing, not proof you did it wrong.",
+        },
+      ],
+      sectionTwoTitle: "Then understand the main paths",
+      sectionTwoSubtitle: "A calmer way to compare options",
+      sectionTwoBody:
+        "Once the basics are clear, the next step is understanding common paths like index funds and single stocks. For most beginners, the goal is not excitement. It is building understanding before making bigger decisions.",
+      sectionTwoVisualTitle: "Three common beginner paths",
+      sectionTwoVisualCards: [
+        {
+          label: "Savings account",
+          value: "Lowest movement",
+          detail: "Best for stability, not usually for strong long-term growth.",
         },
         {
           label: "Index funds",
-          value: "Balanced start",
-          detail: "Broad market exposure instead of betting on one company.",
+          value: "Broader and calmer",
+          detail: "A basket of many companies, often a stronger beginner path.",
         },
         {
           label: "Single stocks",
@@ -82,47 +104,6 @@ export function getLessonOneContent(
           detail: "More upside and more downside if you guess wrong.",
         },
       ],
-      sectionTwoTitle: "Why starting early matters",
-      sectionTwoSubtitle: "Time helps more than intensity",
-      sectionTwoBody:
-        "When you start early, small amounts have more time to grow. That means your first win is not picking the perfect stock. It is learning early enough to make better long-term choices.",
-      sectionTwoVisualTitle: "Time beats urgency",
-      sectionTwoVisualCards:
-        persona === "teen-supported" || persona === "student-dependent"
-          ? [
-              {
-                label: "Start in teens",
-                value: "More runway",
-                detail: "You have more years for learning and compounding.",
-              },
-              {
-                label: "Start in 20s",
-                value: "Still strong",
-                detail: "There is still plenty of time, but less margin.",
-              },
-              {
-                label: "Start later",
-                value: "More catch-up needed",
-                detail: "You often need bigger contributions to close the gap.",
-              },
-            ]
-          : [
-              {
-                label: "Early start",
-                value: "Lower pressure",
-                detail: "Smaller repeated amounts can do more work over time.",
-              },
-              {
-                label: "Delayed start",
-                value: "Higher effort",
-                detail: "Waiting often means needing bigger moves later.",
-              },
-              {
-                label: "Long horizon",
-                value: "Better decisions",
-                detail: "Time gives you room to think beyond short-term swings.",
-              },
-            ],
     };
   }
 
@@ -230,21 +211,23 @@ export function getLessonOneContent(
     };
   }
 
+  const teenLike = persona === "teen-supported" || persona === "student-dependent";
+
   return {
     heroTitle: "Saving and starting early",
     heroBody:
-      persona === "teen-supported" || persona === "student-dependent"
+      teenLike
         ? "This lesson is about using saving as a foundation, not as an adult emergency-fund lecture. At your stage, saving is about building awareness, patience, and a habit that gives you more control later."
         : "This lesson is about one of the most important ideas in personal finance. Saving is not just about discipline. It is about reducing pressure, creating options, and giving your future self more stability.",
     sectionOneTitle: "Why saving matters",
     sectionOneSubtitle: "The emotional side first",
     sectionOneBody:
-      persona === "teen-supported" || persona === "student-dependent"
+      teenLike
         ? "Saving creates a sense of ownership and intention. Even small amounts can help you feel more in control and more prepared for choices you will make later."
         : "Saving gives breathing room. It means one unexpected bill is less likely to become a crisis. Even a small cushion can change how life feels.",
     sectionOneVisualTitle: "What saving can do",
     sectionOneVisualCards:
-      persona === "teen-supported" || persona === "student-dependent"
+      teenLike
         ? [
             {
               label: "First habit",
@@ -313,28 +296,28 @@ export function getLessonTwoContent(
       heroTitle: "Your next practical investing step",
       heroBody:
         persona === "teen-supported" || persona === "student-dependent"
-          ? "Now turn curiosity into a smarter first move. Pick the investing step that feels most useful right now."
-          : "Now turn interest into a practical first move. Pick the investing step that feels most useful right now.",
+          ? "Now turn curiosity into a smarter first move. These three steps build on each other and work better in order."
+          : "Now turn interest into a practical first move. These three steps build on each other and work better in order.",
       options: [
         {
           key: "goal",
-          title: "Learn the building blocks",
+          title: "Step 1 - Learn the building blocks",
           subtitle: "Understand stocks, index funds, and risk before choosing anything",
         },
         {
           key: "amount",
-          title: "Choose a tiny starter habit",
+          title: "Step 2 - Choose a tiny starter habit",
           subtitle: "Start with watchlists, paper trading, or a very small amount",
         },
         {
           key: "compare",
-          title: "Compare beginner-friendly paths",
+          title: "Step 3 - Compare beginner-friendly paths",
           subtitle: "See which account or platform type actually fits your stage of life",
         },
       ],
       details: {
         goal: {
-          title: "Start by learning the building blocks",
+          title: "Step 1 - Learn the building blocks",
           subtitle: "The first win is understanding what you are buying and why.",
           examples: [
             {
@@ -355,7 +338,7 @@ export function getLessonTwoContent(
           ],
         },
         amount: {
-          title: "Choose a tiny starter habit",
+          title: "Step 2 - Choose a tiny starter habit",
           subtitle: "At the beginning, habits often matter more than money size.",
           examples:
             persona === "teen-supported" || persona === "student-dependent"
@@ -395,7 +378,7 @@ export function getLessonTwoContent(
                 ],
         },
         compare: {
-          title: "Compare beginner-friendly paths",
+          title: "Step 3 - Compare beginner-friendly paths",
           subtitle: "The right path depends on your age and what kind of control you actually have right now.",
           examples:
             persona === "teen-supported" || persona === "student-dependent"
@@ -442,27 +425,27 @@ export function getLessonTwoContent(
     return {
       heroTitle: "Your next practical step",
       heroBody:
-        "Now turn clarity into action. Pick the budget step that feels most useful right now.",
+        "Now turn clarity into action. These three steps build on each other and work best in order.",
       options: [
         {
           key: "goal",
-          title: "List the essentials",
+          title: "Step 1 - List the essentials",
           subtitle: "Start with rent, food, transport, and must-pay bills",
         },
         {
           key: "amount",
-          title: "Choose a weekly check-in",
+          title: "Step 2 - Choose a weekly check-in",
           subtitle: "A small review habit is easier to keep than a big reset",
         },
         {
           key: "compare",
-          title: "Compare what is fixed vs flexible",
+          title: "Step 3 - Compare fixed vs flexible",
           subtitle: "See what cannot change and what might be adjusted",
         },
       ],
       details: {
         goal: {
-          title: "Start by listing the essentials",
+          title: "Step 1 - List the essentials",
           subtitle:
             "The goal is to see what must be covered before anything optional.",
           examples: [
@@ -484,7 +467,7 @@ export function getLessonTwoContent(
           ],
         },
         amount: {
-          title: "Pick a repeatable review rhythm",
+          title: "Step 2 - Pick a repeatable review rhythm",
           subtitle:
             "Consistency matters more than doing a huge budgeting session once.",
           examples: [
@@ -506,7 +489,7 @@ export function getLessonTwoContent(
           ],
         },
         compare: {
-          title: "Compare fixed and flexible spending",
+          title: "Step 3 - Compare fixed and flexible spending",
           subtitle:
             "This helps you find where pressure can actually be reduced.",
           examples: [
@@ -535,27 +518,27 @@ export function getLessonTwoContent(
     return {
       heroTitle: "Your next practical step",
       heroBody:
-        "Now narrow the topic down. Pick the credit question that feels most useful right now.",
+        "Now narrow the topic down. These three steps build on each other and work best in order.",
       options: [
         {
           key: "goal",
-          title: "Learn what affects a score",
+          title: "Step 1 - Learn what affects a score",
           subtitle: "Understand the big drivers before going deeper",
         },
         {
           key: "amount",
-          title: "Understand credit card habits",
+          title: "Step 2 - Understand credit card habits",
           subtitle: "See how balances, timing, and behavior affect outcomes",
         },
         {
           key: "compare",
-          title: "Compare healthy vs risky patterns",
+          title: "Step 3 - Compare healthy vs risky patterns",
           subtitle: "Know what helps and what creates damage over time",
         },
       ],
       details: {
         goal: {
-          title: "Start with what affects a score",
+          title: "Step 1 - Start with what affects a score",
           subtitle:
             "A few factors matter far more than most people realize.",
           examples: [
@@ -577,7 +560,7 @@ export function getLessonTwoContent(
           ],
         },
         amount: {
-          title: "Understand day-to-day card habits",
+          title: "Step 2 - Understand day-to-day card habits",
           subtitle:
             "Small repeated behavior matters more than one smart decision.",
           examples: [
@@ -599,7 +582,7 @@ export function getLessonTwoContent(
           ],
         },
         compare: {
-          title: "Compare healthy and risky credit patterns",
+          title: "Step 3 - Compare healthy and risky credit patterns",
           subtitle:
             "This makes good behavior easier to recognize early.",
           examples: [
@@ -629,47 +612,47 @@ export function getLessonTwoContent(
   return {
     heroTitle: "Your next practical saving step",
     heroBody: teenLike
-      ? "Now turn the idea into a first move that actually fits your stage of life."
-      : "Now turn the idea into one practical step you can actually repeat.",
+      ? "Now turn the idea into a first move that actually fits your stage of life. These three steps build on each other and work best in order."
+      : "Now turn the idea into one practical step you can actually repeat. These three steps build on each other and work best in order.",
     options: teenLike
       ? [
           {
             key: "goal",
-            title: "Pick a first money goal",
+            title: "Step 1 - Pick a first money goal",
             subtitle: "A short-term target can make saving feel real and useful",
           },
           {
             key: "amount",
-            title: "Choose a small weekly habit",
+            title: "Step 2 - Choose a small weekly habit",
             subtitle: "The goal is consistency, not pressure",
           },
           {
             key: "compare",
-            title: "Compare beginner-friendly places to save",
+            title: "Step 3 - Compare beginner-friendly places to save",
             subtitle: "See what kind of account or tool fits your stage of life",
           },
         ]
       : [
           {
             key: "goal",
-            title: "Pick a goal",
+            title: "Step 1 - Pick a goal",
             subtitle: "Emergency fund, peace of mind, or a first savings target",
           },
           {
             key: "amount",
-            title: "Choose a monthly amount",
+            title: "Step 2 - Choose a monthly amount",
             subtitle: "Even $50 or $100 can be a meaningful start",
           },
           {
             key: "compare",
-            title: "Compare a few reputable options",
+            title: "Step 3 - Compare reputable options",
             subtitle: "Look at 2 to 3 established savings providers",
           },
         ],
     details: teenLike
       ? {
           goal: {
-            title: "Start by choosing a first money goal",
+            title: "Step 1 - Choose a first money goal",
             subtitle:
               "A small concrete target is often better than a vague idea of saving.",
             examples: [
@@ -691,7 +674,7 @@ export function getLessonTwoContent(
             ],
           },
           amount: {
-            title: "Choose a small weekly habit",
+            title: "Step 2 - Choose a small weekly habit",
             subtitle:
               "For your stage, the habit matters more than the size.",
             examples: [
@@ -713,7 +696,7 @@ export function getLessonTwoContent(
             ],
           },
           compare: {
-            title: "Compare beginner-friendly saving paths",
+            title: "Step 3 - Compare beginner-friendly saving paths",
             subtitle:
               "The right place depends on how much control you have right now.",
             examples: [
@@ -737,7 +720,7 @@ export function getLessonTwoContent(
         }
       : {
           goal: {
-            title: "Start by picking one savings goal",
+            title: "Step 1 - Pick one savings goal",
             subtitle:
               "A clear reason makes it easier to begin and easier to stay consistent.",
             examples: [
@@ -759,7 +742,7 @@ export function getLessonTwoContent(
             ],
           },
           amount: {
-            title: "Choose a monthly amount you can repeat",
+            title: "Step 2 - Choose a monthly amount you can repeat",
             subtitle:
               "Consistency matters more than picking a number that feels impressive.",
             examples: [
@@ -781,7 +764,7 @@ export function getLessonTwoContent(
             ],
           },
           compare: {
-            title: "Compare a few reputable options",
+            title: "Step 3 - Compare a few reputable options",
             subtitle:
               "You do not need the perfect option. You need a safe, clear, simple one.",
             examples: [

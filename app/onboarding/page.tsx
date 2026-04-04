@@ -50,28 +50,28 @@ const flowSteps = [
     title: "Short assessment",
     body: "A few simple questions so the app understands your stage of life and what feels hard right now.",
     classes:
-      "border-violet-200/20 bg-[linear-gradient(135deg,rgba(196,181,253,0.22)_0%,rgba(167,139,250,0.10)_100%)]",
+      "border-white/20 bg-[linear-gradient(135deg,rgba(251,191,36,0.22)_0%,rgba(196,181,253,0.12)_100%)]",
   },
   {
     step: "02",
     title: "AI analysis",
     body: "The app looks for patterns in your answers and identifies what support would be most useful first.",
     classes:
-      "border-violet-200/18 bg-[linear-gradient(135deg,rgba(167,139,250,0.20)_0%,rgba(139,92,246,0.10)_100%)]",
+      "border-white/20 bg-[linear-gradient(135deg,rgba(192,132,252,0.22)_0%,rgba(96,165,250,0.10)_100%)]",
   },
   {
     step: "03",
     title: "Personalized plan",
     body: "You get a starting plan shaped around your situation, not a one-size-fits-all article.",
     classes:
-      "border-violet-200/16 bg-[linear-gradient(135deg,rgba(139,92,246,0.18)_0%,rgba(124,58,237,0.10)_100%)]",
+      "border-white/20 bg-[linear-gradient(135deg,rgba(251,146,60,0.18)_0%,rgba(168,85,247,0.10)_100%)]",
   },
   {
     step: "04",
     title: "Lessons and tracking",
     body: "You move into practical lessons and simple progress tools you can build on over time.",
     classes:
-      "border-violet-200/14 bg-[linear-gradient(135deg,rgba(124,58,237,0.16)_0%,rgba(109,40,217,0.10)_100%)]",
+      "border-white/20 bg-[linear-gradient(135deg,rgba(250,204,21,0.16)_0%,rgba(59,130,246,0.10)_100%)]",
   },
 ];
 
@@ -100,7 +100,7 @@ export default function OnboardingPage() {
   return (
     <AppShell footerDark>
       <div className="relative overflow-hidden bg-[#141127] text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(99,102,241,0.22),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(168,85,247,0.18),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(79,70,229,0.12),_transparent_24%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(99,102,241,0.22),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(168,85,247,0.18),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(251,146,60,0.10),_transparent_24%)]" />
 
         <div className="relative px-5 py-4 md:px-8 md:py-5">
           <div className="mx-auto max-w-6xl">
@@ -109,19 +109,21 @@ export default function OnboardingPage() {
                 <div
                   key={index}
                   className={`h-2 flex-1 rounded-full ${
-                    index <= step ? "bg-white" : "bg-white/15"
+                    index <= step
+                      ? "bg-[linear-gradient(90deg,#fde68a_0%,#ffffff_40%,#c4b5fd_100%)]"
+                      : "bg-white/15"
                   }`}
                 />
               ))}
             </div>
 
-            <div className="rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0.04)_100%)] p-4 shadow-2xl backdrop-blur">
+            <div className="rounded-[32px] border border-amber-200/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08)_0%,rgba(255,255,255,0.04)_100%)] p-4 shadow-2xl backdrop-blur">
               <div className="rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(31,24,58,0.96)_0%,rgba(22,19,40,0.96)_100%)] p-6 md:p-7">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10 text-white">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full border border-amber-300/20 bg-[linear-gradient(135deg,rgba(250,204,21,0.16)_0%,rgba(196,181,253,0.12)_100%)] text-amber-100">
                   <Icon className="h-6 w-6" />
                 </div>
 
-                <div className="mt-4 inline-flex rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.24em] text-violet-100">
+                <div className="mt-4 inline-flex rounded-full border border-amber-200/20 bg-[linear-gradient(135deg,rgba(251,191,36,0.20)_0%,rgba(168,85,247,0.10)_100%)] px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.24em] text-amber-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
                   {current.eyebrow}
                 </div>
 
@@ -134,7 +136,7 @@ export default function OnboardingPage() {
                 </p>
 
                 {step < 2 && current.supportTitle && current.supportBody && (
-                  <div className="mt-5 rounded-[22px] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.06)_0%,rgba(196,181,253,0.05)_100%)] p-5">
+                  <div className="mt-5 rounded-[22px] border border-copper-200/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.06)_0%,rgba(251,146,60,0.06)_50%,rgba(196,181,253,0.05)_100%)] p-5">
                     <div className="text-[20px] font-semibold text-white">{current.supportTitle}</div>
                     <div className="mt-2 max-w-4xl text-[15px] leading-7 text-slate-300">
                       {current.supportBody}
@@ -150,12 +152,12 @@ export default function OnboardingPage() {
                         className={`rounded-[20px] border px-5 py-4 ${item.classes}`}
                       >
                         <div className="flex items-start gap-4">
-                          <div className="min-w-[44px] rounded-xl bg-white/12 px-2 py-1 text-center text-xs font-semibold tracking-[0.18em] text-white">
+                          <div className="min-w-[48px] rounded-xl bg-white/12 px-2 py-1 text-center text-xs font-semibold tracking-[0.18em] text-white">
                             {item.step}
                           </div>
                           <div>
                             <div className="text-[17px] font-semibold text-white">{item.title}</div>
-                            <div className="mt-1 text-[14px] leading-6 text-slate-200">
+                            <div className="mt-1 text-[14px] leading-6 text-slate-100/90">
                               {item.body}
                             </div>
                           </div>

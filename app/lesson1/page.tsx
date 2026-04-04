@@ -20,16 +20,17 @@ function VisualGrid({
   cards: { label: string; value: string; detail: string }[];
 }) {
   return (
-    <div className="mt-5 rounded-[24px] border border-white/10 bg-slate-950/25 p-5">
-      <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-200">
+    <div className="mt-5 rounded-[24px] border border-amber-200/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.05)_0%,rgba(251,146,60,0.05)_30%,rgba(96,165,250,0.04)_100%)] p-5">
+      <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-100">
         <BarChart3 className="h-4 w-4 text-amber-200" />
         {title}
       </div>
+
       <div className="grid gap-4 md:grid-cols-3">
         {cards.map((card) => (
           <div
             key={`${card.label}-${card.value}`}
-            className="rounded-[20px] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.06)_0%,rgba(96,165,250,0.04)_100%)] p-4"
+            className="rounded-[20px] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.05)_0%,rgba(196,181,253,0.04)_100%)] p-4"
           >
             <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
               {card.label}
@@ -47,6 +48,55 @@ function VisualGrid({
   );
 }
 
+function TeenInvestingGraphic() {
+  return (
+    <div className="mt-5 rounded-[24px] border border-amber-200/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.05)_0%,rgba(251,146,60,0.04)_25%,rgba(96,165,250,0.04)_100%)] p-5">
+      <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-100">
+        <BarChart3 className="h-4 w-4 text-amber-200" />
+        How a simple investing foundation builds
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="rounded-[20px] border border-white/10 bg-slate-950/25 p-4">
+          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
+            Step 1
+          </div>
+          <div className="mt-2 text-lg font-semibold text-white">
+            Learn the terms
+          </div>
+          <div className="mt-2 text-sm leading-6 text-slate-300">
+            Know the difference between saving, investing, index funds, and stocks.
+          </div>
+        </div>
+
+        <div className="rounded-[20px] border border-white/10 bg-slate-950/25 p-4">
+          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
+            Step 2
+          </div>
+          <div className="mt-2 text-lg font-semibold text-white">
+            Understand risk
+          </div>
+          <div className="mt-2 text-sm leading-6 text-slate-300">
+            Prices move. The goal is to understand that movement before using real money.
+          </div>
+        </div>
+
+        <div className="rounded-[20px] border border-white/10 bg-slate-950/25 p-4">
+          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
+            Step 3
+          </div>
+          <div className="mt-2 text-lg font-semibold text-white">
+            Start tiny
+          </div>
+          <div className="mt-2 text-sm leading-6 text-slate-300">
+            Use a watchlist, paper trading, or a very small amount only after the basics feel clear.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function LessonOnePage() {
   const router = useRouter();
   const [answers, setAnswers] = useState<AssessmentInput>(defaultAssessmentInput);
@@ -57,18 +107,18 @@ export default function LessonOnePage() {
 
   const plan = useMemo(() => buildPersonalizedPlan(answers), [answers]);
   const content = useMemo(
-    () =>
-      getLessonOneContent(
-        plan.recommendedPath.modules[0],
-        plan.persona
-      ),
+    () => getLessonOneContent(plan.recommendedPath.modules[0], plan.persona),
     [plan]
   );
+
+  const showTeenInvestingGraphic =
+    plan.recommendedPath.modules[0] === "investing-basics-and-first-stocks" &&
+    (plan.persona === "teen-supported" || plan.persona === "student-dependent");
 
   return (
     <AppShell>
       <div className="relative overflow-hidden bg-[#120f1e] text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.24),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(168,85,247,0.18),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(251,191,36,0.08),_transparent_20%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.24),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(168,85,247,0.18),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(251,146,60,0.10),_transparent_20%)]" />
         <div className="relative px-6 py-10 md:px-10 lg:px-14">
           <div className="mx-auto max-w-4xl">
             <button
@@ -80,8 +130,8 @@ export default function LessonOnePage() {
             </button>
 
             <div className="space-y-5">
-              <div className="overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.10)_0%,rgba(255,255,255,0.04)_42%,rgba(255,255,255,0.08)_100%)] shadow-2xl backdrop-blur">
-                <div className="bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_30%),linear-gradient(135deg,rgba(59,130,246,0.10)_0%,rgba(168,85,247,0.12)_55%,rgba(251,191,36,0.08)_100%)] px-6 py-8 md:px-8">
+              <div className="overflow-hidden rounded-[32px] border border-amber-200/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.10)_0%,rgba(255,255,255,0.04)_42%,rgba(255,255,255,0.08)_100%)] shadow-2xl backdrop-blur">
+                <div className="bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_30%),linear-gradient(135deg,rgba(59,130,246,0.10)_0%,rgba(168,85,247,0.10)_50%,rgba(251,146,60,0.10)_100%)] px-6 py-8 md:px-8">
                   <div className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-200">
                     Step 2 of 3 - Understand the topic
                   </div>
@@ -101,9 +151,9 @@ export default function LessonOnePage() {
                 </div>
               </div>
 
-              <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
+              <div className="rounded-[30px] border border-amber-200/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-amber-200">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full border border-amber-300/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.16)_0%,rgba(196,181,253,0.10)_100%)] text-amber-200">
                     <Wallet className="h-5 w-5" />
                   </div>
                   <div>
@@ -118,15 +168,19 @@ export default function LessonOnePage() {
                 <p className="mt-5 text-base leading-8 text-slate-300">
                   {content.sectionOneBody}
                 </p>
-                <VisualGrid
-                  title={content.sectionOneVisualTitle}
-                  cards={content.sectionOneVisualCards}
-                />
+                {showTeenInvestingGraphic ? (
+                  <TeenInvestingGraphic />
+                ) : (
+                  <VisualGrid
+                    title={content.sectionOneVisualTitle}
+                    cards={content.sectionOneVisualCards}
+                  />
+                )}
               </div>
 
-              <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
+              <div className="rounded-[30px] border border-amber-200/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-amber-200">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full border border-amber-300/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.16)_0%,rgba(196,181,253,0.10)_100%)] text-amber-200">
                     <TrendingUp className="h-5 w-5" />
                   </div>
                   <div>
