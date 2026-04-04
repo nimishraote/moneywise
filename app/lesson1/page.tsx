@@ -26,6 +26,7 @@ export default function LessonOnePage() {
   const plan = useMemo(() => buildPersonalizedPlan(answers), [answers]);
 
   const topModule = plan.recommendedPath.modules[0];
+  const nextModule = plan.recommendedPath.modules[1] ?? null;
 
   const content = useMemo(() => getLearnPageContent(topModule), [topModule]);
 
@@ -63,8 +64,9 @@ export default function LessonOnePage() {
               <div className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-200">
                 Why this lesson is showing up first
               </div>
+              <p className="mt-4 text-sm leading-8 text-slate-300">{personaLead}</p>
               <p className="mt-4 text-sm leading-8 text-slate-300">
-                {personaLead}
+                {plan.firstLessonReason}
               </p>
             </div>
 
@@ -150,6 +152,59 @@ export default function LessonOnePage() {
                   </div>
                 </section>
               ))}
+            </div>
+
+            <div className="mt-6 rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
+              <div className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-100">
+                What comes after this
+              </div>
+              <h2
+                className="mt-3 text-2xl font-semibold tracking-tight text-white"
+                style={{ fontFamily: "Georgia, serif" }}
+              >
+                Keep the flow going
+              </h2>
+              <p className="mt-4 text-sm leading-8 text-slate-300">
+                This lesson is meant to be the first useful step, not the last stop. From
+                here, go to your dashboard to see your broader path and what to do next.
+              </p>
+
+              <div className="mt-5 grid gap-4 md:grid-cols-2">
+                <div className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
+                  <div className="text-sm font-semibold text-white">Next best place to go</div>
+                  <div className="mt-2 text-base leading-8 text-slate-200">
+                    Your dashboard
+                  </div>
+                  <p className="mt-3 text-sm leading-7 text-slate-300">
+                    See your full learning path, your priority topics, and the next step after
+                    this lesson.
+                  </p>
+                  <a
+                    href="/dashboard"
+                    className="mt-5 inline-flex rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
+                  >
+                    Go to dashboard
+                  </a>
+                </div>
+
+                <div className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
+                  <div className="text-sm font-semibold text-white">After that</div>
+                  <div className="mt-2 text-base leading-8 text-slate-200">
+                    {nextModule ? moduleTitles[nextModule] : "Your next recommended topic"}
+                  </div>
+                  <p className="mt-3 text-sm leading-7 text-slate-300">
+                    {nextModule
+                      ? "Your dashboard will also show the next topic that likely matters after this one."
+                      : "Your dashboard will help you decide what to focus on after finishing this lesson."}
+                  </p>
+                  <a
+                    href="/plan"
+                    className="mt-5 inline-flex rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white"
+                  >
+                    Review my plan again
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
