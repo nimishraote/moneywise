@@ -1,26 +1,40 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import {
+  defaultAssessmentInput,
+  getStoredAssessment,
+} from "@/lib/storage/moneywise-storage";
+import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
+import { getLessonHref } from "@/lib/content/lesson-content";
 
 export default function LessonTwoPage() {
   const router = useRouter();
 
+  const secondLessonHref = useMemo(() => {
+    const answers = getStoredAssessment() || defaultAssessmentInput;
+    const plan = buildPersonalizedPlan(answers);
+    const secondModule =
+      plan.recommendedPath.modules[1] ?? plan.recommendedPath.modules[0];
+    return getLessonHref(secondModule);
+  }, []);
+
   useEffect(() => {
-    router.replace("/lesson1");
-  }, [router]);
+    router.replace(secondLessonHref);
+  }, [router, secondLessonHref]);
 
   return (
-    <div className="min-h-screen bg-[#120f1e] text-white flex items-center justify-center px-6">
+    <div className="flex min-h-screen items-center justify-center bg-[#120f1e] px-6 text-white">
       <div className="text-center">
         <div
           className="text-3xl font-semibold tracking-tight"
           style={{ fontFamily: "Georgia, serif" }}
         >
-          Redirecting to Learn...
+          Redirecting to your next lesson...
         </div>
         <p className="mt-4 text-sm text-slate-300">
-          We combined the lesson flow into one page for a simpler learning experience.
+          Taking you to the next recommended topic in your learning path.
         </p>
       </div>
     </div>

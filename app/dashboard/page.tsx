@@ -12,7 +12,7 @@ import {
   getStoredProfile,
 } from "@/lib/storage/moneywise-storage";
 import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
-import { moduleTitles } from "@/lib/content/lesson-content";
+import { getLessonHref, moduleTitles } from "@/lib/content/lesson-content";
 
 export default function DashboardPage() {
   const [answers, setAnswers] = useState<AssessmentInput>(defaultAssessmentInput);
@@ -73,7 +73,7 @@ export default function DashboardPage() {
 
                   <div className="mt-5 flex flex-wrap gap-3">
                     <a
-                      href="/lesson1"
+                      href={getLessonHref(topModule)}
                       className="inline-flex rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
                     >
                       Continue learning
@@ -97,13 +97,23 @@ export default function DashboardPage() {
                         key={`${module}-${index}`}
                         className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5"
                       >
-                        <div className="text-sm font-semibold text-white">
-                          {index + 2}. {moduleTitles[module]}
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <div className="text-sm font-semibold text-white">
+                              {index + 2}. {moduleTitles[module]}
+                            </div>
+                            <p className="mt-3 text-sm leading-7 text-slate-300">
+                              {plan.focusAreas.find((area) => area.module === module)?.whyNow ||
+                                "This is one of the next strongest topics for your situation."}
+                            </p>
+                          </div>
+                          <a
+                            href={getLessonHref(module)}
+                            className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-white"
+                          >
+                            Open
+                          </a>
                         </div>
-                        <p className="mt-3 text-sm leading-7 text-slate-300">
-                          {plan.focusAreas.find((area) => area.module === module)?.whyNow ||
-                            "This is one of the next strongest topics for your situation."}
-                        </p>
                       </div>
                     ))}
                   </div>
@@ -184,7 +194,7 @@ export default function DashboardPage() {
                   </p>
                   <div className="mt-5 flex flex-wrap gap-3">
                     <a
-                      href="/lesson1"
+                      href={getLessonHref(topModule)}
                       className="inline-flex rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
                     >
                       Back to lesson

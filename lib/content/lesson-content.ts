@@ -12,6 +12,22 @@ export const moduleTitles: Record<RecommendedModule, string> = {
   "investing-basics-and-first-stocks": "Investing basics and first stocks",
 };
 
+const recommendedModules: RecommendedModule[] = [
+  "money-101-foundations",
+  "budgeting-and-cash-flow",
+  "saving-starting-early-and-long-term-impact",
+  "credit-scores-and-credit-cards",
+  "investing-basics-and-first-stocks",
+];
+
+export function isRecommendedModule(value: string): value is RecommendedModule {
+  return recommendedModules.includes(value as RecommendedModule);
+}
+
+export function getLessonHref(module: RecommendedModule) {
+  return `/learn/${module}`;
+}
+
 export type LessonConcept = {
   id: string;
   title: string;

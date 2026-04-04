@@ -12,7 +12,7 @@ import {
   getStoredProfile,
 } from "@/lib/storage/moneywise-storage";
 import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
-import { moduleTitles } from "@/lib/content/lesson-content";
+import { getLessonHref, moduleTitles } from "@/lib/content/lesson-content";
 
 type AiSummary = {
   title: string;
@@ -37,6 +37,7 @@ export default function PlanPage() {
   const headingName = firstName ? `, ${firstName}` : "";
   const recommendedTopModule = plan.recommendedPath.modules[0];
   const recommendedTopModuleTitle = moduleTitles[recommendedTopModule];
+  const startLessonHref = getLessonHref(recommendedTopModule);
 
   useEffect(() => {
     let cancelled = false;
@@ -211,7 +212,7 @@ export default function PlanPage() {
                       </div>
                     </div>
                     <a
-                      href="/lesson1"
+                      href={startLessonHref}
                       className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
                     >
                       Start learning
