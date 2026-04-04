@@ -3,14 +3,49 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
-import { ArrowLeft, Image as ImageIcon, TrendingUp, Wallet } from "lucide-react";
+import { ArrowLeft, BarChart3, TrendingUp, Wallet } from "lucide-react";
 import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
-import { lessonOneContent } from "@/lib/content/lesson-content";
+import { getLessonOneContent } from "@/lib/content/lesson-content";
 import {
   defaultAssessmentInput,
   getStoredAssessment,
 } from "@/lib/storage/moneywise-storage";
 import type { AssessmentInput } from "@/lib/types/assessment";
+
+function VisualGrid({
+  title,
+  cards,
+}: {
+  title: string;
+  cards: { label: string; value: string; detail: string }[];
+}) {
+  return (
+    <div className="mt-5 rounded-[24px] border border-white/10 bg-slate-950/25 p-5">
+      <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-200">
+        <BarChart3 className="h-4 w-4 text-amber-200" />
+        {title}
+      </div>
+      <div className="grid gap-4 md:grid-cols-3">
+        {cards.map((card) => (
+          <div
+            key={`${card.label}-${card.value}`}
+            className="rounded-[20px] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.06)_0%,rgba(96,165,250,0.04)_100%)] p-4"
+          >
+            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
+              {card.label}
+            </div>
+            <div className="mt-2 text-lg font-semibold text-white">
+              {card.value}
+            </div>
+            <div className="mt-2 text-sm leading-6 text-slate-300">
+              {card.detail}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function LessonOnePage() {
   const router = useRouter();
@@ -20,18 +55,15 @@ export default function LessonOnePage() {
     setAnswers(getStoredAssessment());
   }, []);
 
+  const plan = useMemo(() => buildPersonalizedPlan(answers), [answers]);
   const content = useMemo(
-    () => lessonOneContent[buildPersonalizedPlan(answers).recommendedPath.modules[0]],
-    [answers]
+    () =>
+      getLessonOneContent(
+        plan.recommendedPath.modules[0],
+        plan.persona
+      ),
+    [plan]
   );
-
-  const goBackToPlan = () => {
-    router.push("/plan");
-  };
-
-  const goToPracticalStep = () => {
-    router.push("/lesson2");
-  };
 
   return (
     <AppShell>
@@ -41,7 +73,7 @@ export default function LessonOnePage() {
           <div className="mx-auto max-w-4xl">
             <button
               type="button"
-              onClick={goBackToPlan}
+              onClick={() => router.push("/plan")}
               className="mb-6 inline-flex items-center gap-3 text-sm text-slate-300"
             >
               <ArrowLeft className="h-4 w-4" /> Back to plan
@@ -86,11 +118,10 @@ export default function LessonOnePage() {
                 <p className="mt-5 text-base leading-8 text-slate-300">
                   {content.sectionOneBody}
                 </p>
-                <div className="mt-5 flex h-40 items-center justify-center rounded-[24px] border border-dashed border-white/12 bg-slate-950/25">
-                  <div className="flex items-center gap-2 text-sm text-slate-400">
-                    <ImageIcon className="h-4 w-4" /> Foundational concept visual
-                  </div>
-                </div>
+                <VisualGrid
+                  title={content.sectionOneVisualTitle}
+                  cards={content.sectionOneVisualCards}
+                />
               </div>
 
               <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
@@ -110,17 +141,16 @@ export default function LessonOnePage() {
                 <p className="mt-5 text-base leading-8 text-slate-300">
                   {content.sectionTwoBody}
                 </p>
-                <div className="mt-5 flex h-40 items-center justify-center rounded-[24px] border border-dashed border-white/12 bg-slate-950/25">
-                  <div className="flex items-center gap-2 text-sm text-slate-400">
-                    <ImageIcon className="h-4 w-4" /> Real-world example visual
-                  </div>
-                </div>
+                <VisualGrid
+                  title={content.sectionTwoVisualTitle}
+                  cards={content.sectionTwoVisualCards}
+                />
               </div>
 
               <div className="flex justify-between">
                 <button
                   type="button"
-                  onClick={goBackToPlan}
+                  onClick={() => router.push("/plan")}
                   className="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white"
                 >
                   Back
@@ -128,7 +158,7 @@ export default function LessonOnePage() {
 
                 <button
                   type="button"
-                  onClick={goToPracticalStep}
+                  onClick={() => router.push("/lesson2")}
                   className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
                 >
                   Continue to practical step

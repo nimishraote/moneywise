@@ -12,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
-import { lessonTwoChoices } from "@/lib/content/lesson-content";
+import { getLessonTwoContent } from "@/lib/content/lesson-content";
 import {
   defaultAssessmentInput,
   getStoredAssessment,
@@ -31,9 +31,14 @@ export default function LessonTwoPage() {
     setAnswers(getStoredAssessment());
   }, []);
 
+  const plan = useMemo(() => buildPersonalizedPlan(answers), [answers]);
   const content = useMemo(
-    () => lessonTwoChoices[buildPersonalizedPlan(answers).recommendedPath.modules[0]],
-    [answers]
+    () =>
+      getLessonTwoContent(
+        plan.recommendedPath.modules[0],
+        plan.persona
+      ),
+    [plan]
   );
 
   const selectedDetail = selectedChoice ? content.details[selectedChoice] : null;
@@ -127,8 +132,15 @@ export default function LessonTwoPage() {
                         key={item.name}
                         className="rounded-3xl border border-white/10 bg-slate-950/30 p-5"
                       >
-                        <div className="font-semibold text-white">{item.name}</div>
-                        <div className="mt-2 text-sm leading-6 text-slate-300">
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="font-semibold text-white">{item.name}</div>
+                          {item.badge && (
+                            <div className="rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-blue-100">
+                              {item.badge}
+                            </div>
+                          )}
+                        </div>
+                        <div className="mt-3 text-sm leading-6 text-slate-300">
                           {item.note}
                         </div>
                       </div>
@@ -136,9 +148,9 @@ export default function LessonTwoPage() {
                   </div>
 
                   <div className="mt-5 rounded-[24px] border border-blue-200/15 bg-blue-200/10 p-4 text-sm leading-7 text-blue-50">
-                    Educational use only. Any banks, rates, accounts, or
-                    financial products shown are informational examples only and
-                    not financial advice or endorsements.
+                    Educational use only. Any brands, account types, or financial
+                    products shown are informational examples only and not
+                    financial advice or endorsements.
                   </div>
                 </div>
               )}

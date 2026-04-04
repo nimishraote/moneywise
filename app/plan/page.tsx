@@ -60,22 +60,16 @@ export default function PlanPage() {
           }),
         });
 
-        if (!response.ok) {
-          throw new Error("Failed to generate summary");
-        }
+        if (!response.ok) throw new Error("Failed to generate summary");
 
         const data = await response.json();
         if (!cancelled && data?.summary) {
           setAiSummary(data.summary);
         }
       } catch {
-        if (!cancelled) {
-          setAiSummary(null);
-        }
+        if (!cancelled) setAiSummary(null);
       } finally {
-        if (!cancelled) {
-          setSummaryLoading(false);
-        }
+        if (!cancelled) setSummaryLoading(false);
       }
     }
 
@@ -88,9 +82,7 @@ export default function PlanPage() {
       answers.helpAreas.length > 0 ||
       (answers.freeTextGoal ?? "").trim().length > 0;
 
-    if (hasEnoughInput) {
-      loadSummary();
-    }
+    if (hasEnoughInput) loadSummary();
 
     return () => {
       cancelled = true;
@@ -129,9 +121,7 @@ export default function PlanPage() {
                     <Sparkles className="h-6 w-6 text-amber-200" />
                   </div>
                   <div>
-                    <div className="text-3xl font-semibold">
-                      {summaryTitle}
-                    </div>
+                    <div className="text-3xl font-semibold">{summaryTitle}</div>
                     <p className="mt-4 max-w-3xl text-base leading-8 text-slate-200">
                       {summaryParagraphOne}
                     </p>
@@ -180,7 +170,7 @@ export default function PlanPage() {
                   What we recommend you do next
                 </div>
                 <div className="mt-5 space-y-4">
-                  {plan.recommendedPath.modules.map((module, index) => (
+                  {plan.recommendedPath.modules.slice(0, 3).map((module, index) => (
                     <div
                       key={module}
                       className="rounded-3xl border border-white/10 bg-white/5 px-5 py-4"

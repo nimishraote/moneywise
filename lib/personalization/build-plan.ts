@@ -2,41 +2,126 @@ import type { AssessmentInput } from "@/lib/types/assessment";
 import type {
   PersonalizedPlan,
   RecommendedModule,
+  UserPersona,
 } from "@/lib/types/personalized-plan";
 
-function getTopModule(input: AssessmentInput): RecommendedModule {
-  if (input.helpAreas.includes("Saving money"))
-    return "saving-starting-early-and-long-term-impact";
-  if (input.helpAreas.includes("Budgeting")) return "budgeting-and-cash-flow";
-  if (input.helpAreas.includes("Understanding credit"))
-    return "credit-scores-and-credit-cards";
+function normalize(input?: string) {
+  return (input || "").toLowerCase().trim();
+}
 
-  if (
-    input.paycheckStatus === "I earn money and it feels tight month to month" ||
-    input.paycheckStatus === "I earn some money but it is inconsistent" ||
-    input.emotionalStates.includes("I feel stressed about money")
-  ) {
-    return "budgeting-and-cash-flow";
+function detectPersona(input: AssessmentInput): UserPersona {
+  const isTeen =
+    input.ageRange === "14 to 18" ||
+    input.lifeStage === "Pre-college / high school";
+
+  const supported =
+    input.paycheckStatus === "I am mostly supported by parents or family";
+  const notEarning =
+    input.paycheckStatus === "I am not earning regularly right now";
+  const tight =
+    input.paycheckStatus === "I earn money and it feels tight month to month";
+  const inconsistent =
+    input.paycheckStatus === "I earn some money but it is inconsistent";
+
+  if (isTeen && (supported || notEarning)) return "teen-supported";
+  if (input.lifeStage === "College student" && (supported || notEarning)) {
+    return "student-dependent";
+  }
+  if (input.lifeStage === "College student" && (tight || inconsistent)) {
+    return "student-earning";
+  }
+  if (tight || inconsistent) return "working-tight";
+  if (input.lifeStage === "Early-career working professional") {
+    return "working-steady";
+  }
+  return "general";
+}
+
+function detectSignals(input: AssessmentInput) {
+  const goal = normalize(input.freeTextGoal);
+
+  const wantsInvesting =
+    input.helpAreas.includes("Learning to invest") ||
+    /invest|investing|stock|stocks|etf|etfs|index fund|brokerage|s&p|shares/.test(
+      goal
+    );
+
+  const wantsCredit =
+    input.helpAreas.includes("Understanding credit") ||
+    /credit|credit card|credit score|fico|debt|interest/.test(goal);
+
+  const wantsBudgeting =
+    input.helpAreas.includes("Budgeting") ||
+    /budget|budgeting|spend|spending|rent|cash flow|monthly|paycheck/.test(goal);
+
+  const wantsSaving =
+    input.helpAreas.includes("Saving money") ||
+    /save|saving|savings|emergency fund|cushion|buffer/.test(goal);
+
+  const stressed =
+    input.emotionalStates.includes("I feel stressed about money") ||
+    input.emotionalStates.includes("I think about money but feel confused");
+
+  return {
+    wantsInvesting,
+    wantsCredit,
+    wantsBudgeting,
+    wantsSaving,
+    stressed,
+  };
+}
+
+function getTopModule(
+  input: AssessmentInput,
+  persona: UserPersona
+): RecommendedModule {
+  const signals = detectSignals(input);
+
+  if (signals.wantsInvesting) return "investing-basics-and-first-stocks";
+  if (signals.wantsCredit) return "credit-scores-and-credit-cards";
+  if (signals.wantsBudgeting) return "budgeting-and-cash-flow";
+  if (signals.wantsSaving) return "saving-starting-early-and-long-term-impact";
+
+  if (persona === "teen-supported" || persona === "student-dependent") {
+    return "saving-starting-early-and-long-term-impact";
   }
 
-  if (
-    input.lifeStage === "Pre-college / high school" ||
-    input.lifeStage === "College student" ||
-    input.paycheckStatus === "I am not earning regularly right now" ||
-    input.paycheckStatus === "I am mostly supported by parents or family"
-  ) {
-    return "saving-starting-early-and-long-term-impact";
+  if (persona === "working-tight" || signals.stressed) {
+    return "budgeting-and-cash-flow";
   }
 
   return "saving-starting-early-and-long-term-impact";
 }
 
-function getRemainingModules(top: RecommendedModule): RecommendedModule[] {
-  const ordered: RecommendedModule[] = [
+function getOrderedModules(
+  top: RecommendedModule,
+  persona: UserPersona
+): RecommendedModule[] {
+  let ordered: RecommendedModule[] = [
     "saving-starting-early-and-long-term-impact",
     "budgeting-and-cash-flow",
     "credit-scores-and-credit-cards",
+    "investing-basics-and-first-stocks",
   ];
+
+  if (persona === "teen-supported" || persona === "student-dependent") {
+    ordered = [
+      "investing-basics-and-first-stocks",
+      "saving-starting-early-and-long-term-impact",
+      "credit-scores-and-credit-cards",
+      "budgeting-and-cash-flow",
+    ];
+  }
+
+  if (persona === "working-tight") {
+    ordered = [
+      "budgeting-and-cash-flow",
+      "saving-starting-early-and-long-term-impact",
+      "credit-scores-and-credit-cards",
+      "investing-basics-and-first-stocks",
+    ];
+  }
+
   return [top, ...ordered.filter((item) => item !== top)];
 }
 
@@ -67,30 +152,31 @@ function buildStrengths(input: AssessmentInput): string[] {
 
   if (strengths.length < 3) {
     strengths.push(
-      "You are starting before life gets more expensive and more complicated."
+      "You are asking these questions before the pressure gets even bigger."
     );
   }
 
   return strengths.slice(0, 3);
 }
 
-function buildEncouragement(input: AssessmentInput) {
-  const lifeStage = input.lifeStage || "where you are right now";
-
-  if (input.emotionalStates.includes("I feel stressed about money")) {
+function buildEncouragement(
+  input: AssessmentInput,
+  persona: UserPersona
+): { title: string; body: string } {
+  if (
+    input.emotionalStates.includes("I feel stressed about money") ||
+    input.emotionalStates.includes("I think about money but feel confused")
+  ) {
     return {
       title: "This can feel heavy, and you are not the only one.",
-      body: `Money stress is common, especially when you are in ${lifeStage.toLowerCase()}. The important thing is that you are looking at it directly now. That creates a real chance to move from pressure to clarity.`,
+      body: "Money stress often grows when nobody has explained things in a way that feels simple and usable. The good news is that once the right topic is clear, things usually start to feel less overwhelming.",
     };
   }
 
-  if (
-    input.lifeStage === "Pre-college / high school" ||
-    input.lifeStage === "College student"
-  ) {
+  if (persona === "teen-supported" || persona === "student-dependent") {
     return {
-      title: "Starting this early gives you an advantage.",
-      body: "A lot of people do not think seriously about money until they are already under pressure. You are looking at it earlier, which gives you more room to build good habits before life gets more expensive.",
+      title: "Starting this early gives you a real advantage.",
+      body: "A lot of people do not think seriously about money until they are already under pressure. You are looking at it earlier, which gives you more room to build understanding before the stakes get higher.",
     };
   }
 
@@ -100,38 +186,64 @@ function buildEncouragement(input: AssessmentInput) {
   };
 }
 
-export function buildPersonalizedPlan(
-  input: AssessmentInput
-): PersonalizedPlan {
-  const topModule = getTopModule(input);
-  const modules = getRemainingModules(topModule);
+function buildFocus(
+  topModule: RecommendedModule,
+  persona: UserPersona
+): { title: string; body: string } {
+  if (topModule === "investing-basics-and-first-stocks") {
+    if (persona === "teen-supported" || persona === "student-dependent") {
+      return {
+        title: "Your clearest next move is to build a simple investing foundation.",
+        body: "You do not need to start by picking hot stocks or chasing fast wins. The best starting point is learning what investing is, how risk works, and how small early decisions can grow over time.",
+      };
+    }
 
-  const encouragement = buildEncouragement(input);
-  const strengths = buildStrengths(input);
-
-  let focus = {
-    title: "Your clearest next move is to build a small savings habit.",
-    body: "You do not need a perfect plan or a big income to begin. A repeatable savings habit can reduce pressure, create stability, and make future choices easier.",
-  };
+    return {
+      title: "Your clearest next move is to build confidence with investing basics.",
+      body: "Before putting money into stocks, it helps to understand how markets work, what risk really means, and what kind of starting strategy fits your life right now.",
+    };
+  }
 
   if (topModule === "budgeting-and-cash-flow") {
-    focus = {
+    return {
       title: "Your clearest next move is to get more control over monthly money flow.",
       body: "That means understanding what is coming in, what is going out, and where small changes could create breathing room. Once that feels clearer, everything else becomes easier to build on.",
     };
   }
 
   if (topModule === "credit-scores-and-credit-cards") {
-    focus = {
+    return {
       title: "Your clearest next move is to strengthen your understanding of credit.",
       body: "Credit can affect borrowing, housing, and financial flexibility later. A little clarity now can prevent expensive misunderstandings and help you make calmer decisions.",
     };
   }
 
+  if (persona === "teen-supported" || persona === "student-dependent") {
+    return {
+      title: "Your clearest next move is to start small and build a habit early.",
+      body: "At this stage, the goal is not an emergency fund in the adult sense. It is learning how money grows, how to save with intention, and how to build a strong foundation before life gets more expensive.",
+    };
+  }
+
   return {
-    encouragement,
-    strengths,
-    focus,
-    recommendedPath: { modules },
+    title: "Your clearest next move is to build a small savings habit.",
+    body: "You do not need a perfect plan or a big income to begin. A repeatable savings habit can reduce pressure, create stability, and make future choices easier.",
+  };
+}
+
+export function buildPersonalizedPlan(
+  input: AssessmentInput
+): PersonalizedPlan {
+  const persona = detectPersona(input);
+  const topModule = getTopModule(input, persona);
+
+  return {
+    persona,
+    encouragement: buildEncouragement(input, persona),
+    strengths: buildStrengths(input),
+    focus: buildFocus(topModule, persona),
+    recommendedPath: {
+      modules: getOrderedModules(topModule, persona),
+    },
   };
 }
