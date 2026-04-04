@@ -29,6 +29,15 @@ export default function AppShell({
           </div>
 
           <div className="flex flex-wrap gap-5">
+            <Link href="/about" className="transition hover:text-slate-200">
+              About
+            </Link>
+            <Link href="/how-it-works" className="transition hover:text-slate-200">
+              How it works
+            </Link>
+            <Link href="/legal" className="transition hover:text-slate-200">
+              Legal / no advice / liability
+            </Link>
             <a
               href="https://www.nimishraote.com"
               target="_blank"
@@ -37,9 +46,6 @@ export default function AppShell({
             >
               Back to nimishraote.com
             </a>
-            <Link href="/legal" className="transition hover:text-slate-200">
-              Legal / no advice / liability
-            </Link>
           </div>
         </div>
       </footer>

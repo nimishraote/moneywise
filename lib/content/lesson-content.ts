@@ -73,7 +73,7 @@ function money101Content(): LearnPageContent {
             summary:
               "A debit card uses your money. A credit card uses borrowed money.",
             narrative: [
-              "A debit card usually uses money that is already in your bank account. A credit card usually means the card company pays first and expects you to pay them back later.",
+              "A debit card usually uses money that is already in your bank account. A credit card usually means the card company pays first and you pay them back later.",
               "They can feel similar when you tap or swipe, but the money behind them works differently.",
               "For example, if you use a debit card for a $20 purchase, the money usually comes from your own account. If you use a credit card for that same purchase, it creates money you owe back later.",
               "This matters because a lot of beginners mix them together and do not realize one is using their own money while the other is creating a bill.",

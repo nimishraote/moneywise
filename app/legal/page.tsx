@@ -2,14 +2,12 @@ import AppShell from "@/components/layout/app-shell";
 import { ShieldCheck } from "lucide-react";
 
 const legalItems = [
-  "This app is for educational and informational purposes only. It does not provide financial, investment, legal, tax, accounting, fiduciary, or other professional advice.",
-  "Nothing in this app is a recommendation to buy, sell, hold, use, avoid, or rely on any security, account, product, strategy, institution, or service.",
-  "Any examples, numbers, scenarios, accounts, providers, platforms, rates, or products shown are illustrative only. They may be incomplete, simplified, outdated, or not suitable for any specific user.",
-  "Users must make their own decisions and, where appropriate, consult a qualified licensed professional before taking action with real money, debt, taxes, contracts, investments, or legal matters.",
-  "This app does not guarantee accuracy, completeness, suitability, availability, merchantability, fitness for a particular purpose, performance, outcomes, savings, gains, or avoidance of loss.",
-  "Use of this app is at the user's own risk. The creators, owners, operators, contributors, and affiliates disclaim liability to the fullest extent permitted by law for any loss, damage, claim, cost, tax consequence, missed opportunity, or other result arising from use of or reliance on this app or any linked third-party content.",
-  "Third-party websites and resources are provided only as convenience links. The app does not control them and does not endorse, verify, or assume responsibility for their content, terms, privacy practices, or availability.",
-  "This app may simplify complex topics for learning purposes. Real-world financial decisions can involve additional risks, fees, restrictions, and legal consequences that are not fully covered here.",
+  "This application is provided for general educational and informational purposes only. It does not provide, and should not be relied upon as, financial, investment, tax, legal, accounting, credit, banking, or other professional advice.",
+  "Nothing in the application constitutes a recommendation, endorsement, solicitation, offer, or advice to open any account, purchase or sell any security, choose any financial product, or take any specific financial action.",
+  "Any references to banks, brokerages, cards, rates, financial products, investment platforms, or third-party providers are illustrative and informational only, may be incomplete, may change without notice, and do not constitute personalized guidance or a suitability determination.",
+  "The creators, operators, affiliates, licensors, and service providers of this application disclaim, to the maximum extent permitted by law, any and all liability for any direct, indirect, incidental, consequential, special, exemplary, statutory, punitive, or other losses, damages, costs, claims, or expenses arising out of or relating to reliance on the application, use of any information presented, or decisions made based on such information.",
+  "Users are solely responsible for independently evaluating any financial product, institution, rate, or provider and for obtaining advice from qualified licensed professionals where appropriate.",
+  "By using the application, the user acknowledges that financial terms, rates, product features, eligibility requirements, and market conditions may change over time, and that no warranty or guarantee is made regarding accuracy, completeness, availability, timeliness, suitability, or results.",
 ];
 
 export default function LegalPage() {
@@ -27,8 +25,7 @@ export default function LegalPage() {
             Important legal information
           </h2>
           <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-300">
-            Please read this carefully before using the product. This page is
-            meant to make the limits of the app very clear.
+            Please read this carefully before using the product.
           </p>
 
           <div className="mt-6 space-y-4">
