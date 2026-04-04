@@ -21,6 +21,15 @@ function buildFallbackSummary(
     "Money can feel confusing when nobody has explained it simply. The good news is that you are looking at it now instead of waiting until it feels bigger.";
   let paragraphTwo = `The best place to start is ${input.recommendedModuleTitle.toLowerCase()}. It gives you a clearer base for calmer and smarter decisions from here.`;
 
+  if (input.assessment.topPriority === "Learning the basic 101 of money") {
+    title = `You do not need advanced finance first${namePart}.`;
+    paragraphOne =
+      "Right now, the most useful thing is to make the basics feel clear and less intimidating. That usually means understanding the building blocks before trying to jump into harder topics.";
+    paragraphTwo =
+      "So the best place to start is money basics 101. That will help you understand bank accounts, cards, budgeting, saving, interest, and the core rules that make later topics easier.";
+    return { title, paragraphOne, paragraphTwo };
+  }
+
   if (input.assessment.lifeStage === "Pre-college / high school") {
     title = `Starting early really helps${namePart}.`;
     paragraphOne =
@@ -33,10 +42,13 @@ function buildFallbackSummary(
   ) {
     title = `This can feel heavy, but it can get clearer${namePart}.`;
     paragraphOne =
-      "When money already feels stressful, the most useful next step is not more noise. It is one simple starting point that makes things feel more understandable.";
+      "When money already feels stressful, the most useful next move is not more noise. It is one simple starting point that makes things feel more understandable.";
   }
 
-  if (
+  if (input.recommendedModule === "money-101-foundations") {
+    paragraphTwo =
+      "The best place to start is money basics 101. That gives you a simpler base for understanding cards, budgeting, saving, interest, and what to do next.";
+  } else if (
     input.assessment.basicsStocks === "No" ||
     input.assessment.basicsIndexFunds === "No" ||
     input.assessment.basicsStockMarket === "No"

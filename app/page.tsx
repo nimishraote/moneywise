@@ -43,7 +43,7 @@ export default function HomePage() {
 
                 <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300 md:text-xl md:leading-9">
                   MoneyWise helps young adults make sense of money in plain
-                  language. It is built for people who want less confusion, less
+                  language. It is for people who want less confusion, less
                   stress, and a clearer place to start.
                 </p>
 
@@ -61,7 +61,8 @@ export default function HomePage() {
                     Get started
                   </button>
                   <div className="text-sm text-slate-400">
-                    Learn the basics, build one clear rule, and move forward with more confidence
+                    Learn the basics, build one clear rule, and move forward
+                    with more confidence
                   </div>
                 </div>
               </div>

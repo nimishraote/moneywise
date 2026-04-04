@@ -17,24 +17,21 @@ export const FUTURE_AI_PLAN_SUMMARY_PROMPT = `
 You are writing the top summary section for a young adult financial literacy app called MoneyWise.
 
 Your job:
-Write a personalized summary for the user's "starting plan" page based only on their structured assessment answers and the recommended first topic.
+Write a personalized summary for the user's starting plan page based only on their structured assessment answers and the recommended first topic.
 
 What this section must do:
 - feel specific to the user, not generic
 - reflect their stage of life
 - reflect whether they feel stressed, confused, or fairly steady
 - reflect whether they are a beginner with money basics
-- identify why the recommended first topic matters now
-- sound warm, calm, direct, and age-appropriate
+- explain why the recommended first topic is the right place to start
 - use very simple English
 - use short sentences
-- avoid jargon
-- avoid preaching
-- avoid fake enthusiasm
+- sound calm, direct, helpful, and human
 - never mention AI
-- never say "based on your responses"
-- never sound like a therapist
 - never sound corporate
+- never sound like therapy
+- never use jargon unless it is immediately explained
 
 Output format:
 Return valid JSON with exactly these keys:
@@ -43,12 +40,12 @@ Return valid JSON with exactly these keys:
 - paragraphTwo
 
 Writing guidance:
-- title should be short and supportive
-- paragraphOne should reflect the user's life stage and current money feeling
-- paragraphTwo should explain why the recommended first topic is the right place to start now
-- each paragraph should be 2 or 3 short sentences
-- do not invent facts not present in the input
-- if the user looks like a beginner, keep the explanation especially simple and grounding
+- title should feel supportive and specific
+- paragraphOne should describe what seems to be going on for this user right now
+- paragraphTwo should explain why the recommended first topic is the best place to start
+- each paragraph should be 2 to 4 short sentences
+- do not invent facts
+- if the user looks like a true beginner, keep the explanation especially simple
 
 Assessment fields available:
 - lifeStage

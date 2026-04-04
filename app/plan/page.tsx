@@ -127,50 +127,58 @@ export default function PlanPage() {
                 A calmer place to start{headingName}
               </h2>
               <p className="mt-4 text-base leading-8 text-slate-300">
-                This page brings together the main readout, your focus areas, and
-                the next steps in one place.
+                This page pulls the signal from your check-in into one clearer
+                place to begin.
               </p>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-              <div className="rounded-[30px] border border-white/10 bg-white/6 p-6 shadow-2xl backdrop-blur md:p-8">
-                <div className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-200">
-                  Your main takeaway
-                </div>
-                <h3 className="mt-3 text-2xl font-semibold text-white">
-                  {summaryTitle}
-                </h3>
-                <p className="mt-4 text-sm leading-7 text-slate-300">
-                  {summaryParagraphOne}
-                </p>
-                <p className="mt-4 text-sm leading-7 text-slate-300">
-                  {summaryParagraphTwo}
-                </p>
-                {summaryLoading && (
-                  <div className="mt-4 text-sm text-slate-400">
-                    Personalizing your summary...
-                  </div>
-                )}
+            <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
+              <div className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-200">
+                Your main takeaway and best place to start
               </div>
 
-              <div className="rounded-[30px] border border-white/10 bg-slate-950/35 p-6 shadow-2xl backdrop-blur md:p-8">
-                <div className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-100">
-                  Focus areas
+              <h3 className="mt-3 text-2xl font-semibold text-white">
+                {summaryTitle}
+              </h3>
+
+              <p className="mt-4 text-sm leading-8 text-slate-300">
+                {summaryParagraphOne}
+              </p>
+
+              <p className="mt-4 text-sm leading-8 text-slate-300">
+                {summaryParagraphTwo}
+              </p>
+
+              <div className="mt-5 rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
+                <div className="text-sm font-semibold text-white">
+                  Best place to start now
                 </div>
-                <div className="mt-4 space-y-3">
-                  <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-sm text-slate-200">
-                    {plan.focus.title}
-                  </div>
-                  {plan.recommendedPath.modules.slice(0, 2).map((module) => (
-                    <div
-                      key={module}
-                      className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-sm text-slate-200"
-                    >
-                      {moduleTitles[module]}
-                    </div>
-                  ))}
+                <div className="mt-2 text-base leading-8 text-slate-200">
+                  {recommendedTopModuleTitle}
                 </div>
+                <p className="mt-3 text-sm leading-8 text-slate-300">
+                  {plan.focus.body}
+                </p>
               </div>
+
+              {plan.strengths.length > 0 && (
+                <div className="mt-5 rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
+                  <div className="text-sm font-semibold text-white">
+                    What stood out in your check-in
+                  </div>
+                  <ul className="mt-3 space-y-2 text-sm leading-7 text-slate-300">
+                    {plan.strengths.map((item) => (
+                      <li key={item}>• {item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {summaryLoading && (
+                <div className="mt-4 text-sm text-slate-400">
+                  Personalizing your summary...
+                </div>
+              )}
             </div>
 
             <div className="mt-6 rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
@@ -180,7 +188,7 @@ export default function PlanPage() {
                     Your next 3 steps
                   </div>
                   <div className="mt-2 text-sm text-slate-400">
-                    One compact section instead of several disconnected cards
+                    Keep this simple. Learn, pick one rule, then stay steady.
                   </div>
                 </div>
                 <a
@@ -190,16 +198,18 @@ export default function PlanPage() {
                   Start learning
                 </a>
               </div>
+
               <div className="mt-5 grid gap-4 md:grid-cols-3">
                 <div className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
                   <div className="text-sm font-semibold text-white">
                     1. Learn the right basics first
                   </div>
                   <p className="mt-2 text-sm leading-7 text-slate-300">
-                    Start with the topic that matches your stage and your current
-                    level of knowledge.
+                    Start with the topic that matches your stage and your
+                    current level of understanding.
                   </p>
                 </div>
+
                 <div className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
                   <div className="text-sm font-semibold text-white">
                     2. Build one clear rule
@@ -209,6 +219,7 @@ export default function PlanPage() {
                     simple rule you can actually use.
                   </p>
                 </div>
+
                 <div className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
                   <div className="text-sm font-semibold text-white">
                     3. Keep it steady

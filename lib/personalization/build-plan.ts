@@ -5,10 +5,6 @@ import type {
   UserPersona,
 } from "@/lib/types/personalized-plan";
 
-function normalize(input?: string) {
-  return (input || "").toLowerCase().trim();
-}
-
 function isStudent(input: AssessmentInput) {
   return (
     input.lifeStage === "Pre-college / high school" ||
@@ -19,7 +15,7 @@ function isStudent(input: AssessmentInput) {
 function detectPersona(input: AssessmentInput): UserPersona {
   const supportedByFamily =
     input.primaryMoneySource === "Parents or family" ||
-    input.primaryMoneySource === "Mostly parents or family";
+    input.primaryMoneySource === "Mostly family support";
 
   const mixedStudentMoney =
     input.primaryMoneySource === "Part-time work and family support" ||
@@ -42,8 +38,8 @@ function detectPersona(input: AssessmentInput): UserPersona {
     input.stressLevel === "Somewhat stressed";
 
   if (financiallyTight) return "working-tight";
+
   if (
-    input.lifeStage === "Early-career working professional" ||
     input.lifeStage === "Working part time" ||
     input.lifeStage === "Working full time"
   ) {
@@ -51,6 +47,23 @@ function detectPersona(input: AssessmentInput): UserPersona {
   }
 
   return "general";
+}
+
+function knowledgeIsVeryLow(input: AssessmentInput) {
+  const fields = [
+    input.basicsStocks,
+    input.basicsIndexFunds,
+    input.basicsStockMarket,
+    input.basicsInterest,
+    input.basicsCredit,
+    input.basicsBudgeting,
+  ];
+
+  const lowCount = fields.filter(
+    (item) => item === "No" || item === "A little"
+  ).length;
+
+  return lowCount >= 5;
 }
 
 function knowledgeIsLow(input: AssessmentInput) {
@@ -64,18 +77,30 @@ function knowledgeIsLow(input: AssessmentInput) {
   ];
 
   const lowCount = fields.filter(
-    (item) => item === "Not really" || item === "No"
+    (item) => item === "No" || item === "A little"
   ).length;
 
   return lowCount >= 3;
 }
 
 function detectTopModule(input: AssessmentInput): RecommendedModule {
+  if (input.topPriority === "Learning the basic 101 of money") {
+    return "money-101-foundations";
+  }
+
   if (input.topPriority === "Stocks and investing") {
+    if (
+      input.basicsStocks === "No" ||
+      input.basicsStockMarket === "No" ||
+      input.basicsIndexFunds === "No"
+    ) {
+      return "money-101-foundations";
+    }
     return "investing-basics-and-first-stocks";
   }
 
   if (input.topPriority === "Credit cards") {
+    if (input.basicsCredit === "No") return "money-101-foundations";
     return "credit-scores-and-credit-cards";
   }
 
@@ -87,41 +112,28 @@ function detectTopModule(input: AssessmentInput): RecommendedModule {
     return "saving-starting-early-and-long-term-impact";
   }
 
-  if (input.topPriority === "Understanding money basics") {
-    if (
-      input.basicsStocks === "No" ||
-      input.basicsIndexFunds === "No" ||
-      input.basicsStockMarket === "No"
-    ) {
-      return "investing-basics-and-first-stocks";
-    }
-
-    if (input.basicsBudgeting === "No" || input.basicsBudgeting === "Not really") {
-      return "budgeting-and-cash-flow";
-    }
-
-    if (input.basicsCredit === "No" || input.basicsCredit === "Not really") {
-      return "credit-scores-and-credit-cards";
-    }
-  }
-
-  if (isStudent(input) && knowledgeIsLow(input)) {
-    return "investing-basics-and-first-stocks";
+  if (knowledgeIsVeryLow(input)) {
+    return "money-101-foundations";
   }
 
   if (
     input.endOfMonthSituation === "I usually run low before the month ends" ||
-    input.moneyHabitStyle === "I spend first and think later"
+    input.moneyHabitStyle === "I spend first and think later" ||
+    input.moneyHabitStyle === "I want to improve but do not know where to start"
   ) {
     return "budgeting-and-cash-flow";
   }
 
   if (
-    input.hasCreditCard === "Yes, and I am not fully sure how it works" ||
-    input.basicsCredit === "No" ||
-    input.basicsCredit === "Not really"
+    input.hasCreditCard === "Credit card but I am not fully sure how it works" ||
+    input.hasCreditCard === "I am not sure how they work" ||
+    input.basicsCredit === "No"
   ) {
-    return "credit-scores-and-credit-cards";
+    return "money-101-foundations";
+  }
+
+  if (isStudent(input) && knowledgeIsLow(input)) {
+    return "money-101-foundations";
   }
 
   return "saving-starting-early-and-long-term-impact";
@@ -132,24 +144,17 @@ function getOrderedModules(
   persona: UserPersona
 ): RecommendedModule[] {
   let ordered: RecommendedModule[] = [
-    "saving-starting-early-and-long-term-impact",
+    "money-101-foundations",
     "budgeting-and-cash-flow",
+    "saving-starting-early-and-long-term-impact",
     "credit-scores-and-credit-cards",
     "investing-basics-and-first-stocks",
   ];
 
-  if (persona === "teen-supported" || persona === "student-dependent") {
-    ordered = [
-      "investing-basics-and-first-stocks",
-      "saving-starting-early-and-long-term-impact",
-      "budgeting-and-cash-flow",
-      "credit-scores-and-credit-cards",
-    ];
-  }
-
   if (persona === "working-tight") {
     ordered = [
       "budgeting-and-cash-flow",
+      "money-101-foundations",
       "saving-starting-early-and-long-term-impact",
       "credit-scores-and-credit-cards",
       "investing-basics-and-first-stocks",
@@ -167,7 +172,7 @@ function buildStrengths(input: AssessmentInput): string[] {
   }
 
   if (input.moneyHabitStyle) {
-    strengths.push("You gave the app honest signal about your current money habits.");
+    strengths.push("You gave honest signal about your current money habits.");
   }
 
   if (input.stressLevel) {
@@ -175,7 +180,7 @@ function buildStrengths(input: AssessmentInput): string[] {
   }
 
   if (knowledgeIsLow(input)) {
-    strengths.push("You were honest about what you do and do not know yet.");
+    strengths.push("You were honest about what still feels new or unclear.");
   }
 
   return strengths.slice(0, 3);
@@ -185,7 +190,10 @@ function buildEncouragement(
   input: AssessmentInput,
   persona: UserPersona
 ): { title: string; body: string } {
-  if (input.stressLevel === "Very stressed" || input.stressLevel === "Somewhat stressed") {
+  if (
+    input.stressLevel === "Very stressed" ||
+    input.stressLevel === "Somewhat stressed"
+  ) {
     return {
       title: "This can feel heavy, and that is normal.",
       body: "When money feels stressful, the best next move is not more noise. It is one clear starting point that makes things feel simpler and less overwhelming.",
@@ -201,17 +209,24 @@ function buildEncouragement(
 
   return {
     title: "You are starting in the right place.",
-    body: "A lot of people avoid money until it becomes a bigger problem. You are looking at it directly now, which makes it much easier to build better habits step by step.",
+    body: "A lot of people avoid money until it becomes a bigger problem. You are looking at it now, which makes it easier to build better habits step by step.",
   };
 }
 
 function buildFocus(
   topModule: RecommendedModule
 ): { title: string; body: string } {
+  if (topModule === "money-101-foundations") {
+    return {
+      title: "Your clearest next move is to build the basic 101 first.",
+      body: "Before getting into deeper topics, it helps to understand the core building blocks. That means bank accounts, debit versus credit, budgeting, saving, interest, and the most basic money rules.",
+    };
+  }
+
   if (topModule === "investing-basics-and-first-stocks") {
     return {
       title: "Your clearest next move is to learn the basics of stocks and markets.",
-      body: "Before anyone buys anything, it helps to understand what a stock is, what the stock market is, what an index fund is, and what risk actually means.",
+      body: "Before anyone buys anything, it helps to understand what a stock is, what the market is, what an index fund is, and how to start in a calmer way.",
     };
   }
 
@@ -224,8 +239,8 @@ function buildFocus(
 
   if (topModule === "credit-scores-and-credit-cards") {
     return {
-      title: "Your clearest next move is to understand how credit really works.",
-      body: "Credit cards can be useful or damaging depending on how they are used. Learning the basic rules early can prevent expensive mistakes later.",
+      title: "Your clearest next move is to understand how cards and credit really work.",
+      body: "Debit and credit can look similar on the surface, but they behave very differently. Learning the basic rules early can prevent expensive mistakes later.",
     };
   }
 

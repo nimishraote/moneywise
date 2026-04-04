@@ -23,24 +23,22 @@ export default function AppShell({
       >
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-sm text-slate-400 md:flex-row md:items-center md:justify-between md:px-10 lg:px-14">
           <div>
-            <div className="font-semibold text-slate-200">MoneyWise</div>
-            <div className="mt-1">
-              Financial confidence for young adults, one step at a time.
+            <div className="text-slate-200">
+              MoneyWise · A product experiment by Nimish Raote
             </div>
           </div>
 
           <div className="flex flex-wrap gap-5">
-            <Link href="/" className="transition hover:text-slate-200">
-              About
-            </Link>
-            <Link href="/" className="transition hover:text-slate-200">
-              Privacy
-            </Link>
-            <Link href="/" className="transition hover:text-slate-200">
-              How it works
-            </Link>
-            <Link href="/" className="transition hover:text-slate-200">
-              Contact
+            <a
+              href="https://www.nimishraote.com"
+              target="_blank"
+              rel="noreferrer"
+              className="transition hover:text-slate-200"
+            >
+              Back to nimishraote.com
+            </a>
+            <Link href="/legal" className="transition hover:text-slate-200">
+              Legal / no advice / liability
             </Link>
           </div>
         </div>

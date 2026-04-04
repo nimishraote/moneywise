@@ -1,4 +1,5 @@
 export type RecommendedModule =
+  | "money-101-foundations"
   | "budgeting-and-cash-flow"
   | "saving-starting-early-and-long-term-impact"
   | "credit-scores-and-credit-cards"
