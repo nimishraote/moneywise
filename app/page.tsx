@@ -42,15 +42,15 @@ export default function HomePage() {
                 </h1>
 
                 <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300 md:text-xl md:leading-9">
-                  MoneyWise helps young adults understand money before life gets
-                  more expensive and more confusing. It turns stress, avoidance,
-                  and guesswork into clearer choices and better habits.
+                  MoneyWise helps young adults make sense of money in plain
+                  language. It is built for people who want less confusion, less
+                  stress, and a clearer place to start.
                 </p>
 
                 <div className="mt-8 flex flex-wrap gap-3">
-                  <Chip>Understand what is happening</Chip>
-                  <Chip>Get a plan that fits your stage of life</Chip>
-                  <Chip>Build confidence one step at a time</Chip>
+                  <Chip>Simple language</Chip>
+                  <Chip>Short assessment</Chip>
+                  <Chip>Personalized learning path</Chip>
                 </div>
 
                 <div className="mt-8 flex flex-wrap items-center gap-4">
@@ -61,67 +61,12 @@ export default function HomePage() {
                     Get started
                   </button>
                   <div className="text-sm text-slate-400">
-                    Short assessment, simple lessons, personalized action plan
+                    Learn the basics, build one clear rule, and move forward with more confidence
                   </div>
                 </div>
               </div>
 
               <EditorialPhotoBand imageKey="home" />
-            </div>
-
-            <div className="mt-8 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
-              <div className="rounded-[30px] border border-white/10 bg-white/6 p-6 shadow-2xl backdrop-blur md:p-8">
-                <div className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-100">
-                  What MoneyWise does
-                </div>
-                <div className="mt-4 grid gap-5 md:grid-cols-3">
-                  <div>
-                    <div className="text-lg font-semibold text-white">
-                      See clearly
-                    </div>
-                    <p className="mt-2 text-sm leading-7 text-slate-300">
-                      Understand your current money habits and where the
-                      pressure is really coming from.
-                    </p>
-                  </div>
-                  <div>
-                    <div className="text-lg font-semibold text-white">
-                      Learn simply
-                    </div>
-                    <p className="mt-2 text-sm leading-7 text-slate-300">
-                      Get short lessons in plain language, without jargon,
-                      lectures, or shame.
-                    </p>
-                  </div>
-                  <div>
-                    <div className="text-lg font-semibold text-white">
-                      Act calmly
-                    </div>
-                    <p className="mt-2 text-sm leading-7 text-slate-300">
-                      Leave with a small set of practical next steps that feel
-                      realistic right now.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-[30px] border border-white/10 bg-slate-950/35 p-6 shadow-2xl backdrop-blur md:p-8">
-                <div className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-200">
-                  Good for people who are
-                </div>
-                <div className="mt-4 space-y-3 text-sm leading-7 text-slate-200">
-                  <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                    Starting to earn money and not fully sure how to manage it
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                    Feeling stress around rent, spending, saving, or credit
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                    Wanting a better relationship with money before bad habits
-                    harden
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

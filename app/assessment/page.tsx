@@ -113,17 +113,17 @@ function getAssessmentSteps(input: AssessmentInput): AssessmentStep[] {
           },
           {
             key: "endOfMonthSituation",
-            label: "Do you usually have money left at the end of the month?",
+            label: "Do you usually have money left by the end of the month?",
             options: [
               "Yes, usually",
               "Sometimes",
               "Rarely",
-              "Not sure",
+              "I am not sure",
             ],
           },
           {
             key: "mainSpendingCategory",
-            label: "What do you spend most on?",
+            label: "What do you spend most on right now?",
             options: [
               "Food",
               "Clothes",
@@ -135,11 +135,13 @@ function getAssessmentSteps(input: AssessmentInput): AssessmentStep[] {
           },
           {
             key: "hasCreditCard",
-            label: "Have you ever used a credit card?",
+            label: "Which of these have you used?",
             options: [
-              "Yes",
-              "No",
-              "Yes, and I am not fully sure how it works",
+              "Debit card only",
+              "Credit card only",
+              "Both debit card and credit card",
+              "Neither",
+              "I am not sure how they work",
             ],
           },
         ],
@@ -165,16 +167,18 @@ function getAssessmentSteps(input: AssessmentInput): AssessmentStep[] {
               "I usually have enough left",
               "I usually run low before the month ends",
               "I often do not know where my money went",
-              "Not sure",
+              "I am not sure",
             ],
           },
           {
             key: "hasCreditCard",
-            label: "Which sounds most like you?",
+            label: "Which of these have you used?",
             options: [
-              "I do not use a credit card",
-              "I use a credit card and understand it fairly well",
-              "Yes, and I am not fully sure how it works",
+              "Debit card only",
+              "Credit card and I understand it fairly well",
+              "Credit card but I am not fully sure how it works",
+              "Both debit card and credit card",
+              "Neither",
             ],
           },
           {
@@ -196,7 +200,7 @@ function getAssessmentSteps(input: AssessmentInput): AssessmentStep[] {
     questions: [
       {
         key: "moneyCheckFrequency",
-        label: "How often do you check your money?",
+        label: "How often do you check your bank balance, card balance, or spending?",
         options: ["Often", "Sometimes", "Rarely", "I avoid it"],
       },
       {
@@ -239,32 +243,32 @@ function getAssessmentSteps(input: AssessmentInput): AssessmentStep[] {
       {
         key: "basicsStocks",
         label: "Do you know what a stock is?",
-        options: ["Yes, clearly", "A little", "Not really", "No"],
+        options: ["Yes, clearly", "A little", "No"],
       },
       {
         key: "basicsIndexFunds",
         label: "Do you know what an index fund is?",
-        options: ["Yes, clearly", "A little", "Not really", "No"],
+        options: ["Yes, clearly", "A little", "No"],
       },
       {
         key: "basicsStockMarket",
         label: "Do you know how the stock market works at a basic level?",
-        options: ["Yes, clearly", "A little", "Not really", "No"],
+        options: ["Yes, clearly", "A little", "No"],
       },
       {
         key: "basicsInterest",
         label: "Do you know what interest means?",
-        options: ["Yes, clearly", "A little", "Not really", "No"],
+        options: ["Yes, clearly", "A little", "No"],
       },
       {
         key: "basicsCredit",
-        label: "Do you know how credit cards work?",
-        options: ["Yes, clearly", "A little", "Not really", "No"],
+        label: "Do you know how debit cards and credit cards work?",
+        options: ["Yes, clearly", "A little", "No"],
       },
       {
         key: "basicsBudgeting",
         label: "Do you know what budgeting means in practice?",
-        options: ["Yes, clearly", "A little", "Not really", "No"],
+        options: ["Yes, clearly", "A little", "No"],
       },
     ],
   };
@@ -282,7 +286,7 @@ function getAssessmentSteps(input: AssessmentInput): AssessmentStep[] {
           "Credit cards",
           "Debt",
           "Stocks and investing",
-          "Understanding money basics",
+          "Learning the basic 101 of money",
           "Staying consistent",
         ],
       },
@@ -306,6 +310,10 @@ export default function AssessmentPage() {
   useEffect(() => {
     saveAssessment(answers);
   }, [answers]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [stepIndex]);
 
   const steps = useMemo(() => getAssessmentSteps(answers), [answers]);
   const step = steps[stepIndex];

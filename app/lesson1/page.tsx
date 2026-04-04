@@ -5,7 +5,13 @@ import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
 import EditorialPhotoBand from "@/components/ui/editorial-photo-band";
 import JourneyNav from "@/components/ui/journey-nav";
-import { ArrowLeft, ChevronDown, ChevronUp, BookOpen } from "lucide-react";
+import {
+  ArrowLeft,
+  ChevronDown,
+  ChevronUp,
+  BookOpen,
+  ExternalLink,
+} from "lucide-react";
 import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
 import { getLearnPageContent } from "@/lib/content/lesson-content";
 import {
@@ -129,51 +135,35 @@ export default function LessonOnePage() {
 
                           {isOpen && (
                             <div className="border-t border-white/10 px-5 py-5">
-                              <div className="grid gap-4">
-                                <div className="rounded-[20px] border border-white/10 bg-white/5 p-4">
-                                  <div className="text-sm font-semibold uppercase tracking-[0.16em] text-amber-200">
-                                    What it is
-                                  </div>
-                                  <div className="mt-2 text-sm leading-7 text-slate-300">
-                                    {concept.detailBody}
-                                  </div>
+                              <div className="rounded-[20px] border border-white/10 bg-white/5 p-5">
+                                <div className="space-y-4 text-sm leading-8 text-slate-300">
+                                  {concept.narrative.map((paragraph, index) => (
+                                    <p key={`${concept.id}-${index}`}>{paragraph}</p>
+                                  ))}
                                 </div>
 
-                                <div className="rounded-[20px] border border-white/10 bg-white/5 p-4">
-                                  <div className="text-sm font-semibold uppercase tracking-[0.16em] text-amber-200">
-                                    Why it matters
-                                  </div>
-                                  <div className="mt-2 text-sm leading-7 text-slate-300">
-                                    {concept.whyItMatters}
-                                  </div>
-                                </div>
-
-                                <div className="rounded-[20px] border border-white/10 bg-white/5 p-4">
-                                  <div className="text-sm font-semibold uppercase tracking-[0.16em] text-amber-200">
-                                    Simple example
-                                  </div>
-                                  <div className="mt-2 text-sm leading-7 text-slate-300">
-                                    {concept.example}
-                                  </div>
-                                </div>
-
-                                <div className="rounded-[20px] border border-white/10 bg-white/5 p-4">
-                                  <div className="text-sm font-semibold uppercase tracking-[0.16em] text-amber-200">
-                                    What beginners get wrong
-                                  </div>
-                                  <div className="mt-2 text-sm leading-7 text-slate-300">
-                                    {concept.beginnerMistake}
-                                  </div>
-                                </div>
-
-                                <div className="rounded-[20px] border border-white/10 bg-[linear-gradient(135deg,rgba(251,191,36,0.12)_0%,rgba(255,255,255,0.05)_100%)] p-4">
-                                  <div className="text-sm font-semibold uppercase tracking-[0.16em] text-amber-200">
-                                    Rule to remember
+                                <div className="mt-5 rounded-[18px] border border-white/10 bg-[linear-gradient(135deg,rgba(251,191,36,0.12)_0%,rgba(255,255,255,0.05)_100%)] p-4">
+                                  <div className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-200">
+                                    Key takeaway
                                   </div>
                                   <div className="mt-2 text-sm leading-7 text-slate-100">
-                                    {concept.ruleToRemember}
+                                    {concept.takeaway}
                                   </div>
                                 </div>
+
+                                {concept.extraReadingUrl && concept.extraReadingLabel && (
+                                  <div className="mt-5">
+                                    <a
+                                      href={concept.extraReadingUrl}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-100 transition hover:bg-white/10"
+                                    >
+                                      {concept.extraReadingLabel}
+                                      <ExternalLink className="h-4 w-4" />
+                                    </a>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           )}
