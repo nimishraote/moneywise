@@ -1,58 +1,50 @@
 "use client";
 
 import Link from "next/link";
-import MoneyWiseLogo from "@/components/ui/moneywise-logo";
+import type { ReactNode } from "react";
+
+type AppShellProps = {
+  children: ReactNode;
+  footerDark?: boolean;
+};
 
 export default function AppShell({
   children,
   footerDark = false,
-}: {
-  children: React.ReactNode;
-  footerDark?: boolean;
-}) {
+}: AppShellProps) {
   return (
-    <div className="min-h-screen bg-[#f6f2eb] text-slate-900">
-      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-        <div className="overflow-hidden rounded-[32px] bg-white shadow-sm ring-1 ring-black/5">
-          {children}
+    <div className="min-h-screen bg-[#120f1e] text-white">
+      <main>{children}</main>
 
-          <footer
-            className={`border-t px-6 py-4 text-sm ${
-              footerDark
-                ? "border-amber-200/10 bg-slate-950 text-slate-300"
-                : "border-slate-200 bg-white text-slate-500"
-            }`}
-          >
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-3">
-                <MoneyWiseLogo compact className="shrink-0" />
-                <div>
-                  <span className="font-semibold text-white">MoneyWise</span>
-                  <span className="mx-2 text-slate-500">•</span>
-                  <span>Built as a concept by Nimish Raote</span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <Link className="underline underline-offset-4" href="/about">
-                  About
-                </Link>
-                <Link className="underline underline-offset-4" href="/legal">
-                  Legal
-                </Link>
-                <a
-                  className="underline underline-offset-4"
-                  href="https://nimishraote.com"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  nimishraote.com
-                </a>
-              </div>
+      <footer
+        className={`border-t border-white/10 ${
+          footerDark ? "bg-[#0f0c19]" : "bg-[#120f1e]"
+        }`}
+      >
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-sm text-slate-400 md:flex-row md:items-center md:justify-between md:px-10 lg:px-14">
+          <div>
+            <div className="font-semibold text-slate-200">MoneyWise</div>
+            <div className="mt-1">
+              Financial confidence for young adults, one step at a time.
             </div>
-          </footer>
+          </div>
+
+          <div className="flex flex-wrap gap-5">
+            <Link href="/" className="transition hover:text-slate-200">
+              About
+            </Link>
+            <Link href="/" className="transition hover:text-slate-200">
+              Privacy
+            </Link>
+            <Link href="/" className="transition hover:text-slate-200">
+              How it works
+            </Link>
+            <Link href="/" className="transition hover:text-slate-200">
+              Contact
+            </Link>
+          </div>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }

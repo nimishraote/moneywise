@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
+import JourneyNav from "@/components/ui/journey-nav";
 import { Check, Circle, Square } from "lucide-react";
 import type { AssessmentInput } from "@/lib/types/assessment";
 import {
@@ -201,168 +202,183 @@ export default function AssessmentPage() {
     <AppShell>
       <div className="relative overflow-hidden bg-[#120f1e] text-white">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.24),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(168,85,247,0.18),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(251,191,36,0.08),_transparent_20%)]" />
-        <div className="relative px-6 py-10 md:px-10 lg:px-14">
-          <div className="mx-auto max-w-4xl">
-            <h2
-              className="text-4xl font-semibold tracking-tight"
-              style={{ fontFamily: "Georgia, serif" }}
-            >
-              A few quick questions before we build your starting plan.
-            </h2>
+        <div className="relative">
+          <JourneyNav activeStep="assessment" />
+          <div className="px-6 py-10 md:px-10 lg:px-14">
+            <div className="mx-auto max-w-6xl">
+              <div className="mb-8">
+                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-100">
+                  Quick assessment
+                </div>
+                <h2
+                  className="mt-3 text-4xl font-semibold tracking-tight"
+                  style={{ fontFamily: "Georgia, serif" }}
+                >
+                  A few quick questions before we build your starting plan.
+                </h2>
+                <p className="mt-4 max-w-2xl text-base leading-8 text-slate-300">
+                  We ask for just enough context to make the plan feel useful and
+                  personal.
+                </p>
+              </div>
 
-            <p className="mt-4 max-w-3xl text-base leading-8 text-slate-300">
-              These questions help the app understand your stage of life, what
-              feels hard right now, and what kind of help will be most useful
-              first.
-            </p>
+              <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <div className="text-sm font-semibold text-slate-200">
+                      {step.section}
+                    </div>
+                    <div className="mt-1 text-sm text-slate-400">
+                      Step {stepIndex + 1} of {assessmentSteps.length}
+                    </div>
+                  </div>
+                  <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-sm text-slate-300">
+                    About 1 minute
+                  </div>
+                </div>
 
-            <div className="mt-8 h-2 overflow-hidden rounded-full bg-white/10">
-              <div
-                className="h-full rounded-full bg-[linear-gradient(90deg,#c084fc_0%,#60a5fa_50%,#f59e0b_100%)]"
-                style={{ width: `${step.progress}%` }}
-              />
-            </div>
-
-            <div className="mt-3 flex items-center justify-between text-sm text-slate-300">
-              <span>{step.section}</span>
-              <span>{stepIndex + 1} of {assessmentSteps.length}</span>
-            </div>
-
-            <div className="mt-8 rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
-              <div className="space-y-5">
-                {step.questions.map((question) => (
+                <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/10">
                   <div
-                    key={question.label}
-                    className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5"
-                  >
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="text-lg font-medium text-white">
-                        {question.label}
+                    className="h-full rounded-full bg-[linear-gradient(90deg,#c084fc_0%,#60a5fa_50%,#f59e0b_100%)]"
+                    style={{ width: `${step.progress}%` }}
+                  />
+                </div>
+
+                <div className="mt-6 space-y-5">
+                  {step.questions.map((question) => (
+                    <div
+                      key={question.label}
+                      className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5"
+                    >
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="text-lg font-medium text-white">
+                          {question.label}
+                        </div>
+
+                        {question.type === "single" && (
+                          <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-300">
+                            Choose one
+                          </div>
+                        )}
+
+                        {question.type === "multi" && (
+                          <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-300">
+                            Choose all that fit
+                          </div>
+                        )}
                       </div>
 
                       {question.type === "single" && (
-                        <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-300">
-                          Choose one
+                        <div className="mt-4 grid gap-3">
+                          {question.options.map((option) => {
+                            const active = answers[question.key] === option;
+
+                            return (
+                              <button
+                                key={option}
+                                onClick={() => toggleSingle(question.key, option)}
+                                className={`flex items-center justify-between rounded-2xl px-4 py-3 text-left text-sm transition ${
+                                  active
+                                    ? "bg-white text-slate-950"
+                                    : "bg-white/5 text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
+                                }`}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <Circle
+                                    className={`h-4 w-4 ${
+                                      active
+                                        ? "fill-slate-950 text-slate-950"
+                                        : "text-slate-400"
+                                    }`}
+                                  />
+                                  <span>{option}</span>
+                                </div>
+                                {active && <Check className="h-4 w-4" />}
+                              </button>
+                            );
+                          })}
                         </div>
                       )}
 
                       {question.type === "multi" && (
-                        <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-300">
-                          Choose all that fit
+                        <div className="mt-4 grid gap-3">
+                          {question.options.map((option) => {
+                            const active = (
+                              answers[question.key] as string[]
+                            ).includes(option);
+
+                            return (
+                              <button
+                                key={option}
+                                onClick={() => toggleMulti(question.key, option)}
+                                className={`flex items-center justify-between rounded-2xl px-4 py-3 text-left text-sm transition ${
+                                  active
+                                    ? "bg-white text-slate-950"
+                                    : "bg-white/5 text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
+                                }`}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <Square
+                                    className={`h-4 w-4 ${
+                                      active
+                                        ? "fill-slate-950 text-slate-950"
+                                        : "text-slate-400"
+                                    }`}
+                                  />
+                                  <span>{option}</span>
+                                </div>
+                                {active && <Check className="h-4 w-4" />}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {question.type === "text" && (
+                        <div className="mt-4">
+                          <textarea
+                            value={answers[question.key]}
+                            onChange={(event) =>
+                              setAnswers((current) => ({
+                                ...current,
+                                [question.key]: event.target.value,
+                              }))
+                            }
+                            placeholder={question.placeholder}
+                            rows={4}
+                            className="w-full rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-sm leading-7 text-slate-200 placeholder:text-slate-500 focus:border-white/20 focus:outline-none"
+                          />
+                          <div className="mt-2 text-sm leading-6 text-slate-400">
+                            {question.helper}
+                          </div>
                         </div>
                       )}
                     </div>
+                  ))}
+                </div>
 
-                    {question.type === "single" && (
-                      <div className="mt-4 grid gap-3">
-                        {question.options.map((option) => {
-                          const active = answers[question.key] === option;
+                <div className="mt-6 flex items-center justify-between">
+                  <button
+                    onClick={handleBack}
+                    className="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white"
+                  >
+                    Back
+                  </button>
 
-                          return (
-                            <button
-                              key={option}
-                              onClick={() => toggleSingle(question.key, option)}
-                              className={`flex items-center justify-between rounded-2xl px-4 py-3 text-left text-sm transition ${
-                                active
-                                  ? "bg-white text-slate-950"
-                                  : "bg-white/5 text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
-                              }`}
-                            >
-                              <div className="flex items-center gap-3">
-                                <Circle
-                                  className={`h-4 w-4 ${
-                                    active
-                                      ? "fill-slate-950 text-slate-950"
-                                      : "text-slate-400"
-                                  }`}
-                                />
-                                <span>{option}</span>
-                              </div>
-                              {active && <Check className="h-4 w-4" />}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {question.type === "multi" && (
-                      <div className="mt-4 grid gap-3">
-                        {question.options.map((option) => {
-                          const active = (
-                            answers[question.key] as string[]
-                          ).includes(option);
-
-                          return (
-                            <button
-                              key={option}
-                              onClick={() => toggleMulti(question.key, option)}
-                              className={`flex items-center justify-between rounded-2xl px-4 py-3 text-left text-sm transition ${
-                                active
-                                  ? "bg-white text-slate-950"
-                                  : "bg-white/5 text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
-                              }`}
-                            >
-                              <div className="flex items-center gap-3">
-                                <Square
-                                  className={`h-4 w-4 ${
-                                    active
-                                      ? "fill-slate-950 text-slate-950"
-                                      : "text-slate-400"
-                                  }`}
-                                />
-                                <span>{option}</span>
-                              </div>
-                              {active && <Check className="h-4 w-4" />}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {question.type === "text" && (
-                      <div className="mt-4">
-                        <textarea
-                          value={answers[question.key]}
-                          onChange={(event) =>
-                            setAnswers((current) => ({
-                              ...current,
-                              [question.key]: event.target.value,
-                            }))
-                          }
-                          placeholder={question.placeholder}
-                          rows={4}
-                          className="w-full rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-sm leading-7 text-slate-200 placeholder:text-slate-500 focus:border-white/20 focus:outline-none"
-                        />
-                        <div className="mt-2 text-sm leading-6 text-slate-400">
-                          {question.helper}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-6 flex items-center justify-between">
-                <button
-                  onClick={handleBack}
-                  className="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white"
-                >
-                  Back
-                </button>
-
-                <button
-                  onClick={handleContinue}
-                  disabled={!canContinue}
-                  className={`rounded-full px-5 py-3 text-sm font-semibold ${
-                    canContinue
-                      ? "bg-white text-slate-950"
-                      : "cursor-not-allowed bg-white/20 text-white/60"
-                  }`}
-                >
-                  {stepIndex === assessmentSteps.length - 1
-                    ? "See my plan"
-                    : "Next"}
-                </button>
+                  <button
+                    onClick={handleContinue}
+                    disabled={!canContinue}
+                    className={`rounded-full px-5 py-3 text-sm font-semibold ${
+                      canContinue
+                        ? "bg-white text-slate-950"
+                        : "cursor-not-allowed bg-white/20 text-white/60"
+                    }`}
+                  >
+                    {stepIndex === assessmentSteps.length - 1
+                      ? "See my plan"
+                      : "Next"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
