@@ -54,7 +54,7 @@ export default function PlanPage() {
             assessment: answers,
             profile: { firstName: profile?.firstName ?? "" },
             recommendedModule: recommendedTopModule,
-            recommendedModuleTitle,
+            recommendedModuleTitle: recommendedTopModuleTitle,
           }),
         });
 
