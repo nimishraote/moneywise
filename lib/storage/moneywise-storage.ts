@@ -20,10 +20,25 @@ function canUseStorage() {
   return typeof window !== "undefined";
 }
 
+function getStorage() {
+  if (!canUseStorage()) return null;
+  return window.sessionStorage;
+}
+
+export function resetMoneywiseSession() {
+  const storage = getStorage();
+  if (!storage) return;
+  storage.removeItem(STORAGE_KEYS.assessment);
+  storage.removeItem(STORAGE_KEYS.profile);
+  storage.removeItem(STORAGE_KEYS.onboardingSeen);
+}
+
 export function getStoredAssessment(): AssessmentInput {
-  if (!canUseStorage()) return defaultAssessmentInput;
+  const storage = getStorage();
+  if (!storage) return defaultAssessmentInput;
+
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEYS.assessment);
+    const raw = storage.getItem(STORAGE_KEYS.assessment);
     if (!raw) return defaultAssessmentInput;
     return { ...defaultAssessmentInput, ...JSON.parse(raw) } as AssessmentInput;
   } catch {
@@ -32,14 +47,23 @@ export function getStoredAssessment(): AssessmentInput {
 }
 
 export function saveAssessment(input: AssessmentInput) {
-  if (!canUseStorage()) return;
-  window.localStorage.setItem(STORAGE_KEYS.assessment, JSON.stringify(input));
+  const storage = getStorage();
+  if (!storage) return;
+  storage.setItem(STORAGE_KEYS.assessment, JSON.stringify(input));
+}
+
+export function clearStoredAssessment() {
+  const storage = getStorage();
+  if (!storage) return;
+  storage.removeItem(STORAGE_KEYS.assessment);
 }
 
 export function getStoredProfile(): MoneywiseProfile | null {
-  if (!canUseStorage()) return null;
+  const storage = getStorage();
+  if (!storage) return null;
+
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEYS.profile);
+    const raw = storage.getItem(STORAGE_KEYS.profile);
     if (!raw) return null;
     return JSON.parse(raw) as MoneywiseProfile;
   } catch {
@@ -48,16 +72,25 @@ export function getStoredProfile(): MoneywiseProfile | null {
 }
 
 export function saveProfile(profile: MoneywiseProfile) {
-  if (!canUseStorage()) return;
-  window.localStorage.setItem(STORAGE_KEYS.profile, JSON.stringify(profile));
+  const storage = getStorage();
+  if (!storage) return;
+  storage.setItem(STORAGE_KEYS.profile, JSON.stringify(profile));
+}
+
+export function clearStoredProfile() {
+  const storage = getStorage();
+  if (!storage) return;
+  storage.removeItem(STORAGE_KEYS.profile);
 }
 
 export function markOnboardingSeen() {
-  if (!canUseStorage()) return;
-  window.localStorage.setItem(STORAGE_KEYS.onboardingSeen, "true");
+  const storage = getStorage();
+  if (!storage) return;
+  storage.setItem(STORAGE_KEYS.onboardingSeen, "true");
 }
 
 export function getOnboardingSeen() {
-  if (!canUseStorage()) return false;
-  return window.localStorage.getItem(STORAGE_KEYS.onboardingSeen) === "true";
+  const storage = getStorage();
+  if (!storage) return false;
+  return storage.getItem(STORAGE_KEYS.onboardingSeen) === "true";
 }

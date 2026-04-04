@@ -1,9 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, Landmark, Lock, MessageCircleMore, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Landmark,
+  Lock,
+  MessageCircleMore,
+  X,
+} from "lucide-react";
 import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
 import { lessonTwoChoices } from "@/lib/content/lesson-content";
 import {
@@ -15,11 +22,10 @@ import type { AssessmentInput } from "@/lib/types/assessment";
 type ChoiceKey = "goal" | "amount" | "compare" | null;
 
 export default function LessonTwoPage() {
+  const router = useRouter();
   const [helperOpen, setHelperOpen] = useState(false);
   const [selectedChoice, setSelectedChoice] = useState<ChoiceKey>(null);
-  const [answers, setAnswers] = useState<AssessmentInput>(
-    defaultAssessmentInput
-  );
+  const [answers, setAnswers] = useState<AssessmentInput>(defaultAssessmentInput);
 
   useEffect(() => {
     setAnswers(getStoredAssessment());
@@ -38,9 +44,12 @@ export default function LessonTwoPage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(96,165,250,0.20),_transparent_26%),radial-gradient(circle_at_top_right,_rgba(59,130,246,0.16),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(37,99,235,0.12),_transparent_24%)]" />
         <div className="relative px-6 py-10 md:px-10 lg:px-14">
           <div className="mx-auto max-w-4xl">
-            <a href="/lesson1" className="mb-6 inline-flex items-center gap-3 text-sm text-slate-200">
+            <button
+              onClick={() => router.push("/lesson1")}
+              className="mb-6 inline-flex items-center gap-3 text-sm text-slate-200"
+            >
               <ArrowLeft className="h-4 w-4" /> Back to lesson 1
-            </a>
+            </button>
 
             <div className="space-y-5">
               <div className="overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.14)_0%,rgba(255,255,255,0.05)_42%,rgba(255,255,255,0.10)_100%)] shadow-2xl backdrop-blur">
@@ -118,9 +127,7 @@ export default function LessonTwoPage() {
                         key={item.name}
                         className="rounded-3xl border border-white/10 bg-slate-950/30 p-5"
                       >
-                        <div className="font-semibold text-white">
-                          {item.name}
-                        </div>
+                        <div className="font-semibold text-white">{item.name}</div>
                         <div className="mt-2 text-sm leading-6 text-slate-300">
                           {item.note}
                         </div>
@@ -137,19 +144,19 @@ export default function LessonTwoPage() {
               )}
 
               <div className="flex justify-between">
-                <a
-                  href="/lesson1"
+                <button
+                  onClick={() => router.push("/lesson1")}
                   className="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white"
                 >
                   Back
-                </a>
+                </button>
 
-                <a
-                  href="/plan"
+                <button
+                  onClick={() => router.push("/plan")}
                   className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
                 >
                   Back to plan
-                </a>
+                </button>
               </div>
             </div>
           </div>

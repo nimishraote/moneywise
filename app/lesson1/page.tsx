@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
 import { ArrowLeft, Image as ImageIcon, TrendingUp, Wallet } from "lucide-react";
 import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
@@ -12,9 +13,8 @@ import {
 import type { AssessmentInput } from "@/lib/types/assessment";
 
 export default function LessonOnePage() {
-  const [answers, setAnswers] = useState<AssessmentInput>(
-    defaultAssessmentInput
-  );
+  const router = useRouter();
+  const [answers, setAnswers] = useState<AssessmentInput>(defaultAssessmentInput);
 
   useEffect(() => {
     setAnswers(getStoredAssessment());
@@ -28,12 +28,15 @@ export default function LessonOnePage() {
   return (
     <AppShell>
       <div className="relative overflow-hidden bg-[#120f1e] text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.24),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(168,85,247,0.18),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(251,191,36,0.08),_transparent_20%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.24),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(168,85,247,0.18),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(251,191,36,0.08)_20%,_transparent_20%)]" />
         <div className="relative px-6 py-10 md:px-10 lg:px-14">
           <div className="mx-auto max-w-4xl">
-            <a href="/plan" className="mb-6 inline-flex items-center gap-3 text-sm text-slate-300">
+            <button
+              onClick={() => router.push("/plan")}
+              className="mb-6 inline-flex items-center gap-3 text-sm text-slate-300"
+            >
               <ArrowLeft className="h-4 w-4" /> Back to plan
-            </a>
+            </button>
 
             <div className="space-y-5">
               <div className="overflow-hidden rounded-[32px] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.10)_0%,rgba(255,255,255,0.04)_42%,rgba(255,255,255,0.08)_100%)] shadow-2xl backdrop-blur">
@@ -106,18 +109,19 @@ export default function LessonOnePage() {
               </div>
 
               <div className="flex justify-between">
-                <a
-                  href="/plan"
+                <button
+                  onClick={() => router.push("/plan")}
                   className="rounded-full border border-white/10 bg-white/5 px-5 py-3 text-sm font-semibold text-white"
                 >
                   Back
-                </a>
-                <a
-                  href="/lesson2"
+                </button>
+
+                <button
+                  onClick={() => router.push("/lesson2")}
                   className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
                 >
                   Continue to practical step
-                </a>
+                </button>
               </div>
             </div>
           </div>
