@@ -1,11 +1,27 @@
 export type AssessmentInput = {
   lifeStage: string;
   ageRange: string;
-  paycheckStatus: string;
+  livingSituation: string;
+
+  primaryMoneySource: string;
+  incomePattern: string;
+  endOfMonthSituation: string;
+  mainSpendingCategory: string;
+  hasCreditCard: string;
+
+  moneyCheckFrequency: string;
+  moneyHabitStyle: string;
+  stressLevel: string;
   confidenceLevel: string;
-  emotionalStates: string[];
-  helpAreas: string[];
-  freeTextGoal?: string;
+
+  basicsStocks: string;
+  basicsIndexFunds: string;
+  basicsStockMarket: string;
+  basicsInterest: string;
+  basicsCredit: string;
+  basicsBudgeting: string;
+
+  topPriority: string;
 };
 
 export type MoneywiseProfile = {

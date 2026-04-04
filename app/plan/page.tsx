@@ -77,11 +77,23 @@ export default function PlanPage() {
     const hasEnoughInput =
       answers.lifeStage ||
       answers.ageRange ||
-      answers.paycheckStatus ||
+      answers.livingSituation ||
+      answers.primaryMoneySource ||
+      answers.incomePattern ||
+      answers.endOfMonthSituation ||
+      answers.mainSpendingCategory ||
+      answers.hasCreditCard ||
+      answers.moneyCheckFrequency ||
+      answers.moneyHabitStyle ||
+      answers.stressLevel ||
       answers.confidenceLevel ||
-      answers.emotionalStates.length > 0 ||
-      answers.helpAreas.length > 0 ||
-      (answers.freeTextGoal ?? "").trim().length > 0;
+      answers.basicsStocks ||
+      answers.basicsIndexFunds ||
+      answers.basicsStockMarket ||
+      answers.basicsInterest ||
+      answers.basicsCredit ||
+      answers.basicsBudgeting ||
+      answers.topPriority;
 
     if (hasEnoughInput) loadSummary();
 
@@ -175,32 +187,35 @@ export default function PlanPage() {
                   href="/lesson1"
                   className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
                 >
-                  Start first lesson
+                  Start learning
                 </a>
               </div>
               <div className="mt-5 grid gap-4 md:grid-cols-3">
                 <div className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
                   <div className="text-sm font-semibold text-white">
-                    1. Track one month
+                    1. Learn the right basics first
                   </div>
                   <p className="mt-2 text-sm leading-7 text-slate-300">
-                    Just observe. Do not try to optimize yet.
+                    Start with the topic that matches your stage and your current
+                    level of knowledge.
                   </p>
                 </div>
                 <div className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
                   <div className="text-sm font-semibold text-white">
-                    2. Set one savings rule
+                    2. Build one clear rule
                   </div>
                   <p className="mt-2 text-sm leading-7 text-slate-300">
-                    Pick a small amount you can repeat without failing.
+                    The goal is not to fix everything. It is to leave with one
+                    simple rule you can actually use.
                   </p>
                 </div>
                 <div className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
                   <div className="text-sm font-semibold text-white">
-                    3. Learn one concept
+                    3. Keep it steady
                   </div>
                   <p className="mt-2 text-sm leading-7 text-slate-300">
-                    Start with credit, budgeting, or emergency funds.
+                    Progress matters more than perfection. Small consistency is
+                    what builds confidence.
                   </p>
                 </div>
               </div>

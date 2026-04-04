@@ -5,103 +5,19 @@ import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
 import EditorialPhotoBand from "@/components/ui/editorial-photo-band";
 import JourneyNav from "@/components/ui/journey-nav";
-import { ArrowLeft, BarChart3, TrendingUp, Wallet } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronUp, BookOpen } from "lucide-react";
 import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
-import { getLessonOneContent } from "@/lib/content/lesson-content";
+import { getLearnPageContent } from "@/lib/content/lesson-content";
 import {
   defaultAssessmentInput,
   getStoredAssessment,
 } from "@/lib/storage/moneywise-storage";
 import type { AssessmentInput } from "@/lib/types/assessment";
 
-function VisualGrid({
-  title,
-  cards,
-}: {
-  title: string;
-  cards: { label: string; value: string; detail: string }[];
-}) {
-  return (
-    <div className="mt-5 rounded-[24px] border border-amber-200/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.05)_0%,rgba(251,146,60,0.05)_30%,rgba(96,165,250,0.04)_100%)] p-5">
-      <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-100">
-        <BarChart3 className="h-4 w-4 text-amber-200" />
-        {title}
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-3">
-        {cards.map((card) => (
-          <div
-            key={`${card.label}-${card.value}`}
-            className="rounded-[20px] border border-white/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.05)_0%,rgba(196,181,253,0.04)_100%)] p-4"
-          >
-            <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
-              {card.label}
-            </div>
-            <div className="mt-2 text-lg font-semibold text-white">
-              {card.value}
-            </div>
-            <div className="mt-2 text-sm leading-6 text-slate-300">
-              {card.detail}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function TeenInvestingGraphic() {
-  return (
-    <div className="mt-5 rounded-[24px] border border-amber-200/10 bg-[linear-gradient(135deg,rgba(255,255,255,0.05)_0%,rgba(251,146,60,0.04)_25%,rgba(96,165,250,0.04)_100%)] p-5">
-      <div className="mb-4 flex items-center gap-2 text-sm font-semibold text-slate-100">
-        <BarChart3 className="h-4 w-4 text-amber-200" />
-        How a simple investing foundation builds
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-[20px] border border-white/10 bg-slate-950/25 p-4">
-          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
-            Step 1
-          </div>
-          <div className="mt-2 text-lg font-semibold text-white">
-            Learn the terms
-          </div>
-          <div className="mt-2 text-sm leading-6 text-slate-300">
-            Know the difference between saving, investing, index funds, and stocks.
-          </div>
-        </div>
-
-        <div className="rounded-[20px] border border-white/10 bg-slate-950/25 p-4">
-          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
-            Step 2
-          </div>
-          <div className="mt-2 text-lg font-semibold text-white">
-            Understand risk
-          </div>
-          <div className="mt-2 text-sm leading-6 text-slate-300">
-            Prices move. The goal is to understand that movement before using real money.
-          </div>
-        </div>
-
-        <div className="rounded-[20px] border border-white/10 bg-slate-950/25 p-4">
-          <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
-            Step 3
-          </div>
-          <div className="mt-2 text-lg font-semibold text-white">
-            Start tiny
-          </div>
-          <div className="mt-2 text-sm leading-6 text-slate-300">
-            Use a watchlist, paper trading, or a very small amount only after the basics feel clear.
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function LessonOnePage() {
   const router = useRouter();
   const [answers, setAnswers] = useState<AssessmentInput>(defaultAssessmentInput);
+  const [openConcepts, setOpenConcepts] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     setAnswers(getStoredAssessment());
@@ -109,13 +25,16 @@ export default function LessonOnePage() {
 
   const plan = useMemo(() => buildPersonalizedPlan(answers), [answers]);
   const content = useMemo(
-    () => getLessonOneContent(plan.recommendedPath.modules[0], plan.persona),
+    () => getLearnPageContent(plan.recommendedPath.modules[0], plan.persona),
     [plan]
   );
 
-  const showTeenInvestingGraphic =
-    plan.recommendedPath.modules[0] === "investing-basics-and-first-stocks" &&
-    (plan.persona === "teen-supported" || plan.persona === "student-dependent");
+  function toggleConcept(id: string) {
+    setOpenConcepts((current) => ({
+      ...current,
+      [id]: !current[id],
+    }));
+  }
 
   return (
     <AppShell>
@@ -126,7 +45,7 @@ export default function LessonOnePage() {
           <div className="mx-auto max-w-5xl px-6 py-10 md:px-10 lg:px-14">
             <div className="mb-8">
               <div className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-100">
-                Lesson
+                Learn
               </div>
               <div className="mt-5 overflow-hidden rounded-[30px] border border-white/10">
                 <EditorialPhotoBand imageKey="lesson" short />
@@ -150,56 +69,120 @@ export default function LessonOnePage() {
               <ArrowLeft className="h-4 w-4" /> Back to plan
             </button>
 
-            <div className="space-y-5">
-              <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full border border-amber-300/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.16)_0%,rgba(196,181,253,0.10)_100%)] text-amber-200">
-                    <Wallet className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-lg font-semibold text-white">
-                      {content.sectionOneTitle}
+            <div className="space-y-8">
+              {content.steps.map((step, stepIndex) => (
+                <div
+                  key={step.id}
+                  className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border border-amber-300/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.16)_0%,rgba(196,181,253,0.10)_100%)] text-amber-200">
+                      <BookOpen className="h-5 w-5" />
                     </div>
-                    <div className="text-sm text-slate-400">
-                      {content.sectionOneSubtitle}
+                    <div>
+                      <div className="text-lg font-semibold text-white">
+                        {step.title}
+                      </div>
+                      <div className="text-sm text-slate-400">
+                        Part {stepIndex + 1} of {content.steps.length}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <p className="mt-5 text-base leading-8 text-slate-300">
-                  {content.sectionOneBody}
-                </p>
-                {showTeenInvestingGraphic ? (
-                  <TeenInvestingGraphic />
-                ) : (
-                  <VisualGrid
-                    title={content.sectionOneVisualTitle}
-                    cards={content.sectionOneVisualCards}
-                  />
-                )}
-              </div>
 
-              <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full border border-amber-300/15 bg-[linear-gradient(135deg,rgba(250,204,21,0.16)_0%,rgba(196,181,253,0.10)_100%)] text-amber-200">
-                    <TrendingUp className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-lg font-semibold text-white">
-                      {content.sectionTwoTitle}
-                    </div>
-                    <div className="text-sm text-slate-400">
-                      {content.sectionTwoSubtitle}
-                    </div>
+                  <p className="mt-5 text-base leading-8 text-slate-300">
+                    {step.intro}
+                  </p>
+
+                  <div className="mt-6 space-y-4">
+                    {step.concepts.map((concept) => {
+                      const isOpen = Boolean(openConcepts[concept.id]);
+
+                      return (
+                        <div
+                          key={concept.id}
+                          className="rounded-[24px] border border-white/10 bg-slate-950/30"
+                        >
+                          <button
+                            onClick={() => toggleConcept(concept.id)}
+                            className="flex w-full items-start justify-between gap-4 px-5 py-5 text-left"
+                          >
+                            <div>
+                              <div className="text-lg font-semibold text-white">
+                                {concept.title}
+                              </div>
+                              <div className="mt-1 text-sm text-amber-100">
+                                {concept.shortLabel}
+                              </div>
+                              <div className="mt-2 text-sm leading-7 text-slate-300">
+                                {concept.summary}
+                              </div>
+                            </div>
+
+                            <div className="mt-1 text-slate-300">
+                              {isOpen ? (
+                                <ChevronUp className="h-5 w-5" />
+                              ) : (
+                                <ChevronDown className="h-5 w-5" />
+                              )}
+                            </div>
+                          </button>
+
+                          {isOpen && (
+                            <div className="border-t border-white/10 px-5 py-5">
+                              <div className="grid gap-4">
+                                <div className="rounded-[20px] border border-white/10 bg-white/5 p-4">
+                                  <div className="text-sm font-semibold uppercase tracking-[0.16em] text-amber-200">
+                                    What it is
+                                  </div>
+                                  <div className="mt-2 text-sm leading-7 text-slate-300">
+                                    {concept.detailBody}
+                                  </div>
+                                </div>
+
+                                <div className="rounded-[20px] border border-white/10 bg-white/5 p-4">
+                                  <div className="text-sm font-semibold uppercase tracking-[0.16em] text-amber-200">
+                                    Why it matters
+                                  </div>
+                                  <div className="mt-2 text-sm leading-7 text-slate-300">
+                                    {concept.whyItMatters}
+                                  </div>
+                                </div>
+
+                                <div className="rounded-[20px] border border-white/10 bg-white/5 p-4">
+                                  <div className="text-sm font-semibold uppercase tracking-[0.16em] text-amber-200">
+                                    Simple example
+                                  </div>
+                                  <div className="mt-2 text-sm leading-7 text-slate-300">
+                                    {concept.example}
+                                  </div>
+                                </div>
+
+                                <div className="rounded-[20px] border border-white/10 bg-white/5 p-4">
+                                  <div className="text-sm font-semibold uppercase tracking-[0.16em] text-amber-200">
+                                    What beginners get wrong
+                                  </div>
+                                  <div className="mt-2 text-sm leading-7 text-slate-300">
+                                    {concept.beginnerMistake}
+                                  </div>
+                                </div>
+
+                                <div className="rounded-[20px] border border-white/10 bg-[linear-gradient(135deg,rgba(251,191,36,0.12)_0%,rgba(255,255,255,0.05)_100%)] p-4">
+                                  <div className="text-sm font-semibold uppercase tracking-[0.16em] text-amber-200">
+                                    Rule to remember
+                                  </div>
+                                  <div className="mt-2 text-sm leading-7 text-slate-100">
+                                    {concept.ruleToRemember}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-                <p className="mt-5 text-base leading-8 text-slate-300">
-                  {content.sectionTwoBody}
-                </p>
-                <VisualGrid
-                  title={content.sectionTwoVisualTitle}
-                  cards={content.sectionTwoVisualCards}
-                />
-              </div>
+              ))}
 
               <div className="flex justify-between">
                 <button
@@ -212,10 +195,10 @@ export default function LessonOnePage() {
 
                 <button
                   type="button"
-                  onClick={() => router.push("/lesson2")}
+                  onClick={() => router.push("/dashboard")}
                   className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
                 >
-                  Continue to practical step
+                  Go to progress
                 </button>
               </div>
             </div>

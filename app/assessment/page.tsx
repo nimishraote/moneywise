@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
 import JourneyNav from "@/components/ui/journey-nav";
-import { Check, Circle, Square } from "lucide-react";
+import { Check } from "lucide-react";
 import type { AssessmentInput } from "@/lib/types/assessment";
 import {
   defaultAssessmentInput,
@@ -12,35 +12,11 @@ import {
   saveAssessment,
 } from "@/lib/storage/moneywise-storage";
 
-type SingleQuestionConfig = {
-  key: keyof Pick<
-    AssessmentInput,
-    "lifeStage" | "ageRange" | "paycheckStatus" | "confidenceLevel"
-  >;
+type QuestionConfig = {
+  key: keyof AssessmentInput;
   label: string;
-  type: "single";
   options: string[];
 };
-
-type MultiQuestionConfig = {
-  key: keyof Pick<AssessmentInput, "emotionalStates" | "helpAreas">;
-  label: string;
-  type: "multi";
-  options: string[];
-};
-
-type TextQuestionConfig = {
-  key: "freeTextGoal";
-  label: string;
-  type: "text";
-  placeholder: string;
-  helper: string;
-};
-
-type QuestionConfig =
-  | SingleQuestionConfig
-  | MultiQuestionConfig
-  | TextQuestionConfig;
 
 type AssessmentStep = {
   section: string;
@@ -48,107 +24,280 @@ type AssessmentStep = {
   questions: QuestionConfig[];
 };
 
-const assessmentSteps: AssessmentStep[] = [
-  {
+function ChoiceButton({
+  active,
+  option,
+  onClick,
+}: {
+  active: boolean;
+  option: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex items-center justify-between rounded-2xl px-4 py-3 text-left text-sm transition ${
+        active
+          ? "bg-white text-slate-950"
+          : "bg-white/5 text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <div
+          className={`h-4 w-4 rounded-full border ${
+            active ? "border-slate-950 bg-slate-950" : "border-slate-500"
+          }`}
+        />
+        <span>{option}</span>
+      </div>
+      {active && <Check className="h-4 w-4" />}
+    </button>
+  );
+}
+
+function getAssessmentSteps(input: AssessmentInput): AssessmentStep[] {
+  const baseStep: AssessmentStep = {
     section: "About you",
-    progress: 25,
+    progress: 20,
     questions: [
       {
         key: "lifeStage",
         label: "Which best describes you right now?",
-        type: "single",
         options: [
           "Pre-college / high school",
           "College student",
-          "Recent graduate",
-          "Early-career working professional",
-          "Other",
+          "Working full time",
+          "Working part time",
+          "Between jobs",
+          "Mostly supported by family",
         ],
       },
       {
         key: "ageRange",
         label: "How old are you?",
-        type: "single",
-        options: ["14 to 18", "18 to 21", "22 to 25", "26 to 30"],
+        options: ["14 to 17", "18 to 21", "22 to 25", "26 to 30"],
+      },
+      {
+        key: "livingSituation",
+        label: "Where do you live right now?",
+        options: [
+          "With family",
+          "Dorm or campus housing",
+          "With roommates",
+          "Alone",
+          "Other",
+        ],
       },
     ],
-  },
-  {
-    section: "Money right now",
-    progress: 50,
+  };
+
+  const isStudent =
+    input.lifeStage === "Pre-college / high school" ||
+    input.lifeStage === "College student" ||
+    input.lifeStage === "Mostly supported by family";
+
+  const moneyStep: AssessmentStep = isStudent
+    ? {
+        section: "Your money situation",
+        progress: 40,
+        questions: [
+          {
+            key: "primaryMoneySource",
+            label: "Where does your money mostly come from?",
+            options: [
+              "Parents or family",
+              "Part-time work",
+              "Part-time work and family support",
+              "Other",
+            ],
+          },
+          {
+            key: "endOfMonthSituation",
+            label: "Do you usually have money left at the end of the month?",
+            options: [
+              "Yes, usually",
+              "Sometimes",
+              "Rarely",
+              "Not sure",
+            ],
+          },
+          {
+            key: "mainSpendingCategory",
+            label: "What do you spend most on?",
+            options: [
+              "Food",
+              "Clothes",
+              "Going out",
+              "Subscriptions",
+              "Transport",
+              "Other",
+            ],
+          },
+          {
+            key: "hasCreditCard",
+            label: "Have you ever used a credit card?",
+            options: [
+              "Yes",
+              "No",
+              "Yes, and I am not fully sure how it works",
+            ],
+          },
+        ],
+      }
+    : {
+        section: "Your money situation",
+        progress: 40,
+        questions: [
+          {
+            key: "incomePattern",
+            label: "How do you get paid right now?",
+            options: [
+              "Regular paycheck",
+              "Irregular income",
+              "Both",
+              "Not earning right now",
+            ],
+          },
+          {
+            key: "endOfMonthSituation",
+            label: "Which sounds most like you?",
+            options: [
+              "I usually have enough left",
+              "I usually run low before the month ends",
+              "I often do not know where my money went",
+              "Not sure",
+            ],
+          },
+          {
+            key: "hasCreditCard",
+            label: "Which sounds most like you?",
+            options: [
+              "I do not use a credit card",
+              "I use a credit card and understand it fairly well",
+              "Yes, and I am not fully sure how it works",
+            ],
+          },
+          {
+            key: "primaryMoneySource",
+            label: "What best describes your current situation?",
+            options: [
+              "Mainly salary or wages",
+              "Mostly family support",
+              "A mix of work and support",
+              "Other",
+            ],
+          },
+        ],
+      };
+
+  const behaviorStep: AssessmentStep = {
+    section: "Habits and stress",
+    progress: 60,
     questions: [
       {
-        key: "paycheckStatus",
-        label: "How would you describe your money situation right now?",
-        type: "single",
+        key: "moneyCheckFrequency",
+        label: "How often do you check your money?",
+        options: ["Often", "Sometimes", "Rarely", "I avoid it"],
+      },
+      {
+        key: "moneyHabitStyle",
+        label: "Which sounds most like you?",
         options: [
-          "I earn money and it feels tight month to month",
-          "I earn some money but it is inconsistent",
-          "I am not earning regularly right now",
-          "I am mostly supported by parents or family",
-          "I am not sure how to describe it",
+          "I spend first and think later",
+          "I try to save but it is inconsistent",
+          "I am careful but confused",
+          "I want to improve but do not know where to start",
+        ],
+      },
+      {
+        key: "stressLevel",
+        label: "How stressed do you feel about money?",
+        options: [
+          "Very stressed",
+          "Somewhat stressed",
+          "A little stressed",
+          "Not very stressed",
         ],
       },
       {
         key: "confidenceLevel",
-        label: "How confident do you feel with money today?",
-        type: "single",
-        options: ["Very low", "Low", "Somewhat confident", "Fairly confident"],
-      },
-    ],
-  },
-  {
-    section: "How it feels",
-    progress: 75,
-    questions: [
-      {
-        key: "emotionalStates",
-        label: "Which of these feel true for you right now?",
-        type: "multi",
+        label: "How confident do you feel making money decisions?",
         options: [
-          "I think about money but feel confused",
-          "I feel stressed about money",
-          "I am trying, but I do not know where to start",
-          "I have some basics, but want to get better",
+          "Very low",
+          "Low",
+          "Somewhat confident",
+          "Fairly confident",
         ],
       },
     ],
-  },
-  {
-    section: "What you want help with",
+  };
+
+  const knowledgeStep: AssessmentStep = {
+    section: "What basics do you already know?",
+    progress: 80,
+    questions: [
+      {
+        key: "basicsStocks",
+        label: "Do you know what a stock is?",
+        options: ["Yes, clearly", "A little", "Not really", "No"],
+      },
+      {
+        key: "basicsIndexFunds",
+        label: "Do you know what an index fund is?",
+        options: ["Yes, clearly", "A little", "Not really", "No"],
+      },
+      {
+        key: "basicsStockMarket",
+        label: "Do you know how the stock market works at a basic level?",
+        options: ["Yes, clearly", "A little", "Not really", "No"],
+      },
+      {
+        key: "basicsInterest",
+        label: "Do you know what interest means?",
+        options: ["Yes, clearly", "A little", "Not really", "No"],
+      },
+      {
+        key: "basicsCredit",
+        label: "Do you know how credit cards work?",
+        options: ["Yes, clearly", "A little", "Not really", "No"],
+      },
+      {
+        key: "basicsBudgeting",
+        label: "Do you know what budgeting means in practice?",
+        options: ["Yes, clearly", "A little", "Not really", "No"],
+      },
+    ],
+  };
+
+  const priorityStep: AssessmentStep = {
+    section: "What do you want help with most?",
     progress: 100,
     questions: [
       {
-        key: "helpAreas",
+        key: "topPriority",
         label: "What do you most want help with right now?",
-        type: "multi",
         options: [
-          "Saving money",
+          "Saving",
           "Budgeting",
-          "Understanding credit",
-          "Learning to invest",
+          "Credit cards",
+          "Debt",
+          "Stocks and investing",
+          "Understanding money basics",
+          "Staying consistent",
         ],
       },
-      {
-        key: "freeTextGoal",
-        label: "What would you most like to change over the next few months?",
-        type: "text",
-        placeholder:
-          "Example: I want to stop stressing before rent and finally build some savings.",
-        helper:
-          "One or two sentences is enough. This helps the app make the plan feel more personal.",
-      },
     ],
-  },
-];
+  };
+
+  return [baseStep, moneyStep, behaviorStep, knowledgeStep, priorityStep];
+}
 
 export default function AssessmentPage() {
   const router = useRouter();
-  const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<AssessmentInput>(
     defaultAssessmentInput
   );
-  const step = assessmentSteps[stepIndex];
+  const [stepIndex, setStepIndex] = useState(0);
 
   useEffect(() => {
     setAnswers(getStoredAssessment());
@@ -158,45 +307,32 @@ export default function AssessmentPage() {
     saveAssessment(answers);
   }, [answers]);
 
+  const steps = useMemo(() => getAssessmentSteps(answers), [answers]);
+  const step = steps[stepIndex];
+
+  function setAnswer(key: keyof AssessmentInput, value: string) {
+    setAnswers((current) => ({ ...current, [key]: value }));
+  }
+
   function handleBack() {
     if (stepIndex === 0) {
       router.push("/onboarding");
       return;
     }
-    setStepIndex((v) => v - 1);
+    setStepIndex((current) => current - 1);
   }
 
   function handleContinue() {
-    if (stepIndex === assessmentSteps.length - 1) {
+    if (stepIndex === steps.length - 1) {
       router.push("/plan");
       return;
     }
-    setStepIndex((v) => v + 1);
+    setStepIndex((current) => current + 1);
   }
 
-  function toggleSingle(key: SingleQuestionConfig["key"], value: string) {
-    setAnswers((current) => ({ ...current, [key]: value }));
-  }
-
-  function toggleMulti(key: MultiQuestionConfig["key"], value: string) {
-    setAnswers((current) => {
-      const currentValues = current[key] as string[];
-      const nextValues = currentValues.includes(value)
-        ? currentValues.filter((item) => item !== value)
-        : [...currentValues, value];
-      return { ...current, [key]: nextValues };
-    });
-  }
-
-  const canContinue = useMemo(() => {
-    return step.questions.every((question) => {
-      if (question.type === "single") return Boolean(answers[question.key]);
-      if (question.type === "multi")
-        return (answers[question.key] as string[]).length > 0;
-      if (question.type === "text") return Boolean(answers[question.key]?.trim());
-      return false;
-    });
-  }, [answers, step.questions]);
+  const canContinue = step.questions.every((question) =>
+    Boolean(answers[question.key])
+  );
 
   return (
     <AppShell>
@@ -217,8 +353,7 @@ export default function AssessmentPage() {
                   A few quick questions before we build your starting plan.
                 </h2>
                 <p className="mt-4 max-w-2xl text-base leading-8 text-slate-300">
-                  We ask for just enough context to make the plan feel useful and
-                  personal.
+                  No typing needed. Just pick what sounds most like you.
                 </p>
               </div>
 
@@ -229,11 +364,11 @@ export default function AssessmentPage() {
                       {step.section}
                     </div>
                     <div className="mt-1 text-sm text-slate-400">
-                      Step {stepIndex + 1} of {assessmentSteps.length}
+                      Step {stepIndex + 1} of {steps.length}
                     </div>
                   </div>
                   <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-sm text-slate-300">
-                    About 1 minute
+                    About 2 minutes
                   </div>
                 </div>
 
@@ -247,112 +382,28 @@ export default function AssessmentPage() {
                 <div className="mt-6 space-y-5">
                   {step.questions.map((question) => (
                     <div
-                      key={question.label}
+                      key={question.key}
                       className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5"
                     >
                       <div className="flex items-center justify-between gap-4">
                         <div className="text-lg font-medium text-white">
                           {question.label}
                         </div>
-
-                        {question.type === "single" && (
-                          <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-300">
-                            Choose one
-                          </div>
-                        )}
-
-                        {question.type === "multi" && (
-                          <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-300">
-                            Choose all that fit
-                          </div>
-                        )}
+                        <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-300">
+                          Choose one
+                        </div>
                       </div>
 
-                      {question.type === "single" && (
-                        <div className="mt-4 grid gap-3">
-                          {question.options.map((option) => {
-                            const active = answers[question.key] === option;
-
-                            return (
-                              <button
-                                key={option}
-                                onClick={() => toggleSingle(question.key, option)}
-                                className={`flex items-center justify-between rounded-2xl px-4 py-3 text-left text-sm transition ${
-                                  active
-                                    ? "bg-white text-slate-950"
-                                    : "bg-white/5 text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
-                                }`}
-                              >
-                                <div className="flex items-center gap-3">
-                                  <Circle
-                                    className={`h-4 w-4 ${
-                                      active
-                                        ? "fill-slate-950 text-slate-950"
-                                        : "text-slate-400"
-                                    }`}
-                                  />
-                                  <span>{option}</span>
-                                </div>
-                                {active && <Check className="h-4 w-4" />}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      )}
-
-                      {question.type === "multi" && (
-                        <div className="mt-4 grid gap-3">
-                          {question.options.map((option) => {
-                            const active = (
-                              answers[question.key] as string[]
-                            ).includes(option);
-
-                            return (
-                              <button
-                                key={option}
-                                onClick={() => toggleMulti(question.key, option)}
-                                className={`flex items-center justify-between rounded-2xl px-4 py-3 text-left text-sm transition ${
-                                  active
-                                    ? "bg-white text-slate-950"
-                                    : "bg-white/5 text-slate-200 ring-1 ring-white/10 hover:bg-white/10"
-                                }`}
-                              >
-                                <div className="flex items-center gap-3">
-                                  <Square
-                                    className={`h-4 w-4 ${
-                                      active
-                                        ? "fill-slate-950 text-slate-950"
-                                        : "text-slate-400"
-                                    }`}
-                                  />
-                                  <span>{option}</span>
-                                </div>
-                                {active && <Check className="h-4 w-4" />}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      )}
-
-                      {question.type === "text" && (
-                        <div className="mt-4">
-                          <textarea
-                            value={answers[question.key]}
-                            onChange={(event) =>
-                              setAnswers((current) => ({
-                                ...current,
-                                [question.key]: event.target.value,
-                              }))
-                            }
-                            placeholder={question.placeholder}
-                            rows={4}
-                            className="w-full rounded-3xl border border-white/10 bg-white/5 px-4 py-4 text-sm leading-7 text-slate-200 placeholder:text-slate-500 focus:border-white/20 focus:outline-none"
+                      <div className="mt-4 grid gap-3">
+                        {question.options.map((option) => (
+                          <ChoiceButton
+                            key={option}
+                            option={option}
+                            active={answers[question.key] === option}
+                            onClick={() => setAnswer(question.key, option)}
                           />
-                          <div className="mt-2 text-sm leading-6 text-slate-400">
-                            {question.helper}
-                          </div>
-                        </div>
-                      )}
+                        ))}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -374,9 +425,7 @@ export default function AssessmentPage() {
                         : "cursor-not-allowed bg-white/20 text-white/60"
                     }`}
                   >
-                    {stepIndex === assessmentSteps.length - 1
-                      ? "See my plan"
-                      : "Next"}
+                    {stepIndex === steps.length - 1 ? "See my plan" : "Next"}
                   </button>
                 </div>
               </div>

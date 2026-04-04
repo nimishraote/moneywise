@@ -1,30 +1,47 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import { FUTURE_AI_PLAN_SUMMARY_PROMPT, type FutureAIPlanRequest, type FutureAIPlanSummaryResponse } from "@/lib/ai/plan-contract";
+import {
+  FUTURE_AI_PLAN_SUMMARY_PROMPT,
+  type FutureAIPlanRequest,
+  type FutureAIPlanSummaryResponse,
+} from "@/lib/ai/plan-contract";
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-function buildFallbackSummary(input: FutureAIPlanRequest): FutureAIPlanSummaryResponse {
+function buildFallbackSummary(
+  input: FutureAIPlanRequest
+): FutureAIPlanSummaryResponse {
   const firstName = input.profile?.firstName?.trim();
   const namePart = firstName ? `, ${firstName}` : "";
 
   let title = `You are starting in the right place${namePart}.`;
   let paragraphOne =
-    "Money can feel confusing when life is already moving fast. The important thing is that you are looking at it directly now instead of pushing it away.";
-  let paragraphTwo = `The best place to start is ${input.recommendedModuleTitle.toLowerCase()}. It gives you a clearer base to make calmer and more useful decisions from here.`;
+    "Money can feel confusing when nobody has explained it simply. The good news is that you are looking at it now instead of waiting until it feels bigger.";
+  let paragraphTwo = `The best place to start is ${input.recommendedModuleTitle.toLowerCase()}. It gives you a clearer base for calmer and smarter decisions from here.`;
 
   if (input.assessment.lifeStage === "Pre-college / high school") {
-    title = `Starting early can really help${namePart}.`;
+    title = `Starting early really helps${namePart}.`;
     paragraphOne =
-      "A lot of people do not think seriously about money until pressure builds later. You are looking at it earlier, which gives you more room to build understanding before life gets more expensive.";
+      "A lot of people do not learn this until much later. You are looking at it earlier, which gives you more time to understand the basics before life gets more expensive.";
   }
 
-  if (input.assessment.emotionalStates.includes("I feel stressed about money")) {
+  if (
+    input.assessment.stressLevel === "Very stressed" ||
+    input.assessment.stressLevel === "Somewhat stressed"
+  ) {
     title = `This can feel heavy, but it can get clearer${namePart}.`;
     paragraphOne =
-      "When money already feels stressful, the most useful thing is not more noise. It is having one calmer place to start so things feel more understandable and less overwhelming.";
+      "When money already feels stressful, the most useful next step is not more noise. It is one simple starting point that makes things feel more understandable.";
+  }
+
+  if (
+    input.assessment.basicsStocks === "No" ||
+    input.assessment.basicsIndexFunds === "No" ||
+    input.assessment.basicsStockMarket === "No"
+  ) {
+    paragraphTwo = `The best place to start is ${input.recommendedModuleTitle.toLowerCase()}. Before you make money decisions, it helps to understand the basics in plain language.`;
   }
 
   return { title, paragraphOne, paragraphTwo };
@@ -104,7 +121,10 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json({ summary: parsed, source: "ai" }, { status: 200 });
+    return NextResponse.json(
+      { summary: parsed, source: "ai" },
+      { status: 200 }
+    );
   } catch {
     try {
       const body = (await request.clone().json()) as FutureAIPlanRequest;

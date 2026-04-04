@@ -9,11 +9,27 @@ const STORAGE_KEYS = {
 export const defaultAssessmentInput: AssessmentInput = {
   lifeStage: "",
   ageRange: "",
-  paycheckStatus: "",
+  livingSituation: "",
+
+  primaryMoneySource: "",
+  incomePattern: "",
+  endOfMonthSituation: "",
+  mainSpendingCategory: "",
+  hasCreditCard: "",
+
+  moneyCheckFrequency: "",
+  moneyHabitStyle: "",
+  stressLevel: "",
   confidenceLevel: "",
-  emotionalStates: [],
-  helpAreas: [],
-  freeTextGoal: "",
+
+  basicsStocks: "",
+  basicsIndexFunds: "",
+  basicsStockMarket: "",
+  basicsInterest: "",
+  basicsCredit: "",
+  basicsBudgeting: "",
+
+  topPriority: "",
 };
 
 function canUseStorage() {
