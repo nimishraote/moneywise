@@ -13,9 +13,17 @@ import {
 import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
 import { moduleTitles } from "@/lib/content/lesson-content";
 
+type AiSummary = {
+  title: string;
+  paragraphOne: string;
+  paragraphTwo: string;
+};
+
 export default function PlanPage() {
   const [answers, setAnswers] = useState<AssessmentInput>(defaultAssessmentInput);
   const [firstName, setFirstName] = useState("");
+  const [aiSummary, setAiSummary] = useState<AiSummary | null>(null);
+  const [summaryLoading, setSummaryLoading] = useState(false);
 
   useEffect(() => {
     setAnswers(getStoredAssessment());
@@ -27,7 +35,71 @@ export default function PlanPage() {
     () => buildPersonalizedPlan(answers),
     [answers]
   );
+
   const headingName = firstName ? `, ${firstName}` : "";
+  const recommendedTopModule = plan.recommendedPath.modules[0];
+  const recommendedTopModuleTitle = moduleTitles[recommendedTopModule];
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadSummary() {
+      setSummaryLoading(true);
+      try {
+        const profile = getStoredProfile();
+        const response = await fetch("/api/plan-summary", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            assessment: answers,
+            profile: { firstName: profile?.firstName ?? "" },
+            recommendedModule: recommendedTopModule,
+            recommendedModuleTitle: recommendedTopModuleTitle,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to generate summary");
+        }
+
+        const data = await response.json();
+        if (!cancelled && data?.summary) {
+          setAiSummary(data.summary);
+        }
+      } catch {
+        if (!cancelled) {
+          setAiSummary(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setSummaryLoading(false);
+        }
+      }
+    }
+
+    const hasEnoughInput =
+      answers.lifeStage ||
+      answers.ageRange ||
+      answers.paycheckStatus ||
+      answers.confidenceLevel ||
+      answers.emotionalStates.length > 0 ||
+      answers.helpAreas.length > 0 ||
+      (answers.freeTextGoal ?? "").trim().length > 0;
+
+    if (hasEnoughInput) {
+      loadSummary();
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [answers, recommendedTopModule, recommendedTopModuleTitle]);
+
+  const summaryTitle = aiSummary?.title || plan.encouragement.title;
+  const summaryParagraphOne = aiSummary?.paragraphOne || plan.encouragement.body;
+  const summaryParagraphTwo = aiSummary?.paragraphTwo || plan.focus.body;
 
   return (
     <AppShell>
@@ -58,14 +130,19 @@ export default function PlanPage() {
                   </div>
                   <div>
                     <div className="text-3xl font-semibold">
-                      {plan.encouragement.title}
+                      {summaryTitle}
                     </div>
                     <p className="mt-4 max-w-3xl text-base leading-8 text-slate-200">
-                      {plan.encouragement.body}
+                      {summaryParagraphOne}
                     </p>
                     <p className="mt-4 max-w-3xl text-base leading-8 text-slate-300">
-                      {plan.focus.body}
+                      {summaryParagraphTwo}
                     </p>
+                    {summaryLoading && (
+                      <div className="mt-4 text-sm text-slate-400">
+                        Personalizing your summary...
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -109,7 +186,7 @@ export default function PlanPage() {
                       className="rounded-3xl border border-white/10 bg-white/5 px-5 py-4"
                     >
                       <div className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-200">
-                        {String(index + 1).padStart(2, "0")}
+                        Lesson {index + 1}
                       </div>
                       <div className="mt-2 text-lg font-semibold text-white">
                         {moduleTitles[module]}
