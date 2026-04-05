@@ -14,29 +14,46 @@ export default function LegalPage() {
   return (
     <AppShell>
       <div className="bg-[#120f1e] px-6 py-12 text-white md:px-10 lg:px-14">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-5xl">
           <div className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
             Legal / disclaimers
           </div>
+
           <h2
             className="mt-3 text-4xl font-semibold tracking-tight"
             style={{ fontFamily: "Georgia, serif" }}
           >
             Important legal information
           </h2>
+
           <p className="mt-4 max-w-3xl text-sm leading-8 text-slate-300">
-            Please read this carefully before using the product.
+            MoneyWise is an educational product, not personal financial advice. Please read the points below before using it.
           </p>
 
-          <div className="mt-6 space-y-4">
-            {legalItems.map((item) => (
+          <div className="mt-8 rounded-[28px] border border-amber-300/20 bg-amber-200/10 p-5">
+            <div className="text-sm font-semibold text-amber-200">In simple terms</div>
+            <div className="mt-2 text-sm leading-7 text-amber-50">
+              This app is meant to help users learn. It should not be treated as a substitute for professional financial, legal, tax, investment, or banking advice.
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-4">
+            {legalItems.map((item, index) => (
               <div
                 key={item}
-                className="rounded-3xl border border-white/10 bg-white/5 p-5 text-sm leading-7 text-slate-200"
+                className="rounded-[24px] border border-white/10 bg-white/6 p-5 text-sm leading-7 text-slate-200"
               >
-                <div className="flex gap-3">
-                  <ShieldCheck className="mt-0.5 h-5 w-5 text-slate-400" />
-                  <span>{item}</span>
+                <div className="flex items-start gap-3">
+                  <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-slate-950/25">
+                    <ShieldCheck className="h-4 w-4 text-slate-300" />
+                  </div>
+
+                  <div>
+                    <div className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+                      Point {index + 1}
+                    </div>
+                    <div className="mt-2">{item}</div>
+                  </div>
                 </div>
               </div>
             ))}
