@@ -37,21 +37,25 @@ export default function SignupPage() {
       });
 
       if (authData.user?.id) {
-        await upsertMoneywiseProfile(authData.user.id, {
-          firstName: firstName.trim(),
-          email: email.trim(),
-        });
+        try {
+          await upsertMoneywiseProfile(authData.user.id, {
+            firstName: firstName.trim(),
+            email: email.trim(),
+          });
+        } catch {
+          // Do not fail signup just because profile sync did not complete yet.
+        }
       }
 
       setSuccessMessage(
         authData.session
           ? "Your account is ready."
-          : "Your account was created. Please check your email if confirmation is required."
+          : "Your account was created. You can now log in, or check your email if confirmation is required."
       );
 
       setTimeout(() => {
-        router.push("/onboarding");
-      }, 800);
+        router.push(authData.session ? "/onboarding" : "/login");
+      }, 1000);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Something went wrong during sign up.";
