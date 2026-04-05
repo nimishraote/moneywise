@@ -21,6 +21,14 @@ export default function HomePage() {
     router.push("/onboarding");
   }
 
+  function handleSignup() {
+    router.push("/signup");
+  }
+
+  function handleLogin() {
+    router.push("/login");
+  }
+
   return (
     <AppShell footerDark>
       <div className="relative overflow-hidden bg-[#120f1e] text-white">
@@ -60,10 +68,25 @@ export default function HomePage() {
                   >
                     Get started
                   </button>
-                  <div className="text-sm text-slate-400">
-                    Learn the basics, build one clear rule, and move forward
-                    with more confidence
-                  </div>
+
+                  <button
+                    onClick={handleSignup}
+                    className="inline-flex rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white"
+                  >
+                    Create account
+                  </button>
+
+                  <button
+                    onClick={handleLogin}
+                    className="inline-flex rounded-full border border-white/10 px-6 py-3 text-sm font-semibold text-slate-300"
+                  >
+                    Log in
+                  </button>
+                </div>
+
+                <div className="mt-4 text-sm text-slate-400">
+                  Learn the basics, build one clear rule, and come back to track
+                  your progress over time
                 </div>
               </div>
 
