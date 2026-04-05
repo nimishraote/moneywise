@@ -8,8 +8,16 @@ import EditorialPhotoBand from "@/components/ui/editorial-photo-band";
 import type { AssessmentInput } from "@/lib/types/assessment";
 import type { RecommendedModule } from "@/lib/types/personalized-plan";
 import {
+  buildLessonActionKey,
   defaultAssessmentInput,
+  getNextIncompleteModule,
+  getProgressState,
   getStoredAssessment,
+  isLessonCompleted,
+  markLessonCompleted,
+  markLessonStarted,
+  setActionCompleted,
+  setCurrentModule,
 } from "@/lib/storage/moneywise-storage";
 import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
 import {
@@ -23,6 +31,7 @@ import {
 export default function DynamicLearnPage() {
   const params = useParams<{ module: string }>();
   const [answers, setAnswers] = useState<AssessmentInput>(defaultAssessmentInput);
+  const [progressTick, setProgressTick] = useState(0);
 
   useEffect(() => {
     setAnswers(getStoredAssessment());
@@ -42,13 +51,61 @@ export default function DynamicLearnPage() {
     [plan.persona, activeModule]
   );
 
+  useEffect(() => {
+    setCurrentModule(activeModule);
+    markLessonStarted(activeModule);
+    setProgressTick((value) => value + 1);
+  }, [activeModule]);
+
+  const progress = useMemo(() => getProgressState(), [progressTick]);
   const moduleIndex = plan.recommendedPath.modules.findIndex(
     (module) => module === activeModule
   );
+
   const nextModule =
     moduleIndex >= 0
       ? plan.recommendedPath.modules[moduleIndex + 1] ?? null
       : plan.recommendedPath.modules[1] ?? null;
+
+  const recommendedCurrentModule =
+    getNextIncompleteModule(plan.recommendedPath.modules) ?? plan.recommendedPath.modules[0];
+
+  const completed = isLessonCompleted(activeModule);
+
+  const totalActionSteps = content.steps.reduce((count, step) => {
+    return (
+      count +
+      step.concepts.reduce((innerCount, concept) => {
+        return innerCount + (concept.actionSteps?.length ?? 0);
+      }, 0)
+    );
+  }, 0);
+
+  const completedActionSteps = content.steps.reduce((count, step) => {
+    return (
+      count +
+      step.concepts.reduce((innerCount, concept) => {
+        return (
+          innerCount +
+          (concept.actionSteps?.filter((_, index) => {
+            const actionKey = buildLessonActionKey(activeModule, concept.id, index);
+            return Boolean(progress.actions[actionKey]);
+          }).length ?? 0)
+        );
+      }, 0)
+    );
+  }, 0);
+
+  function handleToggleAction(conceptId: string, actionIndex: number, checked: boolean) {
+    const actionKey = buildLessonActionKey(activeModule, conceptId, actionIndex);
+    setActionCompleted(actionKey, checked);
+    setProgressTick((value) => value + 1);
+  }
+
+  function handleCompleteLesson() {
+    markLessonCompleted(activeModule);
+    setProgressTick((value) => value + 1);
+  }
 
   return (
     <AppShell>
@@ -75,17 +132,45 @@ export default function DynamicLearnPage() {
               </p>
             </div>
 
-            <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
-              <div className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-200">
-                Why this lesson matters for you
+            <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+              <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
+                <div className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-200">
+                  Why this lesson matters for you
+                </div>
+                <p className="mt-4 text-sm leading-8 text-slate-300">{personaLead}</p>
+                <p className="mt-4 text-sm leading-8 text-slate-300">
+                  {moduleIndex === 0
+                    ? plan.firstLessonReason
+                    : plan.focusAreas.find((area) => area.module === activeModule)?.whyNow ||
+                      "This is one of the next strongest topics for your situation right now."}
+                </p>
               </div>
-              <p className="mt-4 text-sm leading-8 text-slate-300">{personaLead}</p>
-              <p className="mt-4 text-sm leading-8 text-slate-300">
-                {moduleIndex === 0
-                  ? plan.firstLessonReason
-                  : plan.focusAreas.find((area) => area.module === activeModule)?.whyNow ||
-                    "This is one of the next strongest topics for your situation right now."}
-              </p>
+
+              <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
+                <div className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-100">
+                  Progress for this lesson
+                </div>
+                <div className="mt-5 space-y-4">
+                  <div className="rounded-[22px] border border-white/10 bg-slate-950/30 p-4">
+                    <div className="text-sm text-slate-400">Action steps completed</div>
+                    <div className="mt-2 text-3xl font-semibold text-white">
+                      {completedActionSteps} / {totalActionSteps}
+                    </div>
+                  </div>
+                  <div className="rounded-[22px] border border-white/10 bg-slate-950/30 p-4">
+                    <div className="text-sm text-slate-400">Lesson status</div>
+                    <div className="mt-2 text-lg font-semibold text-white">
+                      {completed ? "Completed" : "In progress"}
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleCompleteLesson}
+                    className="w-full rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
+                  >
+                    {completed ? "Mark lesson as completed again" : "Mark lesson as completed"}
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className="mt-6 space-y-6">
@@ -141,14 +226,33 @@ export default function DynamicLearnPage() {
                               Try this now
                             </div>
                             <div className="mt-3 space-y-3">
-                              {concept.actionSteps.map((action, index) => (
-                                <div
-                                  key={`${concept.id}-action-${index}`}
-                                  className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm leading-7 text-slate-200"
-                                >
-                                  {index + 1}. {action}
-                                </div>
-                              ))}
+                              {concept.actionSteps.map((action, index) => {
+                                const actionKey = buildLessonActionKey(
+                                  activeModule,
+                                  concept.id,
+                                  index
+                                );
+                                const checked = Boolean(progress.actions[actionKey]);
+
+                                return (
+                                  <button
+                                    key={`${concept.id}-action-${index}`}
+                                    onClick={() =>
+                                      handleToggleAction(concept.id, index, !checked)
+                                    }
+                                    className={`w-full rounded-2xl border p-4 text-left text-sm leading-7 ${
+                                      checked
+                                        ? "border-emerald-300/20 bg-emerald-200/8 text-emerald-100"
+                                        : "border-white/10 bg-white/5 text-slate-200"
+                                    }`}
+                                  >
+                                    <span className="font-semibold">
+                                      {checked ? "Done: " : `${index + 1}. `}
+                                    </span>
+                                    {action}
+                                  </button>
+                                );
+                              })}
                             </div>
                           </div>
                         )}
@@ -183,18 +287,18 @@ export default function DynamicLearnPage() {
                 Keep the learning path moving
               </h2>
               <p className="mt-4 text-sm leading-8 text-slate-300">
-                This lesson should feed into your broader path. Go to the dashboard to
-                review progress, or continue to the next recommended topic.
+                This lesson should now feed into real progress. Go to the dashboard to
+                review what you have started or completed, or continue to the next recommended topic.
               </p>
 
               <div className="mt-5 grid gap-4 md:grid-cols-2">
                 <div className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5">
-                  <div className="text-sm font-semibold text-white">Next best place to go</div>
+                  <div className="text-sm font-semibold text-white">Current dashboard focus</div>
                   <div className="mt-2 text-base leading-8 text-slate-200">
-                    Your dashboard
+                    {moduleTitles[recommendedCurrentModule]}
                   </div>
                   <p className="mt-3 text-sm leading-7 text-slate-300">
-                    Review your full path, your priority topics, and what to do next.
+                    Your dashboard now uses saved progress to decide what still needs attention.
                   </p>
                   <a
                     href="/dashboard"
