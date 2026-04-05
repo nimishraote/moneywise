@@ -103,8 +103,7 @@ function FinishPrompt({
         </h2>
 
         <p className="mt-4 text-sm leading-7 text-slate-300 md:text-base">
-          You can keep going as a guest, or create an account to save your plan,
-          progress, and learning history.
+          You can keep going as a guest, or create an account to save your plan and progress.
         </p>
 
         <div className="mt-8 space-y-3">
@@ -134,7 +133,7 @@ function FinishPrompt({
           >
             Continue as guest
             <div className="mt-1 text-xs font-normal text-slate-400">
-              You can still explore, but this device will hold the progress
+              Your progress will stay on this device for now
             </div>
           </button>
         </div>
@@ -541,7 +540,7 @@ export default function AssessmentPage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(59,130,246,0.24),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(168,85,247,0.18),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(251,191,36,0.08),_transparent_20%)]" />
         <div className="relative">
           <JourneyNav activeStep="assessment" />
-          <div className="px-6 py-10 md:px-10 lg:px-14">
+          <div className="px-6 py-8 md:px-10 lg:px-14">
             <div className="mx-auto max-w-6xl">
               <div className="mb-8">
                 <div className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-100">
@@ -551,7 +550,7 @@ export default function AssessmentPage() {
                   className="mt-3 text-4xl font-semibold tracking-tight"
                   style={{ fontFamily: "Georgia, serif" }}
                 >
-                  A few quick questions before we build your starting plan.
+                  A few quick questions before we build your starting plan
                 </h2>
                 <p className="mt-4 max-w-2xl text-base leading-8 text-slate-300">
                   No typing needed. Just pick what sounds most like you.
@@ -580,14 +579,14 @@ export default function AssessmentPage() {
                   />
                 </div>
 
-                <div className="mt-6 space-y-5">
+                <div className="mt-6 grid gap-5 lg:grid-cols-2">
                   {step.questions.map((question) => (
                     <div
                       key={question.key}
                       className="rounded-[24px] border border-white/10 bg-slate-950/30 p-5"
                     >
                       <div className="flex items-center justify-between gap-4">
-                        <div className="text-lg font-medium text-white">
+                        <div className="text-base font-medium text-white">
                           {question.label}
                         </div>
                         <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-300">

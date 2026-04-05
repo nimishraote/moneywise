@@ -129,15 +129,32 @@ export default function SignupPage() {
           <div className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-100">
             Create your account
           </div>
+
           <h1
             className="mt-4 text-4xl font-semibold tracking-tight"
             style={{ fontFamily: "Georgia, serif" }}
           >
             Save your progress for real
           </h1>
+
           <p className="mt-4 text-sm leading-8 text-slate-300">
-            This is the first step toward real saved learning, saved progress, and a more personal dashboard.
+            Create an account so your plan, lessons, and progress stay with you.
           </p>
+
+          <div className="mt-5 rounded-[24px] border border-white/10 bg-slate-950/25 p-4">
+            <div className="text-sm font-semibold text-white">Why create an account</div>
+            <div className="mt-3 grid gap-3 md:grid-cols-3">
+              <div className="rounded-[18px] border border-white/10 bg-white/5 p-3 text-sm text-slate-300">
+                Save your plan
+              </div>
+              <div className="rounded-[18px] border border-white/10 bg-white/5 p-3 text-sm text-slate-300">
+                Track progress
+              </div>
+              <div className="rounded-[18px] border border-white/10 bg-white/5 p-3 text-sm text-slate-300">
+                Come back later
+              </div>
+            </div>
+          </div>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             <div>

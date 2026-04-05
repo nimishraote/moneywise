@@ -100,15 +100,32 @@ export default function LoginPage() {
           <div className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-100">
             Log in
           </div>
+
           <h1
             className="mt-4 text-4xl font-semibold tracking-tight"
             style={{ fontFamily: "Georgia, serif" }}
           >
-            Continue where you left off
+            Pick up where you left off
           </h1>
+
           <p className="mt-4 text-sm leading-8 text-slate-300">
-            Log in to reconnect your account with your saved MoneyWise experience.
+            Log in to reconnect your plan, lessons, and progress.
           </p>
+
+          <div className="mt-5 rounded-[24px] border border-white/10 bg-slate-950/25 p-4">
+            <div className="text-sm font-semibold text-white">What comes back when you log in</div>
+            <div className="mt-3 grid gap-3 md:grid-cols-3">
+              <div className="rounded-[18px] border border-white/10 bg-white/5 p-3 text-sm text-slate-300">
+                Your plan
+              </div>
+              <div className="rounded-[18px] border border-white/10 bg-white/5 p-3 text-sm text-slate-300">
+                Lesson progress
+              </div>
+              <div className="rounded-[18px] border border-white/10 bg-white/5 p-3 text-sm text-slate-300">
+                Next best step
+              </div>
+            </div>
+          </div>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             <div>
