@@ -178,6 +178,16 @@ export default function PlanPage() {
                       ? authEmail || "Your progress can follow you when you come back."
                       : "Create an account if you want this plan and progress to stay with you later."}
                   </div>
+                  {isLoggedIn && (
+                    <div className="mt-3">
+                      <a
+                        href="/dashboard"
+                        className="text-xs font-semibold text-white underline underline-offset-4"
+                      >
+                        View dashboard
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -304,17 +314,10 @@ export default function PlanPage() {
                         href={startLessonHref}
                         className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
                       >
-                        Start learning
+                        {isLoggedIn ? "Continue learning" : "Start learning"}
                       </a>
 
-                      {isLoggedIn ? (
-                        <a
-                          href="/dashboard"
-                          className="rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white"
-                        >
-                          Go to dashboard
-                        </a>
-                      ) : (
+                      {!isLoggedIn && (
                         <a
                           href={accountHref}
                           className="rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white"
