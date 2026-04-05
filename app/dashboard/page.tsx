@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
 import JourneyNav from "@/components/ui/journey-nav";
@@ -17,7 +17,11 @@ import {
   getStoredProfile,
 } from "@/lib/storage/moneywise-storage";
 import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
-import { getCurrentAuthUser, signOutCurrentUser, subscribeToAuthChanges } from "@/lib/supabase/auth";
+import {
+  getCurrentAuthUser,
+  signOutCurrentUser,
+  subscribeToAuthChanges,
+} from "@/lib/supabase/auth";
 import { getLessonHref, moduleTitles } from "@/lib/content/lesson-content";
 
 export default function DashboardPage() {
@@ -29,6 +33,8 @@ export default function DashboardPage() {
   const [authEmail, setAuthEmail] = useState<string | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
   const [checkingAccess, setCheckingAccess] = useState(true);
+
+  const accessResolvedRef = useRef(false);
 
   useEffect(() => {
     setAnswers(getStoredAssessment());
@@ -44,6 +50,8 @@ export default function DashboardPage() {
         const user = await getCurrentAuthUser();
         if (!mounted) return;
 
+        accessResolvedRef.current = true;
+
         if (!user) {
           router.replace("/login?next=/dashboard");
           return;
@@ -53,6 +61,8 @@ export default function DashboardPage() {
         setCheckingAccess(false);
       } catch {
         if (!mounted) return;
+
+        accessResolvedRef.current = true;
         router.replace("/login?next=/dashboard");
       }
     }
@@ -60,9 +70,15 @@ export default function DashboardPage() {
     void loadAuth();
 
     const unsubscribe = subscribeToAuthChanges((user) => {
+      if (!accessResolvedRef.current) return;
+
       if (!user) {
         setAuthEmail(null);
-        router.replace("/");
+
+        if (loggingOut) {
+          router.replace("/");
+        }
+
         return;
       }
 
@@ -74,7 +90,7 @@ export default function DashboardPage() {
       mounted = false;
       unsubscribe();
     };
-  }, [router]);
+  }, [router, loggingOut]);
 
   useEffect(() => {
     function handleFocus() {
@@ -118,10 +134,11 @@ export default function DashboardPage() {
 
   async function handleLogout() {
     setLoggingOut(true);
+
     try {
       await signOutCurrentUser();
       setAuthEmail(null);
-      router.push("/");
+      router.replace("/");
     } catch {
       setLoggingOut(false);
     }
