@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
 import EditorialPhotoBand from "@/components/ui/editorial-photo-band";
-import { useRouter } from "next/navigation";
 import { resetMoneywiseSession } from "@/lib/storage/moneywise-storage";
 
 function Chip({ children }: { children: React.ReactNode }) {
@@ -13,10 +14,97 @@ function Chip({ children }: { children: React.ReactNode }) {
   );
 }
 
+function EntryModal({
+  open,
+  onClose,
+  onContinueGuest,
+  onSignup,
+  onLogin,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onContinueGuest: () => void;
+  onSignup: () => void;
+  onLogin: () => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-6">
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      <div className="relative z-10 w-full max-w-lg rounded-[28px] border border-white/10 bg-[#171327] p-6 text-white shadow-2xl md:p-8">
+        <div className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-200">
+          Continue to MoneyWise
+        </div>
+
+        <h2
+          className="mt-4 text-3xl font-semibold tracking-tight md:text-4xl"
+          style={{ fontFamily: "Georgia, serif" }}
+        >
+          How would you like to start?
+        </h2>
+
+        <p className="mt-4 text-sm leading-7 text-slate-300 md:text-base">
+          You can jump in right away without an account, or create one to save
+          your progress and come back to your dashboard later.
+        </p>
+
+        <div className="mt-8 space-y-3">
+          <button
+            onClick={onContinueGuest}
+            className="w-full rounded-2xl bg-white px-5 py-4 text-left text-sm font-semibold text-slate-950"
+          >
+            Continue without account
+            <div className="mt-1 text-xs font-normal text-slate-600">
+              Best if you just want to explore first
+            </div>
+          </button>
+
+          <button
+            onClick={onSignup}
+            className="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-left text-sm font-semibold text-white"
+          >
+            Create account
+            <div className="mt-1 text-xs font-normal text-slate-400">
+              Save progress, plan, and learning history
+            </div>
+          </button>
+
+          <button
+            onClick={onLogin}
+            className="w-full rounded-2xl border border-white/10 bg-transparent px-5 py-4 text-left text-sm font-semibold text-slate-200"
+          >
+            Log in
+            <div className="mt-1 text-xs font-normal text-slate-400">
+              Pick up where you left off
+            </div>
+          </button>
+        </div>
+
+        <button
+          onClick={onClose}
+          className="mt-6 text-sm text-slate-400 underline underline-offset-4"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function HomePage() {
   const router = useRouter();
+  const [showEntryModal, setShowEntryModal] = useState(false);
 
-  function handleStart() {
+  function handleOpenEntryModal() {
+    setShowEntryModal(true);
+  }
+
+  function handleContinueGuest() {
     resetMoneywiseSession();
     router.push("/onboarding");
   }
@@ -63,24 +151,10 @@ export default function HomePage() {
 
                 <div className="mt-8 flex flex-wrap items-center gap-4">
                   <button
-                    onClick={handleStart}
+                    onClick={handleOpenEntryModal}
                     className="inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950"
                   >
                     Get started
-                  </button>
-
-                  <button
-                    onClick={handleSignup}
-                    className="inline-flex rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white"
-                  >
-                    Create account
-                  </button>
-
-                  <button
-                    onClick={handleLogin}
-                    className="inline-flex rounded-full border border-white/10 px-6 py-3 text-sm font-semibold text-slate-300"
-                  >
-                    Log in
                   </button>
                 </div>
 
@@ -94,6 +168,14 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+
+        <EntryModal
+          open={showEntryModal}
+          onClose={() => setShowEntryModal(false)}
+          onContinueGuest={handleContinueGuest}
+          onSignup={handleSignup}
+          onLogin={handleLogin}
+        />
       </div>
     </AppShell>
   );
