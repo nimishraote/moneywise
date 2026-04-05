@@ -108,12 +108,14 @@ export function saveAssessment(input: AssessmentInput) {
   const storage = getStorage();
   if (!storage) return;
   storage.setItem(STORAGE_KEYS.assessment, JSON.stringify(input));
+  window.dispatchEvent(new Event("moneywise-storage-updated"));
 }
 
 export function clearStoredAssessment() {
   const storage = getStorage();
   if (!storage) return;
   storage.removeItem(STORAGE_KEYS.assessment);
+  window.dispatchEvent(new Event("moneywise-storage-updated"));
 }
 
 export function getStoredProfile(): MoneywiseProfile | null {
@@ -133,18 +135,21 @@ export function saveProfile(profile: MoneywiseProfile) {
   const storage = getStorage();
   if (!storage) return;
   storage.setItem(STORAGE_KEYS.profile, JSON.stringify(profile));
+  window.dispatchEvent(new Event("moneywise-storage-updated"));
 }
 
 export function clearStoredProfile() {
   const storage = getStorage();
   if (!storage) return;
   storage.removeItem(STORAGE_KEYS.profile);
+  window.dispatchEvent(new Event("moneywise-storage-updated"));
 }
 
 export function markOnboardingSeen() {
   const storage = getStorage();
   if (!storage) return;
   storage.setItem(STORAGE_KEYS.onboardingSeen, "true");
+  window.dispatchEvent(new Event("moneywise-storage-updated"));
 }
 
 export function getOnboardingSeen() {
@@ -177,12 +182,14 @@ export function saveProgressState(progress: MoneywiseProgressState) {
   const storage = getStorage();
   if (!storage) return;
   storage.setItem(STORAGE_KEYS.progress, JSON.stringify(withTimestamp(progress)));
+  window.dispatchEvent(new Event("moneywise-storage-updated"));
 }
 
 export function clearProgressState() {
   const storage = getStorage();
   if (!storage) return;
   storage.removeItem(STORAGE_KEYS.progress);
+  window.dispatchEvent(new Event("moneywise-storage-updated"));
 }
 
 export function setCurrentModule(module: RecommendedModule) {

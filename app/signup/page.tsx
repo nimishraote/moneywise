@@ -1,14 +1,146 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
-import { getStoredProfile, saveProfile } from "@/lib/storage/moneywise-storage";
+import { saveProfile } from "@/lib/storage/moneywise-storage";
+import { signUpWithEmail } from "@/lib/supabase/auth";
+import { upsertMoneywiseProfile } from "@/lib/supabase/moneywise-db";
+
 export default function SignupPage() {
   const router = useRouter();
+
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("This is still local-only for now. It saves your profile in this browser so the app can feel more personalized.");
-  useEffect(() => { const profile = getStoredProfile(); if (profile?.firstName) setFirstName(profile.firstName); if (profile?.email) setEmail(profile.email); }, []);
-  function handleSubmit() { if (!firstName.trim() || !email.trim()) { setMessage("Please add your first name and email."); return; } saveProfile({ firstName: firstName.trim(), email: email.trim(), createdAt: new Date().toISOString() }); setMessage("Saved in this browser. Real auth can be wired in next with Supabase."); router.push("/assessment"); }
-  return <AppShell><div className="px-6 py-16 md:px-10 lg:px-14"><div className="mx-auto max-w-xl rounded-[30px] bg-white p-8 shadow-sm ring-1 ring-black/5"><h1 className="text-3xl font-semibold tracking-tight">Create your account</h1><p className="mt-3 text-slate-600">{message}</p><div className="mt-6 space-y-4"><input className="w-full rounded-2xl border border-slate-200 px-4 py-3" placeholder="First name" value={firstName} onChange={(e) => setFirstName(e.target.value)} /><input className="w-full rounded-2xl border border-slate-200 px-4 py-3" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} /><button onClick={handleSubmit} className="w-full rounded-full bg-slate-950 px-5 py-3 text-sm font-semibold text-white">Save and continue</button></div></div></div></AppShell>;
+  const [password, setPassword] = useState("");
+
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const isDisabled = useMemo(() => {
+    return !firstName.trim() || !email.trim() || password.trim().length < 6 || submitting;
+  }, [email, firstName, password, submitting]);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setErrorMessage("");
+    setSuccessMessage("");
+    setSubmitting(true);
+
+    try {
+      const authData = await signUpWithEmail(email.trim(), password, firstName.trim());
+
+      saveProfile({
+        firstName: firstName.trim(),
+        email: email.trim(),
+      });
+
+      if (authData.user?.id) {
+        await upsertMoneywiseProfile(authData.user.id, {
+          firstName: firstName.trim(),
+          email: email.trim(),
+        });
+      }
+
+      setSuccessMessage(
+        authData.session
+          ? "Your account is ready."
+          : "Your account was created. Please check your email if confirmation is required."
+      );
+
+      setTimeout(() => {
+        router.push("/onboarding");
+      }, 800);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Something went wrong during sign up.";
+      setErrorMessage(message);
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <AppShell>
+      <div className="min-h-screen bg-[#120f1e] px-6 py-12 text-white">
+        <div className="mx-auto max-w-xl rounded-[32px] border border-white/10 bg-white/8 p-8 shadow-2xl backdrop-blur md:p-10">
+          <div className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-100">
+            Create your account
+          </div>
+          <h1
+            className="mt-4 text-4xl font-semibold tracking-tight"
+            style={{ fontFamily: "Georgia, serif" }}
+          >
+            Save your progress for real
+          </h1>
+          <p className="mt-4 text-sm leading-8 text-slate-300">
+            This is the first step toward real saved learning, saved progress, and a more personal dashboard.
+          </p>
+
+          <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+            <div>
+              <label className="text-sm font-semibold text-white">First name</label>
+              <input
+                type="text"
+                value={firstName}
+                onChange={(event) => setFirstName(event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white outline-none"
+                placeholder="Your first name"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-white">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white outline-none"
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-white">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                className="mt-2 w-full rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-white outline-none"
+                placeholder="At least 6 characters"
+              />
+            </div>
+
+            {errorMessage ? (
+              <div className="rounded-2xl border border-red-300/20 bg-red-300/10 p-4 text-sm text-red-100">
+                {errorMessage}
+              </div>
+            ) : null}
+
+            {successMessage ? (
+              <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm text-emerald-100">
+                {successMessage}
+              </div>
+            ) : null}
+
+            <button
+              type="submit"
+              disabled={isDisabled}
+              className="w-full rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {submitting ? "Creating account..." : "Create account"}
+            </button>
+          </form>
+
+          <div className="mt-6 text-sm text-slate-400">
+            Already have an account?{" "}
+            <a href="/login" className="font-semibold text-white underline underline-offset-4">
+              Log in
+            </a>
+          </div>
+        </div>
+      </div>
+    </AppShell>
+  );
 }

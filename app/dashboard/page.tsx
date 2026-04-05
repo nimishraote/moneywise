@@ -16,17 +16,46 @@ import {
   getStoredProfile,
 } from "@/lib/storage/moneywise-storage";
 import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
+import { getCurrentAuthUser, signOutCurrentUser, subscribeToAuthChanges } from "@/lib/supabase/auth";
 import { getLessonHref, moduleTitles } from "@/lib/content/lesson-content";
 
 export default function DashboardPage() {
   const [answers, setAnswers] = useState<AssessmentInput>(defaultAssessmentInput);
   const [firstName, setFirstName] = useState("");
   const [progressTick, setProgressTick] = useState(0);
+  const [authEmail, setAuthEmail] = useState<string | null>(null);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     setAnswers(getStoredAssessment());
     const profile = getStoredProfile();
     if (profile?.firstName) setFirstName(profile.firstName);
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadAuth() {
+      try {
+        const user = await getCurrentAuthUser();
+        if (!mounted) return;
+        setAuthEmail(user?.email ?? null);
+      } catch {
+        if (!mounted) return;
+        setAuthEmail(null);
+      }
+    }
+
+    loadAuth();
+
+    const unsubscribe = subscribeToAuthChanges((user) => {
+      setAuthEmail(user?.email ?? null);
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
@@ -36,10 +65,12 @@ export default function DashboardPage() {
 
     window.addEventListener("focus", handleFocus);
     window.addEventListener("storage", handleFocus);
+    window.addEventListener("moneywise-storage-updated", handleFocus);
 
     return () => {
       window.removeEventListener("focus", handleFocus);
       window.removeEventListener("storage", handleFocus);
+      window.removeEventListener("moneywise-storage-updated", handleFocus);
     };
   }, []);
 
@@ -67,6 +98,18 @@ export default function DashboardPage() {
     return "Not started";
   }
 
+  async function handleLogout() {
+    setLoggingOut(true);
+    try {
+      await signOutCurrentUser();
+      setAuthEmail(null);
+    } catch {
+      // Keep silent for now
+    } finally {
+      setLoggingOut(false);
+    }
+  }
+
   return (
     <AppShell>
       <div className="relative overflow-hidden bg-[#120f1e] text-white">
@@ -75,21 +118,60 @@ export default function DashboardPage() {
           <JourneyNav activeStep="dashboard" />
           <div className="mx-auto max-w-6xl px-6 py-10 md:px-10 lg:px-14">
             <div className="mb-8">
-              <div className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-100">
-                Your dashboard
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <div className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-100">
+                    Your dashboard
+                  </div>
+                  <h1
+                    className="mt-4 text-4xl font-semibold tracking-tight"
+                    style={{ fontFamily: "Georgia, serif" }}
+                  >
+                    Your progress and next best steps{headingName}
+                  </h1>
+                  <p className="mt-4 max-w-3xl text-base leading-8 text-slate-300">
+                    This page should now reflect where you really are in the path, not just what the app first recommended.
+                  </p>
+                </div>
+
+                <div className="rounded-[24px] border border-white/10 bg-white/8 p-4 text-sm text-slate-300">
+                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
+                    Account status
+                  </div>
+                  <div className="mt-2 text-white">
+                    {authEmail ? authEmail : "Not logged in"}
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-3">
+                    {authEmail ? (
+                      <button
+                        onClick={handleLogout}
+                        className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-white"
+                      >
+                        {loggingOut ? "Logging out..." : "Log out"}
+                      </button>
+                    ) : (
+                      <>
+                        <a
+                          href="/login"
+                          className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-slate-950"
+                        >
+                          Log in
+                        </a>
+                        <a
+                          href="/signup"
+                          className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-white"
+                        >
+                          Create account
+                        </a>
+                      </>
+                    )}
+                  </div>
+                </div>
               </div>
+
               <div className="mt-5 overflow-hidden rounded-[30px] border border-white/10">
                 <EditorialPhotoBand imageKey="dashboard" short />
               </div>
-              <h1
-                className="mt-4 text-4xl font-semibold tracking-tight"
-                style={{ fontFamily: "Georgia, serif" }}
-              >
-                Your progress and next best steps{headingName}
-              </h1>
-              <p className="mt-4 text-base leading-8 text-slate-300">
-                This page should now reflect where you really are in the path, not just what the app first recommended.
-              </p>
             </div>
 
             <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
