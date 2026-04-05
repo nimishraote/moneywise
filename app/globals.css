@@ -6,14 +6,24 @@
   color-scheme: light;
 }
 
-html, body {
+html,
+body {
   padding: 0;
   margin: 0;
+  min-height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   font-family: Inter, Arial, Helvetica, sans-serif;
-  background: #f6f2eb;
+  background: #120f1e;
+  color: #ffffff;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -21,6 +31,83 @@ a {
   text-decoration: none;
 }
 
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
 * {
   box-sizing: border-box;
+}
+
+*::selection {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    line-height: 1.7;
+  }
+}
+
+@layer components {
+  .mw-page-section {
+    @apply px-6 py-8 md:px-10 md:py-10 lg:px-14 lg:py-12;
+  }
+
+  .mw-page-container {
+    @apply mx-auto max-w-6xl;
+  }
+
+  .mw-card {
+    @apply rounded-[30px] border border-white/10 bg-white/8 shadow-2xl backdrop-blur;
+  }
+
+  .mw-card-tight {
+    @apply rounded-[24px] border border-white/10 bg-slate-950/25;
+  }
+
+  .mw-eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.22em] text-violet-100;
+  }
+
+  .mw-title {
+    font-family: Georgia, serif;
+    @apply text-4xl font-semibold tracking-tight;
+  }
+
+  .mw-muted {
+    @apply text-sm leading-8 text-slate-300;
+  }
+}
+
+@layer utilities {
+  .bg-white\/8 {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .bg-white\/6 {
+    background-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .bg-white\/5 {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
 }
