@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
 import { saveProfile } from "@/lib/storage/moneywise-storage";
 import { getCurrentAuthUser, signUpWithEmail } from "@/lib/supabase/auth";
@@ -10,7 +10,6 @@ import { syncMoneywiseUserData } from "@/lib/supabase/moneywise-sync";
 
 export default function SignupPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
@@ -20,12 +19,22 @@ export default function SignupPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [checkingSession, setCheckingSession] = useState(true);
-
-  const nextPath = searchParams.get("next") || "/dashboard";
+  const [nextPath, setNextPath] = useState("/dashboard");
 
   const isDisabled = useMemo(() => {
     return !firstName.trim() || !email.trim() || password.trim().length < 6 || submitting;
   }, [email, firstName, password, submitting]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+    const next = params.get("next");
+
+    if (next && next.startsWith("/")) {
+      setNextPath(next);
+    }
+  }, []);
 
   useEffect(() => {
     let mounted = true;

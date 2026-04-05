@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
 import { getCurrentAuthUser, signInWithEmail } from "@/lib/supabase/auth";
 import { syncMoneywiseUserData } from "@/lib/supabase/moneywise-sync";
 
 export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,12 +15,22 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [checkingSession, setCheckingSession] = useState(true);
-
-  const nextPath = searchParams.get("next") || "/dashboard";
+  const [nextPath, setNextPath] = useState("/dashboard");
 
   const isDisabled = useMemo(() => {
     return !email.trim() || !password.trim() || submitting;
   }, [email, password, submitting]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+    const next = params.get("next");
+
+    if (next && next.startsWith("/")) {
+      setNextPath(next);
+    }
+  }, []);
 
   useEffect(() => {
     let mounted = true;
