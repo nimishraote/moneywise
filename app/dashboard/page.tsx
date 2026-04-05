@@ -28,6 +28,7 @@ export default function DashboardPage() {
   const [progressTick, setProgressTick] = useState(0);
   const [authEmail, setAuthEmail] = useState<string | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [checkingAccess, setCheckingAccess] = useState(true);
 
   useEffect(() => {
     setAnswers(getStoredAssessment());
@@ -42,24 +43,38 @@ export default function DashboardPage() {
       try {
         const user = await getCurrentAuthUser();
         if (!mounted) return;
-        setAuthEmail(user?.email ?? null);
+
+        if (!user) {
+          router.replace("/login?next=/dashboard");
+          return;
+        }
+
+        setAuthEmail(user.email ?? null);
+        setCheckingAccess(false);
       } catch {
         if (!mounted) return;
-        setAuthEmail(null);
+        router.replace("/login?next=/dashboard");
       }
     }
 
-    loadAuth();
+    void loadAuth();
 
     const unsubscribe = subscribeToAuthChanges((user) => {
-      setAuthEmail(user?.email ?? null);
+      if (!user) {
+        setAuthEmail(null);
+        router.replace("/");
+        return;
+      }
+
+      setAuthEmail(user.email ?? null);
+      setCheckingAccess(false);
     });
 
     return () => {
       mounted = false;
       unsubscribe();
     };
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     function handleFocus() {
@@ -112,6 +127,18 @@ export default function DashboardPage() {
     }
   }
 
+  if (checkingAccess) {
+    return (
+      <AppShell>
+        <div className="min-h-screen bg-[#120f1e] px-6 py-12 text-white">
+          <div className="mx-auto max-w-xl rounded-[32px] border border-white/10 bg-white/8 p-8 text-center shadow-2xl backdrop-blur md:p-10">
+            Opening your dashboard...
+          </div>
+        </div>
+      </AppShell>
+    );
+  }
+
   return (
     <AppShell>
       <div className="relative overflow-hidden bg-[#120f1e] text-white">
@@ -140,33 +167,14 @@ export default function DashboardPage() {
                   <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
                     Account status
                   </div>
-                  <div className="mt-2 text-white">
-                    {authEmail ? authEmail : "Not logged in"}
-                  </div>
+                  <div className="mt-2 text-white">{authEmail}</div>
                   <div className="mt-3 flex flex-wrap gap-3">
-                    {authEmail ? (
-                      <button
-                        onClick={handleLogout}
-                        className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-white"
-                      >
-                        {loggingOut ? "Logging out..." : "Log out"}
-                      </button>
-                    ) : (
-                      <>
-                        <a
-                          href="/login"
-                          className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-slate-950"
-                        >
-                          Log in
-                        </a>
-                        <a
-                          href="/signup"
-                          className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-white"
-                        >
-                          Create account
-                        </a>
-                      </>
-                    )}
+                    <button
+                      onClick={handleLogout}
+                      className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-white"
+                    >
+                      {loggingOut ? "Logging out..." : "Log out"}
+                    </button>
                   </div>
                 </div>
               </div>

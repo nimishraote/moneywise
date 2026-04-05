@@ -1,15 +1,16 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
 import { saveProfile } from "@/lib/storage/moneywise-storage";
-import { signUpWithEmail } from "@/lib/supabase/auth";
+import { getCurrentAuthUser, signUpWithEmail } from "@/lib/supabase/auth";
 import { upsertMoneywiseProfile } from "@/lib/supabase/moneywise-db";
 import { syncMoneywiseUserData } from "@/lib/supabase/moneywise-sync";
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [firstName, setFirstName] = useState("");
   const [email, setEmail] = useState("");
@@ -18,10 +19,40 @@ export default function SignupPage() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  const nextPath = searchParams.get("next") || "/dashboard";
 
   const isDisabled = useMemo(() => {
     return !firstName.trim() || !email.trim() || password.trim().length < 6 || submitting;
   }, [email, firstName, password, submitting]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function checkExistingSession() {
+      try {
+        const user = await getCurrentAuthUser();
+        if (!mounted) return;
+
+        if (user) {
+          router.replace(nextPath);
+          return;
+        }
+
+        setCheckingSession(false);
+      } catch {
+        if (!mounted) return;
+        setCheckingSession(false);
+      }
+    }
+
+    void checkExistingSession();
+
+    return () => {
+      mounted = false;
+    };
+  }, [nextPath, router]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -44,7 +75,7 @@ export default function SignupPage() {
             email: email.trim(),
           });
         } catch {
-          // Do not fail signup just because profile sync did not complete yet.
+          // Keep signup moving even if this part fails.
         }
       }
 
@@ -59,7 +90,7 @@ export default function SignupPage() {
       );
 
       setTimeout(() => {
-        router.push(authData.session ? "/onboarding" : "/login");
+        router.push(authData.session ? nextPath : "/login");
       }, 1000);
     } catch (error) {
       const message =
@@ -68,6 +99,18 @@ export default function SignupPage() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (checkingSession) {
+    return (
+      <AppShell>
+        <div className="min-h-screen bg-[#120f1e] px-6 py-12 text-white">
+          <div className="mx-auto max-w-xl rounded-[32px] border border-white/10 bg-white/8 p-8 text-center shadow-2xl backdrop-blur md:p-10">
+            Checking your session...
+          </div>
+        </div>
+      </AppShell>
+    );
   }
 
   return (
@@ -144,7 +187,10 @@ export default function SignupPage() {
 
           <div className="mt-6 text-sm text-slate-400">
             Already have an account?{" "}
-            <a href="/login" className="font-semibold text-white underline underline-offset-4">
+            <a
+              href={nextPath !== "/dashboard" ? `/login?next=${encodeURIComponent(nextPath)}` : "/login"}
+              className="font-semibold text-white underline underline-offset-4"
+            >
               Log in
             </a>
           </div>

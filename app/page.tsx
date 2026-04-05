@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
 import EditorialPhotoBand from "@/components/ui/editorial-photo-band";
 import { resetMoneywiseSession } from "@/lib/storage/moneywise-storage";
+import { getCurrentAuthUser, subscribeToAuthChanges } from "@/lib/supabase/auth";
 
 function Chip({ children }: { children: React.ReactNode }) {
   return (
@@ -31,10 +32,7 @@ function EntryModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-6">
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       <div className="relative z-10 w-full max-w-lg rounded-[28px] border border-white/10 bg-[#171327] p-6 text-white shadow-2xl md:p-8">
         <div className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-200">
@@ -49,8 +47,7 @@ function EntryModal({
         </h2>
 
         <p className="mt-4 text-sm leading-7 text-slate-300 md:text-base">
-          You can jump in right away without an account, or create one to save
-          your progress and come back to your dashboard later.
+          You can jump in right away without an account, or create one to save your progress and come back later.
         </p>
 
         <div className="mt-8 space-y-3">
@@ -99,8 +96,39 @@ function EntryModal({
 export default function HomePage() {
   const router = useRouter();
   const [showEntryModal, setShowEntryModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
-  function handleOpenEntryModal() {
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadAuth() {
+      try {
+        const user = await getCurrentAuthUser();
+        if (!mounted) return;
+        setIsLoggedIn(Boolean(user));
+      } catch {
+        if (!mounted) return;
+        setIsLoggedIn(false);
+      }
+    }
+
+    void loadAuth();
+
+    const unsubscribe = subscribeToAuthChanges((user) => {
+      setIsLoggedIn(Boolean(user));
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
+  }, []);
+
+  function handleStart() {
+    if (isLoggedIn) {
+      router.push("/dashboard");
+      return;
+    }
     setShowEntryModal(true);
   }
 
@@ -138,9 +166,7 @@ export default function HomePage() {
                 </h1>
 
                 <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300 md:text-xl md:leading-9">
-                  MoneyWise helps young adults make sense of money in plain
-                  language. It is for people who want less confusion, less
-                  stress, and a clearer place to start.
+                  MoneyWise helps young adults make sense of money in plain language. It is for people who want less confusion, less stress, and a clearer place to start.
                 </p>
 
                 <div className="mt-8 flex flex-wrap gap-3">
@@ -151,16 +177,15 @@ export default function HomePage() {
 
                 <div className="mt-8 flex flex-wrap items-center gap-4">
                   <button
-                    onClick={handleOpenEntryModal}
+                    onClick={handleStart}
                     className="inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950"
                   >
-                    Get started
+                    {isLoggedIn ? "Go to dashboard" : "Get started"}
                   </button>
                 </div>
 
                 <div className="mt-4 text-sm text-slate-400">
-                  Learn the basics, build one clear rule, and come back to track
-                  your progress over time
+                  Learn the basics, build one clear rule, and come back to track your progress over time
                 </div>
               </div>
 

@@ -1,23 +1,54 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
-import { signInWithEmail } from "@/lib/supabase/auth";
+import { getCurrentAuthUser, signInWithEmail } from "@/lib/supabase/auth";
 import { syncMoneywiseUserData } from "@/lib/supabase/moneywise-sync";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  const nextPath = searchParams.get("next") || "/dashboard";
 
   const isDisabled = useMemo(() => {
     return !email.trim() || !password.trim() || submitting;
   }, [email, password, submitting]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function checkExistingSession() {
+      try {
+        const user = await getCurrentAuthUser();
+        if (!mounted) return;
+
+        if (user) {
+          router.replace(nextPath);
+          return;
+        }
+
+        setCheckingSession(false);
+      } catch {
+        if (!mounted) return;
+        setCheckingSession(false);
+      }
+    }
+
+    void checkExistingSession();
+
+    return () => {
+      mounted = false;
+    };
+  }, [nextPath, router]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -31,7 +62,7 @@ export default function LoginPage() {
         await syncMoneywiseUserData(authData.user.id, authData.user.email ?? email.trim());
       }
 
-      router.push("/dashboard");
+      router.push(nextPath);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Something went wrong during log in.";
@@ -39,6 +70,18 @@ export default function LoginPage() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (checkingSession) {
+    return (
+      <AppShell>
+        <div className="min-h-screen bg-[#120f1e] px-6 py-12 text-white">
+          <div className="mx-auto max-w-xl rounded-[32px] border border-white/10 bg-white/8 p-8 text-center shadow-2xl backdrop-blur md:p-10">
+            Checking your session...
+          </div>
+        </div>
+      </AppShell>
+    );
   }
 
   return (
@@ -98,7 +141,10 @@ export default function LoginPage() {
 
           <div className="mt-6 text-sm text-slate-400">
             Need an account?{" "}
-            <a href="/signup" className="font-semibold text-white underline underline-offset-4">
+            <a
+              href={nextPath !== "/dashboard" ? `/signup?next=${encodeURIComponent(nextPath)}` : "/signup"}
+              className="font-semibold text-white underline underline-offset-4"
+            >
               Create one
             </a>
           </div>
