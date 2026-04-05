@@ -13,6 +13,7 @@ import {
 } from "@/lib/storage/moneywise-storage";
 import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
 import { getLessonHref, moduleTitles } from "@/lib/content/lesson-content";
+import { getCurrentAuthUser, subscribeToAuthChanges } from "@/lib/supabase/auth";
 
 type AiSummary = {
   title: string;
@@ -25,11 +26,42 @@ export default function PlanPage() {
   const [firstName, setFirstName] = useState("");
   const [aiSummary, setAiSummary] = useState<AiSummary | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const [authEmail, setAuthEmail] = useState<string | null>(null);
 
   useEffect(() => {
     setAnswers(getStoredAssessment());
     const profile = getStoredProfile();
     if (profile?.firstName) setFirstName(profile.firstName);
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadAuth() {
+      try {
+        const user = await getCurrentAuthUser();
+        if (!mounted) return;
+        setIsLoggedIn(Boolean(user));
+        setAuthEmail(user?.email ?? null);
+      } catch {
+        if (!mounted) return;
+        setIsLoggedIn(false);
+        setAuthEmail(null);
+      }
+    }
+
+    void loadAuth();
+
+    const unsubscribe = subscribeToAuthChanges((user) => {
+      setIsLoggedIn(Boolean(user));
+      setAuthEmail(user?.email ?? null);
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
   }, []);
 
   const plan: PersonalizedPlan = useMemo(() => buildPersonalizedPlan(answers), [answers]);
@@ -44,6 +76,7 @@ export default function PlanPage() {
 
     async function loadSummary() {
       setSummaryLoading(true);
+
       try {
         const profile = getStoredProfile();
         const response = await fetch("/api/plan-summary", {
@@ -93,7 +126,9 @@ export default function PlanPage() {
       answers.basicsBudgeting ||
       answers.topPriority.length > 0;
 
-    if (hasEnoughInput) loadSummary();
+    if (hasEnoughInput) {
+      void loadSummary();
+    }
 
     return () => {
       cancelled = true;
@@ -104,6 +139,9 @@ export default function PlanPage() {
   const summaryParagraphOne = aiSummary?.paragraphOne || plan.snapshot.body;
   const summaryParagraphTwo = aiSummary?.paragraphTwo || plan.focus.body;
 
+  const accountHref = `/signup?next=${encodeURIComponent("/plan")}`;
+  const loginHref = `/login?next=${encodeURIComponent("/plan")}`;
+
   return (
     <AppShell>
       <div className="relative overflow-hidden bg-[#120f1e] text-white">
@@ -112,22 +150,71 @@ export default function PlanPage() {
           <JourneyNav activeStep="plan" />
           <div className="mx-auto max-w-6xl px-6 py-10 md:px-10 lg:px-14">
             <div className="mb-8">
-              <div className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-100">
-                Your starting plan
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <div className="text-xs font-semibold uppercase tracking-[0.22em] text-violet-100">
+                    Your starting plan
+                  </div>
+                  <h2
+                    className="mt-3 text-4xl font-semibold tracking-tight"
+                    style={{ fontFamily: "Georgia, serif" }}
+                  >
+                    A more personal place to start{headingName}
+                  </h2>
+                  <p className="mt-4 text-base leading-8 text-slate-300">
+                    This plan should reflect your real situation, not a generic beginner path.
+                  </p>
+                </div>
+
+                <div className="rounded-[24px] border border-white/10 bg-white/8 p-4 text-sm text-slate-300">
+                  <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
+                    Save status
+                  </div>
+                  <div className="mt-2 text-white">
+                    {isLoggedIn ? "Saved to your account" : "Saved on this device only"}
+                  </div>
+                  <div className="mt-1 text-xs text-slate-400">
+                    {isLoggedIn
+                      ? authEmail || "Your progress can follow you when you come back."
+                      : "Create an account if you want this plan and progress to stay with you later."}
+                  </div>
+                </div>
               </div>
+
               <div className="mt-5 overflow-hidden rounded-[30px] border border-white/10">
                 <EditorialPhotoBand imageKey="plan" short />
               </div>
-              <h2
-                className="mt-3 text-4xl font-semibold tracking-tight"
-                style={{ fontFamily: "Georgia, serif" }}
-              >
-                A more personal place to start{headingName}
-              </h2>
-              <p className="mt-4 text-base leading-8 text-slate-300">
-                This plan should reflect your real situation, not a generic beginner path.
-              </p>
             </div>
+
+            {!isLoggedIn && (
+              <div className="mb-6 rounded-[28px] border border-amber-300/20 bg-amber-200/10 p-5 shadow-xl">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <div className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-200">
+                      Guest mode
+                    </div>
+                    <div className="mt-2 max-w-2xl text-sm leading-7 text-amber-50">
+                      You can keep learning as a guest, but your plan and progress are only saved on this device for now.
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-3">
+                    <a
+                      href={accountHref}
+                      className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
+                    >
+                      Create account
+                    </a>
+                    <a
+                      href={loginHref}
+                      className="rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white"
+                    >
+                      Log in
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
               <div className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-200">
@@ -211,12 +298,31 @@ export default function PlanPage() {
                         These should be small enough to do, not just admire.
                       </div>
                     </div>
-                    <a
-                      href={startLessonHref}
-                      className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
-                    >
-                      Start learning
-                    </a>
+
+                    <div className="flex flex-wrap gap-3">
+                      <a
+                        href={startLessonHref}
+                        className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950"
+                      >
+                        Start learning
+                      </a>
+
+                      {isLoggedIn ? (
+                        <a
+                          href="/dashboard"
+                          className="rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white"
+                        >
+                          Go to dashboard
+                        </a>
+                      ) : (
+                        <a
+                          href={accountHref}
+                          className="rounded-full border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white"
+                        >
+                          Create account to save
+                        </a>
+                      )}
+                    </div>
                   </div>
 
                   <div className="mt-5 space-y-4">
@@ -231,6 +337,12 @@ export default function PlanPage() {
                       </div>
                     ))}
                   </div>
+
+                  {!isLoggedIn && (
+                    <div className="mt-5 rounded-[22px] border border-white/10 bg-slate-950/20 p-4 text-sm leading-7 text-slate-300">
+                      You can start learning right away as a guest. When you are ready, create an account to keep your progress across visits.
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
