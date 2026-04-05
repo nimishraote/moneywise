@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
 import { signInWithEmail } from "@/lib/supabase/auth";
+import { syncMoneywiseUserData } from "@/lib/supabase/moneywise-sync";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,7 +25,12 @@ export default function LoginPage() {
     setSubmitting(true);
 
     try {
-      await signInWithEmail(email.trim(), password);
+      const authData = await signInWithEmail(email.trim(), password);
+
+      if (authData.user?.id) {
+        await syncMoneywiseUserData(authData.user.id, authData.user.email ?? email.trim());
+      }
+
       router.push("/dashboard");
     } catch (error) {
       const message =

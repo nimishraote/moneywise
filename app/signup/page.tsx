@@ -6,6 +6,7 @@ import AppShell from "@/components/layout/app-shell";
 import { saveProfile } from "@/lib/storage/moneywise-storage";
 import { signUpWithEmail } from "@/lib/supabase/auth";
 import { upsertMoneywiseProfile } from "@/lib/supabase/moneywise-db";
+import { syncMoneywiseUserData } from "@/lib/supabase/moneywise-sync";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -45,6 +46,10 @@ export default function SignupPage() {
         } catch {
           // Do not fail signup just because profile sync did not complete yet.
         }
+      }
+
+      if (authData.user?.id && authData.session) {
+        await syncMoneywiseUserData(authData.user.id, authData.user.email ?? email.trim());
       }
 
       setSuccessMessage(
