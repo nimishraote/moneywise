@@ -11,6 +11,7 @@ import {
   getStoredAssessment,
   saveAssessment,
 } from "@/lib/storage/moneywise-storage";
+import { getCurrentAuthUser, subscribeToAuthChanges } from "@/lib/supabase/auth";
 
 type SingleQuestionConfig = {
   key: Exclude<keyof AssessmentInput, "topPriority">;
@@ -56,7 +57,7 @@ function ChoiceButton({
     >
       <div className="flex items-center gap-3">
         <div
-          className={`h-4 w-4 rounded-sm border ${
+          className={`h-4 w-4 border ${
             active ? "border-slate-950 bg-slate-950" : "border-slate-500"
           } ${multi ? "rounded-sm" : "rounded-full"}`}
         />
@@ -64,6 +65,88 @@ function ChoiceButton({
       </div>
       {active && <Check className="h-4 w-4" />}
     </button>
+  );
+}
+
+function FinishPrompt({
+  open,
+  onClose,
+  onContinueGuest,
+  onSignup,
+  onLogin,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onContinueGuest: () => void;
+  onSignup: () => void;
+  onLogin: () => void;
+}) {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-6">
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
+
+      <div className="relative z-10 w-full max-w-lg rounded-[28px] border border-white/10 bg-[#171327] p-6 text-white shadow-2xl md:p-8">
+        <div className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-200">
+          Save your progress
+        </div>
+
+        <h2
+          className="mt-4 text-3xl font-semibold tracking-tight md:text-4xl"
+          style={{ fontFamily: "Georgia, serif" }}
+        >
+          Your plan is ready
+        </h2>
+
+        <p className="mt-4 text-sm leading-7 text-slate-300 md:text-base">
+          You can keep going as a guest, or create an account to save your plan,
+          progress, and learning history.
+        </p>
+
+        <div className="mt-8 space-y-3">
+          <button
+            onClick={onSignup}
+            className="w-full rounded-2xl bg-white px-5 py-4 text-left text-sm font-semibold text-slate-950"
+          >
+            Create account
+            <div className="mt-1 text-xs font-normal text-slate-600">
+              Best if you want to save this and come back later
+            </div>
+          </button>
+
+          <button
+            onClick={onLogin}
+            className="w-full rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-left text-sm font-semibold text-white"
+          >
+            Log in
+            <div className="mt-1 text-xs font-normal text-slate-400">
+              Pick up from an existing account
+            </div>
+          </button>
+
+          <button
+            onClick={onContinueGuest}
+            className="w-full rounded-2xl border border-white/10 bg-transparent px-5 py-4 text-left text-sm font-semibold text-slate-200"
+          >
+            Continue as guest
+            <div className="mt-1 text-xs font-normal text-slate-400">
+              You can still explore, but this device will hold the progress
+            </div>
+          </button>
+        </div>
+
+        <button
+          onClick={onClose}
+          className="mt-6 text-sm text-slate-400 underline underline-offset-4"
+        >
+          Close
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -346,10 +429,10 @@ function getAssessmentSteps(input: AssessmentInput): AssessmentStep[] {
 
 export default function AssessmentPage() {
   const router = useRouter();
-  const [answers, setAnswers] = useState<AssessmentInput>(
-    defaultAssessmentInput
-  );
+  const [answers, setAnswers] = useState<AssessmentInput>(defaultAssessmentInput);
   const [stepIndex, setStepIndex] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const [showFinishPrompt, setShowFinishPrompt] = useState(false);
 
   useEffect(() => {
     setAnswers(getStoredAssessment());
@@ -362,6 +445,32 @@ export default function AssessmentPage() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [stepIndex]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadAuth() {
+      try {
+        const user = await getCurrentAuthUser();
+        if (!mounted) return;
+        setIsLoggedIn(Boolean(user));
+      } catch {
+        if (!mounted) return;
+        setIsLoggedIn(false);
+      }
+    }
+
+    void loadAuth();
+
+    const unsubscribe = subscribeToAuthChanges((user) => {
+      setIsLoggedIn(Boolean(user));
+    });
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
+  }, []);
 
   const steps = useMemo(() => getAssessmentSteps(answers), [answers]);
   const step = steps[stepIndex];
@@ -390,11 +499,32 @@ export default function AssessmentPage() {
     setStepIndex((current) => current - 1);
   }
 
+  function handleContinueGuest() {
+    setShowFinishPrompt(false);
+    router.push("/plan");
+  }
+
+  function handleCreateAccount() {
+    setShowFinishPrompt(false);
+    router.push("/signup?next=/plan");
+  }
+
+  function handleLogin() {
+    setShowFinishPrompt(false);
+    router.push("/login?next=/plan");
+  }
+
   function handleContinue() {
     if (stepIndex === steps.length - 1) {
-      router.push("/plan");
+      if (isLoggedIn) {
+        router.push("/plan");
+        return;
+      }
+
+      setShowFinishPrompt(true);
       return;
     }
+
     setStepIndex((current) => current + 1);
   }
 
@@ -514,6 +644,14 @@ export default function AssessmentPage() {
               </div>
             </div>
           </div>
+
+          <FinishPrompt
+            open={showFinishPrompt}
+            onClose={() => setShowFinishPrompt(false)}
+            onContinueGuest={handleContinueGuest}
+            onSignup={handleCreateAccount}
+            onLogin={handleLogin}
+          />
         </div>
       </div>
     </AppShell>
