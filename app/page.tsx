@@ -7,10 +7,17 @@ import EditorialPhotoBand from "@/components/ui/editorial-photo-band";
 import { resetMoneywiseSession } from "@/lib/storage/moneywise-storage";
 import { getCurrentAuthUser, subscribeToAuthChanges } from "@/lib/supabase/auth";
 
-function Chip({ children }: { children: React.ReactNode }) {
+function BenefitCard({
+  title,
+  body,
+}: {
+  title: string;
+  body: string;
+}) {
   return (
-    <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-200">
-      {children}
+    <div className="rounded-[24px] border border-white/10 bg-white/6 p-5">
+      <div className="text-sm font-semibold text-white">{title}</div>
+      <div className="mt-2 text-sm leading-7 text-slate-300">{body}</div>
     </div>
   );
 }
@@ -43,11 +50,11 @@ function EntryModal({
           className="mt-4 text-3xl font-semibold tracking-tight md:text-4xl"
           style={{ fontFamily: "Georgia, serif" }}
         >
-          How would you like to start?
+          Choose how you want to start
         </h2>
 
         <p className="mt-4 text-sm leading-7 text-slate-300 md:text-base">
-          You can jump in right away without an account, or create one to save your progress and come back later.
+          You can explore first, or create an account so your plan and progress stay with you.
         </p>
 
         <div className="mt-8 space-y-3">
@@ -57,7 +64,7 @@ function EntryModal({
           >
             Continue without account
             <div className="mt-1 text-xs font-normal text-slate-600">
-              Best if you just want to explore first
+              Good if you just want to look around first
             </div>
           </button>
 
@@ -67,7 +74,7 @@ function EntryModal({
           >
             Create account
             <div className="mt-1 text-xs font-normal text-slate-400">
-              Save progress, plan, and learning history
+              Save your plan, lessons, and progress
             </div>
           </button>
 
@@ -77,7 +84,7 @@ function EntryModal({
           >
             Log in
             <div className="mt-1 text-xs font-normal text-slate-400">
-              Pick up where you left off
+              Return to where you left off
             </div>
           </button>
         </div>
@@ -152,7 +159,7 @@ export default function HomePage() {
 
         <div className="relative px-6 py-10 md:px-10 md:py-12 lg:px-14 lg:py-14">
           <div className="mx-auto max-w-7xl">
-            <div className="grid items-stretch gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:gap-10">
+            <div className="grid items-stretch gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10">
               <div className="flex flex-col justify-center">
                 <div className="inline-flex w-fit rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-amber-200">
                   Built for young adults
@@ -166,14 +173,8 @@ export default function HomePage() {
                 </h1>
 
                 <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300 md:text-xl md:leading-9">
-                  MoneyWise helps young adults make sense of money in plain language. It is for people who want less confusion, less stress, and a clearer place to start.
+                  MoneyWise helps young adults understand money in plain language and turn that into a clear starting plan.
                 </p>
-
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <Chip>Simple language</Chip>
-                  <Chip>Short assessment</Chip>
-                  <Chip>Personalized learning path</Chip>
-                </div>
 
                 <div className="mt-8 flex flex-wrap items-center gap-4">
                   <button
@@ -182,10 +183,25 @@ export default function HomePage() {
                   >
                     {isLoggedIn ? "Go to dashboard" : "Get started"}
                   </button>
+
+                  <div className="text-sm text-slate-400">
+                    Short check-in, personal plan, simple next steps
+                  </div>
                 </div>
 
-                <div className="mt-4 text-sm text-slate-400">
-                  Learn the basics, build one clear rule, and come back to track your progress over time
+                <div className="mt-8 grid gap-4 md:grid-cols-3">
+                  <BenefitCard
+                    title="Understand your money style"
+                    body="A short check-in helps the app see what feels easy, confusing, or stressful right now."
+                  />
+                  <BenefitCard
+                    title="Get a starting plan"
+                    body="You get a clearer place to begin, instead of generic advice that does not fit your situation."
+                  />
+                  <BenefitCard
+                    title="Build progress over time"
+                    body="Track lessons, simple actions, and the next step that matters most."
+                  />
                 </div>
               </div>
 
