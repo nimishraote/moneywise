@@ -1,157 +1,127 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import {
-  FUTURE_AI_PLAN_SUMMARY_PROMPT,
-  type FutureAIPlanRequest,
-  type FutureAIPlanSummaryResponse,
-} from "@/lib/ai/plan-contract";
+import type { AssessmentInput } from "@/lib/types/assessment";
+import type { RecommendedModule } from "@/lib/types/personalized-plan";
+import { buildPersonalizedPlan } from "@/lib/personalization/build-plan";
+import { moduleTitles } from "@/lib/content/lesson-content";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+type PlanSummaryRequest = {
+  assessment: AssessmentInput;
+  profile?: {
+    firstName?: string;
+  };
+  recommendedModule: RecommendedModule;
+  recommendedModuleTitle: string;
+};
 
-function buildFallbackSummary(
-  input: FutureAIPlanRequest
-): FutureAIPlanSummaryResponse {
-  const firstName = input.profile?.firstName?.trim();
-  const namePart = firstName ? `, ${firstName}` : "";
+function buildFallbackSummary(payload: PlanSummaryRequest) {
+  const plan = buildPersonalizedPlan(payload.assessment);
+  const firstName = payload.profile?.firstName?.trim();
+  const introName = firstName ? `${firstName}, ` : "";
+  const recommendedTitle =
+    payload.recommendedModuleTitle || moduleTitles[payload.recommendedModule];
 
-  let title = `You are starting in the right place${namePart}.`;
-  let paragraphOne =
-    "Money can feel confusing when nobody has explained it simply. The good news is that you are looking at it now instead of waiting until it feels bigger.";
-  let paragraphTwo = `The best place to start is ${input.recommendedModuleTitle.toLowerCase()}. It gives you a clearer base for calmer and smarter decisions from here.`;
-
-  const topPriorities = input.assessment.topPriority || [];
-  const wantsMoney101 = topPriorities.includes("Learning the basic 101 of money");
-
-  if (wantsMoney101) {
-    title = `You do not need advanced finance first${namePart}.`;
-    paragraphOne =
-      "Right now, the most useful thing is to make the basics feel clear and less intimidating. That usually means understanding the building blocks before trying to jump into harder topics.";
-    paragraphTwo =
-      "So the best place to start is money basics 101. That will help you understand bank accounts, cards, budgeting, saving, interest, and the core rules that make later topics easier.";
-    return { title, paragraphOne, paragraphTwo };
-  }
-
-  if (input.assessment.lifeStage === "Pre-college / high school") {
-    title = `Starting early really helps${namePart}.`;
-    paragraphOne =
-      "A lot of people do not learn this until much later. You are looking at it earlier, which gives you more time to understand the basics before life gets more expensive.";
-  }
-
-  if (
-    input.assessment.stressLevel === "Very stressed" ||
-    input.assessment.stressLevel === "Somewhat stressed"
-  ) {
-    title = `This can feel heavy, but it can get clearer${namePart}.`;
-    paragraphOne =
-      "When money already feels stressful, the most useful next move is not more noise. It is one simple starting point that makes things feel more understandable.";
-  }
-
-  if (input.recommendedModule === "money-101-foundations") {
-    paragraphTwo =
-      "The best place to start is money basics 101. That gives you a simpler base for understanding cards, budgeting, saving, interest, and what to do next.";
-  } else if (
-    input.assessment.basicsStocks === "No" ||
-    input.assessment.basicsIndexFunds === "No" ||
-    input.assessment.basicsStockMarket === "No"
-  ) {
-    paragraphTwo = `The best place to start is ${input.recommendedModuleTitle.toLowerCase()}. Before you make money decisions, it helps to understand the basics in plain language.`;
-  }
-
-  return { title, paragraphOne, paragraphTwo };
-}
-
-function safeParseJson(text: string): FutureAIPlanSummaryResponse | null {
-  try {
-    const parsed = JSON.parse(text);
-    if (
-      parsed &&
-      typeof parsed.title === "string" &&
-      typeof parsed.paragraphOne === "string" &&
-      typeof parsed.paragraphTwo === "string"
-    ) {
-      return {
-        title: parsed.title.trim(),
-        paragraphOne: parsed.paragraphOne.trim(),
-        paragraphTwo: parsed.paragraphTwo.trim(),
-      };
-    }
-    return null;
-  } catch {
-    return null;
-  }
+  return {
+    summary: {
+      title: `${introName}this is a strong place to begin`,
+      paragraphOne: `Your answers suggest that ${recommendedTitle.toLowerCase()} is the best starting point right now. The goal is not to learn everything at once. It is to focus on the one area that will make the rest of money feel clearer and easier to handle.`,
+      paragraphTwo: `${plan.firstLessonReason} Start there first, then build from that foundation instead of trying to fix everything at the same time.`,
+    },
+  };
 }
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as FutureAIPlanRequest;
+    const payload = (await request.json()) as PlanSummaryRequest;
 
-    if (!body?.assessment || !body?.recommendedModuleTitle) {
-      return NextResponse.json(
-        { error: "Missing required fields." },
-        { status: 400 }
-      );
+    const apiKey = process.env.OPENAI_API_KEY;
+
+    if (!apiKey) {
+      return NextResponse.json(buildFallbackSummary(payload));
     }
 
-    if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json(
-        { summary: buildFallbackSummary(body), source: "fallback" },
-        { status: 200 }
-      );
-    }
+    const client = new OpenAI({ apiKey });
+
+    const firstName = payload.profile?.firstName?.trim();
+    const recommendedTitle =
+      payload.recommendedModuleTitle || moduleTitles[payload.recommendedModule];
+
+    const prompt = `
+You are writing for a young adult using a financial literacy app.
+
+Write a short personalized summary in very simple English.
+Tone:
+- calm
+- clear
+- supportive
+- not robotic
+- not too formal
+- not too long
+
+Audience:
+- beginner
+- likely age 16 to 29
+- may feel confused or stressed about money
+- needs practical clarity
+
+Rules:
+- return valid JSON only
+- JSON shape:
+{
+  "title": "...",
+  "paragraphOne": "...",
+  "paragraphTwo": "..."
+}
+- title should be short
+- each paragraph should be 2 to 4 sentences max
+- do not use jargon
+- do not use bullet points
+- do not use markdown
+
+Context:
+- user first name: ${firstName || "Unknown"}
+- recommended starting topic: ${recommendedTitle}
+- assessment data: ${JSON.stringify(payload.assessment)}
+`;
 
     const response = await client.responses.create({
-      model: "gpt-5.4",
-      instructions: FUTURE_AI_PLAN_SUMMARY_PROMPT,
-      input: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "input_text",
-              text: JSON.stringify(
-                {
-                  firstName: body.profile?.firstName ?? "",
-                  recommendedModule: body.recommendedModule,
-                  recommendedModuleTitle: body.recommendedModuleTitle,
-                  assessment: body.assessment,
-                },
-                null,
-                2
-              ),
-            },
-          ],
-        },
-      ],
+      model: "gpt-5-mini",
+      input: prompt,
     });
 
-    const outputText = response.output_text?.trim() || "";
-    const parsed = safeParseJson(outputText);
+    const rawText = response.output_text?.trim();
 
-    if (!parsed) {
-      return NextResponse.json(
-        { summary: buildFallbackSummary(body), source: "fallback" },
-        { status: 200 }
-      );
+    if (!rawText) {
+      return NextResponse.json(buildFallbackSummary(payload));
     }
 
+    try {
+      const parsed = JSON.parse(rawText);
+
+      if (
+        typeof parsed?.title === "string" &&
+        typeof parsed?.paragraphOne === "string" &&
+        typeof parsed?.paragraphTwo === "string"
+      ) {
+        return NextResponse.json({ summary: parsed });
+      }
+
+      return NextResponse.json(buildFallbackSummary(payload));
+    } catch {
+      return NextResponse.json(buildFallbackSummary(payload));
+    }
+  } catch {
     return NextResponse.json(
-      { summary: parsed, source: "ai" },
+      {
+        summary: {
+          title: "A clear place to begin",
+          paragraphOne:
+            "We picked a starting point based on your answers so you do not have to figure everything out at once.",
+          paragraphTwo:
+            "Start with the first recommended lesson and build from there one step at a time.",
+        },
+      },
       { status: 200 }
     );
-  } catch {
-    try {
-      const body = (await request.clone().json()) as FutureAIPlanRequest;
-      return NextResponse.json(
-        { summary: buildFallbackSummary(body), source: "fallback" },
-        { status: 200 }
-      );
-    } catch {
-      return NextResponse.json(
-        { error: "Unable to generate summary." },
-        { status: 500 }
-      );
-    }
   }
 }
