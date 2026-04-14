@@ -41,7 +41,6 @@ export default function LessonCoach({
 
     setLoading(true);
     setErrorMessage("");
-    setAnswer("");
 
     try {
       const response = await fetch("/api/lesson-coach", {
@@ -108,9 +107,9 @@ export default function LessonCoach({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 18, scale: 0.98 }}
             transition={{ duration: 0.18 }}
-            className="fixed bottom-44 right-5 z-40 w-[calc(100vw-2.5rem)] max-w-[380px] md:bottom-44 md:right-8"
+            className="fixed bottom-44 right-5 z-40 w-[calc(100vw-2.5rem)] max-w-[390px] md:bottom-44 md:right-8"
           >
-            <div className="overflow-hidden rounded-[28px] border border-white/10 bg-[#171327]/95 shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+            <div className="flex h-[70vh] max-h-[680px] min-h-[520px] flex-col overflow-hidden rounded-[28px] border border-white/10 bg-[#171327]/95 shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl">
               <div className="border-b border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.25),transparent_35%),linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div>
@@ -141,78 +140,98 @@ export default function LessonCoach({
                 </div>
               </div>
 
-              <div className="p-5">
-                <div className="rounded-[22px] border border-white/10 bg-slate-950/25 p-4">
-                  <div className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                    Current lesson
+              <div className="flex min-h-0 flex-1 flex-col">
+                <div className="min-h-0 flex-1 overflow-y-auto p-5">
+                  <div className="rounded-[22px] border border-white/10 bg-slate-950/25 p-4">
+                    <div className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+                      Current lesson
+                    </div>
+                    <div className="mt-2 text-sm font-semibold text-white">
+                      {lessonTitle}
+                    </div>
+                    <div className="mt-2 text-sm leading-7 text-slate-300">
+                      {personaLead}
+                    </div>
                   </div>
-                  <div className="mt-2 text-sm font-semibold text-white">
-                    {lessonTitle}
+
+                  <div className="mt-4">
+                    <div className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+                      Suggested prompts
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {suggestedPrompts.map((prompt) => (
+                        <button
+                          key={prompt}
+                          type="button"
+                          onClick={() => {
+                            setQuestion(prompt);
+                            void askCoach(prompt);
+                          }}
+                          className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-left text-xs font-medium text-slate-200 transition hover:bg-white/10"
+                        >
+                          {prompt}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <div className="mt-2 text-sm leading-7 text-slate-300">
-                    {personaLead}
-                  </div>
+
+                  {errorMessage ? (
+                    <div className="mt-4 rounded-[22px] border border-red-300/20 bg-red-300/10 p-4 text-sm leading-7 text-red-100">
+                      {errorMessage}
+                    </div>
+                  ) : null}
+
+                  {answer ? (
+                    <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 p-4">
+                      <div className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-100">
+                        Coach answer
+                      </div>
+                      <div className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-200">
+                        {answer}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 p-4 text-sm leading-7 text-slate-400">
+                      Ask a question or tap one of the suggested prompts.
+                    </div>
+                  )}
                 </div>
 
-                <div className="mt-4">
-                  <div className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                    Suggested prompts
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {suggestedPrompts.map((prompt) => (
-                      <button
-                        key={prompt}
-                        type="button"
-                        onClick={() => {
-                          setQuestion(prompt);
-                          void askCoach(prompt);
-                        }}
-                        className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-left text-xs font-medium text-slate-200 transition hover:bg-white/10"
-                      >
-                        {prompt}
-                      </button>
-                    ))}
-                  </div>
+                <div className="border-t border-white/10 bg-[#171327]/95 p-4">
+                  <form onSubmit={handleSubmit}>
+                    <div className="rounded-[22px] border border-white/10 bg-slate-950/25 p-3">
+                      <textarea
+                        value={question}
+                        onChange={(event) => setQuestion(event.target.value)}
+                        rows={3}
+                        placeholder={placeholder}
+                        className="w-full resize-none bg-transparent text-sm leading-7 text-white outline-none placeholder:text-slate-500"
+                      />
+                      <div className="mt-2 flex justify-between gap-3">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setQuestion("");
+                            setAnswer("");
+                            setErrorMessage("");
+                          }}
+                          className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+                        >
+                          Clear
+                        </button>
+
+                        <button
+                          type="submit"
+                          disabled={loading || !question.trim()}
+                          className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                          <Send className="h-4 w-4" />
+                          {loading ? "Thinking..." : "Ask"}
+                        </button>
+                      </div>
+                    </div>
+                  </form>
                 </div>
-
-                <form onSubmit={handleSubmit} className="mt-4">
-                  <div className="rounded-[22px] border border-white/10 bg-slate-950/25 p-3">
-                    <textarea
-                      value={question}
-                      onChange={(event) => setQuestion(event.target.value)}
-                      rows={3}
-                      placeholder={placeholder}
-                      className="w-full resize-none bg-transparent text-sm leading-7 text-white outline-none placeholder:text-slate-500"
-                    />
-                    <div className="mt-2 flex justify-end">
-                      <button
-                        type="submit"
-                        disabled={loading || !question.trim()}
-                        className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
-                      >
-                        <Send className="h-4 w-4" />
-                        {loading ? "Thinking..." : "Ask"}
-                      </button>
-                    </div>
-                  </div>
-                </form>
-
-                {errorMessage ? (
-                  <div className="mt-4 rounded-[22px] border border-red-300/20 bg-red-300/10 p-4 text-sm leading-7 text-red-100">
-                    {errorMessage}
-                  </div>
-                ) : null}
-
-                {answer ? (
-                  <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 p-4">
-                    <div className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-100">
-                      Coach answer
-                    </div>
-                    <div className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-200">
-                      {answer}
-                    </div>
-                  </div>
-                ) : null}
               </div>
             </div>
           </motion.div>
