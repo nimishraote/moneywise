@@ -81,11 +81,11 @@ function money101Content(): LearnPageContent {
               "A bank account is not just where money sits. It is the main place where you can see your money life clearly.",
             actionSteps: [
               "Open your banking app or ask to see the account you usually use.",
-              "Say out loud how much money is in there right now.",
-              "Write down the last 3 ways money came into the account.",
-              "Write down the last 3 ways money went out.",
+              "Write down the current balance.",
+              "Write the last 3 ways money came in.",
+              "Write the last 3 ways money went out.",
             ],
-            extraReadingLabel: "Read more about bank accounts",
+            extraReadingLabel: "Learn more about bank accounts",
             extraReadingUrl:
               "https://consumer.gov/managing-your-money/opening-checking-or-savings-account",
           },
@@ -102,13 +102,13 @@ function money101Content(): LearnPageContent {
               "The useful mental rule is this: debit checks what you have now. Credit can create a bill for later. Once you understand that clearly, a lot of future confusion gets avoided.",
             ],
             takeaway:
-              "Debit usually uses your own money now. Credit can create money you owe later.",
+              "Debit usually uses your own money now. Credit can create a bill for later.",
             actionSteps: [
               "Look at the cards you use now and label each one debit or credit.",
               "Write one sentence explaining the difference in your own words.",
               "Next time you use a card, pause and ask: is this my money now, or a bill later?",
             ],
-            extraReadingLabel: "Read more about debit and credit",
+            extraReadingLabel: "Learn more about debit and credit",
             extraReadingUrl:
               "https://consumer.gov/managing-your-money/using-debit-cards",
           },
@@ -150,6 +150,9 @@ function budgetingContent(): LearnPageContent {
               "Next to each one, write how much it was.",
               "Under that, write the first 3 things that money usually goes toward.",
             ],
+            extraReadingLabel: "Learn more about budgeting and cash flow",
+            extraReadingUrl:
+              "https://consumer.gov/managing-your-money/making-budget",
           },
           {
             id: "needs-vs-flex",
@@ -170,6 +173,9 @@ function budgetingContent(): LearnPageContent {
               "Mark each one as harder to change or easier to change.",
               "Circle one easier-to-change category you want to watch this week.",
             ],
+            extraReadingLabel: "Learn more about needs and wants spending",
+            extraReadingUrl:
+              "https://consumer.gov/managing-your-money/tracking-your-spending",
           },
         ],
       },
@@ -208,6 +214,9 @@ function savingContent(): LearnPageContent {
               "Write down how even a small savings cushion could have helped.",
               "Choose one reason saving would matter to you personally, not just in theory.",
             ],
+            extraReadingLabel: "Learn more about emergency savings",
+            extraReadingUrl:
+              "https://consumer.gov/saving-and-investing/opening-and-maintaining-emergency-fund",
           },
           {
             id: "small-starts",
@@ -228,6 +237,9 @@ function savingContent(): LearnPageContent {
               "Make it small enough that you would actually do it again.",
               "Name what that saved money is for, even if the goal is small.",
             ],
+            extraReadingLabel: "Learn more about building a savings habit",
+            extraReadingUrl:
+              "https://consumer.gov/managing-your-money/saving-money",
           },
         ],
       },
@@ -266,6 +278,9 @@ function creditContent(): LearnPageContent {
               "Underline the word borrowed in your sentence.",
               "Ask yourself whether that changes how you think about using a credit card.",
             ],
+            extraReadingLabel: "Learn more about credit basics",
+            extraReadingUrl:
+              "https://consumer.gov/managing-your-money/building-and-improving-credit",
           },
           {
             id: "interest",
@@ -286,6 +301,9 @@ function creditContent(): LearnPageContent {
               "Under it, write: borrowing does not remove the cost, it can increase it.",
               "Keep that sentence as your reminder if you ever use credit.",
             ],
+            extraReadingLabel: "Learn more about interest and credit card costs",
+            extraReadingUrl:
+              "https://consumer.gov/managing-your-money/using-credit-cards",
           },
         ],
       },
@@ -320,10 +338,15 @@ function investingContent(): LearnPageContent {
             takeaway:
               "Saving and investing both matter, but they solve different problems.",
             actionSteps: [
-              "Write one short sentence explaining what saving is for.",
-              "Write one short sentence explaining what investing is for.",
-              "Check whether your two sentences sound meaningfully different.",
+              "Make two columns in your notes app: Save and Invest.",
+              "Under Save, write any money you may need in the next 1 to 3 years, like emergency money, school needs, or a near-term purchase.",
+              "Under Invest, write money you would not need soon and could leave alone for a long time.",
+              "If you do not currently have money in either group, that is okay. The point is to understand which job each bucket is meant to do.",
+              "Ask yourself: do I already have any money sitting somewhere that is really savings, even if I never called it that?",
             ],
+            extraReadingLabel: "Learn more about saving versus investing",
+            extraReadingUrl:
+              "https://consumer.gov/saving-and-investing/investing",
           },
           {
             id: "time",
@@ -340,9 +363,15 @@ function investingContent(): LearnPageContent {
             takeaway:
               "You do not need to start big to understand why starting earlier can matter.",
             actionSteps: [
-              "Write one reason time may help money grow more than people expect.",
-              "Then write one reason someone might still need savings before investing.",
+              "Write down your current age.",
+              "Then write down an age 10 years older than you.",
+              "Ask yourself: if I learned the basics now instead of 10 years from now, what advantage would that give me?",
+              "Write one sentence answering that question in your own words.",
+              "Then write one reason someone may still need savings before investing, so you remember these are related but different decisions.",
             ],
+            extraReadingLabel: "Learn more about starting early and long-term investing",
+            extraReadingUrl:
+              "https://www.investor.gov/introduction-investing/general-resources/news-alerts/alerts-bulletins/investor-bulletins/how-start-investing",
           },
         ],
       },
