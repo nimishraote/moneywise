@@ -35,13 +35,12 @@ export default function LessonCoach({
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
   const hasConversation = Boolean(answer || errorMessage || loading || lastQuestion);
-  const compactMode = hasConversation;
 
   const placeholder = useMemo(() => {
-    return compactMode
+    return hasConversation
       ? "Ask a follow-up question"
-      : "Ask about this lesson in simple language";
-  }, [compactMode]);
+      : "Ask about this lesson";
+  }, [hasConversation]);
 
   function scrollToBottom() {
     requestAnimationFrame(() => {
@@ -136,11 +135,7 @@ export default function LessonCoach({
             className="fixed bottom-44 right-5 z-40 w-[calc(100vw-2.5rem)] max-w-[390px] md:bottom-44 md:right-8"
           >
             <div className="flex h-[72vh] max-h-[700px] min-h-[520px] flex-col overflow-hidden rounded-[28px] border border-white/10 bg-[#171327]/95 shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl">
-              <div
-                className={`shrink-0 border-b border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.22),transparent_35%),linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] ${
-                  compactMode ? "px-5 py-3" : "px-5 py-4"
-                }`}
-              >
+              <div className="shrink-0 border-b border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.22),transparent_35%),linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] px-5 py-3">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
                     <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-violet-100">
@@ -148,14 +143,12 @@ export default function LessonCoach({
                       Lesson Coach
                     </div>
                     <div
-                      className={`mt-3 font-semibold tracking-tight text-white ${
-                        compactMode ? "text-[18px]" : "text-[22px]"
-                      }`}
+                      className="mt-3 text-[20px] font-semibold tracking-tight text-white"
                       style={{ fontFamily: "Georgia, serif" }}
                     >
                       Ask for help
                     </div>
-                    {!compactMode ? (
+                    {!hasConversation ? (
                       <p className="mt-2 max-w-[280px] text-sm leading-7 text-slate-300">
                         Simpler words, examples, or the next step.
                       </p>
@@ -175,9 +168,7 @@ export default function LessonCoach({
 
               <div
                 ref={scrollAreaRef}
-                className={`min-h-0 flex-1 overflow-y-auto px-5 ${
-                  compactMode ? "py-3" : "py-4"
-                }`}
+                className="min-h-0 flex-1 overflow-y-auto px-5 py-4"
               >
                 {!hasConversation ? (
                   <>
@@ -219,7 +210,7 @@ export default function LessonCoach({
                     </div>
                   </>
                 ) : (
-                  <div className="h-full">
+                  <div className="space-y-4">
                     {loading ? (
                       <div className="rounded-[22px] border border-white/10 bg-white/5 p-4">
                         <div className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-100">
@@ -261,21 +252,15 @@ export default function LessonCoach({
                 )}
               </div>
 
-              <div
-                className={`shrink-0 border-t border-white/10 bg-[#171327]/98 px-5 ${
-                  compactMode ? "py-2.5" : "py-3"
-                }`}
-              >
+              <div className="shrink-0 border-t border-white/10 bg-[#171327]/98 px-5 py-2.5">
                 <form onSubmit={handleSubmit}>
                   <div className="rounded-[22px] border border-white/10 bg-slate-950/25 p-3">
                     <textarea
                       value={question}
                       onChange={(event) => setQuestion(event.target.value)}
-                      rows={compactMode ? 1 : 3}
+                      rows={1}
                       placeholder={placeholder}
-                      className={`w-full resize-none bg-transparent text-sm leading-7 text-white outline-none placeholder:text-slate-500 ${
-                        compactMode ? "min-h-[28px]" : "min-h-[96px]"
-                      }`}
+                      className="min-h-[30px] w-full resize-none bg-transparent text-sm leading-6 text-white outline-none placeholder:text-slate-500"
                     />
                     <div className="mt-2 flex justify-between gap-3">
                       <button
