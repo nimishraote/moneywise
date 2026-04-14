@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import AppShell from "@/components/layout/app-shell";
 import JourneyNav from "@/components/ui/journey-nav";
+import LessonCoach from "@/components/lesson-coach";
 import type { AssessmentInput } from "@/lib/types/assessment";
 import type { RecommendedModule } from "@/lib/types/personalized-plan";
 import {
@@ -35,6 +36,34 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+
+const suggestedPromptsByModule: Partial<Record<RecommendedModule, string[]>> = {
+  "money-101-foundations": [
+    "Explain this in simpler words",
+    "What is a real-life example?",
+    "What should I actually do now?",
+  ],
+  "budgeting-and-cash-flow": [
+    "Explain cash flow in simpler words",
+    "Why does my money disappear so fast?",
+    "What should I do this week?",
+  ],
+  "saving-starting-early-and-long-term-impact": [
+    "How do I know if I am really saving?",
+    "Why does starting early matter?",
+    "What should I do with a small amount of money?",
+  ],
+  "credit-scores-and-credit-cards": [
+    "Explain credit in simple words",
+    "What is a real-life example of interest?",
+    "What should I be careful about?",
+  ],
+  "investing-basics-and-first-stocks": [
+    "Am I already saving or investing?",
+    "Explain investing in simple words",
+    "What should I do if I only have a little money?",
+  ],
+};
 
 export default function DynamicLearnPage() {
   const params = useParams<{ module: string }>();
@@ -211,6 +240,16 @@ export default function DynamicLearnPage() {
     );
   }
 
+  const coachPrompts =
+    suggestedPromptsByModule[activeModule] ?? [
+      "Explain this in simpler words",
+      "Give me a real-life example",
+      "What should I do next?",
+    ];
+
+  const coachConceptTitles = allConcepts.map((concept) => concept.title);
+  const coachConceptSummaries = allConcepts.map((concept) => concept.summary);
+
   return (
     <AppShell>
       <div className="relative overflow-hidden bg-[#120f1e] text-white">
@@ -315,6 +354,15 @@ export default function DynamicLearnPage() {
 
             <div className="h-20" />
           </div>
+
+          <LessonCoach
+            module={activeModule}
+            lessonTitle={moduleTitles[activeModule]}
+            personaLead={personaLead}
+            conceptTitles={coachConceptTitles}
+            conceptSummaries={coachConceptSummaries}
+            suggestedPrompts={coachPrompts}
+          />
         </div>
       </div>
     </AppShell>
