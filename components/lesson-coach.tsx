@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bot, Send, Sparkles, X } from "lucide-react";
 
@@ -27,13 +27,32 @@ export default function LessonCoach({
 }: LessonCoachProps) {
   const [open, setOpen] = useState(false);
   const [question, setQuestion] = useState("");
+  const [lastQuestion, setLastQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+
   const placeholder = useMemo(() => {
     return "Ask about this lesson in simple language";
   }, []);
+
+  function scrollToBottom() {
+    requestAnimationFrame(() => {
+      if (!scrollAreaRef.current) return;
+      scrollAreaRef.current.scrollTo({
+        top: scrollAreaRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    });
+  }
+
+  useEffect(() => {
+    if (loading || answer || errorMessage) {
+      scrollToBottom();
+    }
+  }, [loading, answer, errorMessage]);
 
   async function askCoach(message: string) {
     const cleaned = message.trim();
@@ -41,6 +60,8 @@ export default function LessonCoach({
 
     setLoading(true);
     setErrorMessage("");
+    setAnswer("");
+    setLastQuestion(cleaned);
 
     try {
       const response = await fetch("/api/lesson-coach", {
@@ -141,7 +162,10 @@ export default function LessonCoach({
               </div>
 
               <div className="flex min-h-0 flex-1 flex-col">
-                <div className="min-h-0 flex-1 overflow-y-auto p-5">
+                <div
+                  ref={scrollAreaRef}
+                  className="min-h-0 flex-1 overflow-y-auto p-5"
+                >
                   <div className="rounded-[22px] border border-white/10 bg-slate-950/25 p-4">
                     <div className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
                       Current lesson
@@ -175,6 +199,28 @@ export default function LessonCoach({
                     </div>
                   </div>
 
+                  {!loading && !answer && !errorMessage ? (
+                    <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 p-4 text-sm leading-7 text-slate-400">
+                      Ask a question or tap one of the suggested prompts.
+                    </div>
+                  ) : null}
+
+                  {loading ? (
+                    <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 p-4">
+                      <div className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-100">
+                        Thinking
+                      </div>
+                      {lastQuestion ? (
+                        <div className="mt-2 text-sm leading-7 text-slate-300">
+                          Question: {lastQuestion}
+                        </div>
+                      ) : null}
+                      <div className="mt-2 text-sm leading-7 text-slate-200">
+                        Working on a clear answer for this lesson...
+                      </div>
+                    </div>
+                  ) : null}
+
                   {errorMessage ? (
                     <div className="mt-4 rounded-[22px] border border-red-300/20 bg-red-300/10 p-4 text-sm leading-7 text-red-100">
                       {errorMessage}
@@ -186,15 +232,16 @@ export default function LessonCoach({
                       <div className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-100">
                         Coach answer
                       </div>
-                      <div className="mt-2 whitespace-pre-wrap text-sm leading-7 text-slate-200">
+                      {lastQuestion ? (
+                        <div className="mt-2 text-sm leading-7 text-slate-400">
+                          Question: {lastQuestion}
+                        </div>
+                      ) : null}
+                      <div className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-200">
                         {answer}
                       </div>
                     </div>
-                  ) : (
-                    <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 p-4 text-sm leading-7 text-slate-400">
-                      Ask a question or tap one of the suggested prompts.
-                    </div>
-                  )}
+                  ) : null}
                 </div>
 
                 <div className="border-t border-white/10 bg-[#171327]/95 p-4">
@@ -214,6 +261,7 @@ export default function LessonCoach({
                             setQuestion("");
                             setAnswer("");
                             setErrorMessage("");
+                            setLastQuestion("");
                           }}
                           className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
                         >
