@@ -5,12 +5,24 @@ export type AuthUserSummary = {
   email: string | null;
 };
 
+function requireSupabase() {
+  const supabase = getSupabaseBrowserClient();
+
+  if (!supabase) {
+    throw new Error(
+      "Authentication is not available right now because Supabase is not configured."
+    );
+  }
+
+  return supabase;
+}
+
 export async function signUpWithEmail(
   email: string,
   password: string,
   firstName: string
 ) {
-  const supabase = getSupabaseBrowserClient();
+  const supabase = requireSupabase();
 
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -28,7 +40,7 @@ export async function signUpWithEmail(
 }
 
 export async function signInWithEmail(email: string, password: string) {
-  const supabase = getSupabaseBrowserClient();
+  const supabase = requireSupabase();
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
@@ -42,12 +54,16 @@ export async function signInWithEmail(email: string, password: string) {
 
 export async function signOutCurrentUser() {
   const supabase = getSupabaseBrowserClient();
+  if (!supabase) return;
+
   const { error } = await supabase.auth.signOut();
   if (error) throw error;
 }
 
 export async function getCurrentAuthUser(): Promise<AuthUserSummary | null> {
   const supabase = getSupabaseBrowserClient();
+  if (!supabase) return null;
+
   const { data, error } = await supabase.auth.getUser();
 
   if (error) throw error;
@@ -61,6 +77,8 @@ export async function getCurrentAuthUser(): Promise<AuthUserSummary | null> {
 
 export async function getCurrentSession() {
   const supabase = getSupabaseBrowserClient();
+  if (!supabase) return null;
+
   const { data, error } = await supabase.auth.getSession();
 
   if (error) throw error;
@@ -71,6 +89,11 @@ export function subscribeToAuthChanges(
   callback: (user: AuthUserSummary | null) => void
 ) {
   const supabase = getSupabaseBrowserClient();
+
+  if (!supabase) {
+    callback(null);
+    return () => {};
+  }
 
   const {
     data: { subscription },

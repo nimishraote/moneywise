@@ -3,9 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import AppShell from "@/components/layout/app-shell";
 import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+import { hasSupabaseBrowserEnv } from "@/lib/supabase/client";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -24,9 +22,11 @@ export default function ForgotPasswordPage() {
     }
   }, []);
 
+  const supabaseReady = hasSupabaseBrowserEnv();
+
   const isDisabled = useMemo(() => {
-    return !email.trim() || submitting;
-  }, [email, submitting]);
+    return !email.trim() || submitting || !supabaseReady;
+  }, [email, submitting, supabaseReady]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -35,11 +35,18 @@ export default function ForgotPasswordPage() {
     setSuccessMessage("");
 
     try {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      if (!supabaseUrl || !supabaseAnonKey) {
+        throw new Error(
+          "Password reset is not available right now because Supabase is not configured."
+        );
+      }
+
       const supabase = createClient(supabaseUrl, supabaseAnonKey);
       const redirectTo =
-        typeof window !== "undefined"
-          ? `${window.location.origin}/login`
-          : undefined;
+        typeof window !== "undefined" ? `${window.location.origin}/login` : undefined;
 
       const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
         redirectTo,
@@ -77,6 +84,12 @@ export default function ForgotPasswordPage() {
           <p className="mt-4 text-sm leading-8 text-slate-300">
             Enter your email and we will send you a password reset link.
           </p>
+
+          {!supabaseReady && (
+            <div className="mt-5 rounded-2xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm text-amber-100">
+              Password reset is not available right now because the app is missing Supabase environment variables.
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             <div>

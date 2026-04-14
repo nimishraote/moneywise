@@ -2,11 +2,23 @@ import type { AssessmentInput, MoneywiseProfile } from "@/lib/types/assessment";
 import type { MoneywiseProgressState } from "@/lib/storage/moneywise-storage";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
+function requireSupabase() {
+  const supabase = getSupabaseBrowserClient();
+
+  if (!supabase) {
+    throw new Error(
+      "Supabase database is not available right now because environment variables are missing."
+    );
+  }
+
+  return supabase;
+}
+
 export async function upsertMoneywiseProfile(
   userId: string,
   profile: MoneywiseProfile
 ) {
-  const supabase = getSupabaseBrowserClient();
+  const supabase = requireSupabase();
 
   const payload = {
     id: userId,
@@ -23,6 +35,7 @@ export async function upsertMoneywiseProfile(
 
 export async function getMoneywiseProfile(userId: string) {
   const supabase = getSupabaseBrowserClient();
+  if (!supabase) return null;
 
   const { data, error } = await supabase
     .from("moneywise_profiles")
@@ -44,7 +57,7 @@ export async function upsertMoneywiseAssessment(
   userId: string,
   assessment: AssessmentInput
 ) {
-  const supabase = getSupabaseBrowserClient();
+  const supabase = requireSupabase();
 
   const { error } = await supabase
     .from("moneywise_assessments")
@@ -61,6 +74,7 @@ export async function upsertMoneywiseAssessment(
 
 export async function getMoneywiseAssessment(userId: string) {
   const supabase = getSupabaseBrowserClient();
+  if (!supabase) return null;
 
   const { data, error } = await supabase
     .from("moneywise_assessments")
@@ -77,7 +91,7 @@ export async function upsertMoneywiseProgress(
   userId: string,
   progress: MoneywiseProgressState
 ) {
-  const supabase = getSupabaseBrowserClient();
+  const supabase = requireSupabase();
 
   const { error } = await supabase
     .from("moneywise_progress")
@@ -94,6 +108,7 @@ export async function upsertMoneywiseProgress(
 
 export async function getMoneywiseProgress(userId: string) {
   const supabase = getSupabaseBrowserClient();
+  if (!supabase) return null;
 
   const { data, error } = await supabase
     .from("moneywise_progress")
