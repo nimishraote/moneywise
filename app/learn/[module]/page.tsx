@@ -28,6 +28,28 @@ import {
 } from "@/lib/content/lesson-content";
 import { getCurrentAuthUser, subscribeToAuthChanges } from "@/lib/supabase/auth";
 
+function buildConceptParagraphs(concept: {
+  summary: string;
+  narrative?: string[];
+  takeaway: string;
+}) {
+  const source = [concept.summary, ...(concept.narrative ?? [])].filter(Boolean);
+
+  const longText = source.join(" ");
+  const sentences = longText
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const paragraphOne = sentences.slice(0, 3).join(" ");
+  const paragraphTwo = sentences.slice(3, 7).join(" ");
+
+  return {
+    paragraphOne: paragraphOne || concept.summary,
+    paragraphTwo: paragraphTwo || concept.takeaway,
+  };
+}
+
 export default function DynamicLearnPage() {
   const params = useParams<{ module: string }>();
   const [answers, setAnswers] = useState<AssessmentInput>(defaultAssessmentInput);
@@ -140,6 +162,9 @@ export default function DynamicLearnPage() {
   const firstConceptActions = firstConcept?.actionSteps ?? [];
   const secondConceptActions = secondConcept?.actionSteps ?? [];
 
+  const firstConceptText = firstConcept ? buildConceptParagraphs(firstConcept) : null;
+  const secondConceptText = secondConcept ? buildConceptParagraphs(secondConcept) : null;
+
   return (
     <AppShell>
       <div className="relative overflow-hidden bg-[#120f1e] text-white">
@@ -201,14 +226,18 @@ export default function DynamicLearnPage() {
               )}
             </div>
 
-            {firstConcept && (
+            {firstConcept && firstConceptText && (
               <div className="mt-6 rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
                 <div className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-200">
                   Main idea
                 </div>
 
                 <h2 className="mt-3 text-2xl font-semibold text-white">{firstConcept.title}</h2>
-                <p className="mt-4 text-sm leading-8 text-slate-300">{firstConcept.summary}</p>
+
+                <div className="mt-4 space-y-4">
+                  <p className="text-sm leading-8 text-slate-300">{firstConceptText.paragraphOne}</p>
+                  <p className="text-sm leading-8 text-slate-300">{firstConceptText.paragraphTwo}</p>
+                </div>
 
                 <div className="mt-5 rounded-[24px] border border-emerald-300/15 bg-emerald-200/8 p-4 text-sm leading-7 text-emerald-100">
                   <span className="font-semibold">Main takeaway: </span>
@@ -249,14 +278,18 @@ export default function DynamicLearnPage() {
               </div>
             )}
 
-            {secondConcept && (
+            {secondConcept && secondConceptText && (
               <div className="mt-6 rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
                 <div className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-100">
                   One more useful concept
                 </div>
 
                 <h2 className="mt-3 text-2xl font-semibold text-white">{secondConcept.title}</h2>
-                <p className="mt-4 text-sm leading-8 text-slate-300">{secondConcept.summary}</p>
+
+                <div className="mt-4 space-y-4">
+                  <p className="text-sm leading-8 text-slate-300">{secondConceptText.paragraphOne}</p>
+                  <p className="text-sm leading-8 text-slate-300">{secondConceptText.paragraphTwo}</p>
+                </div>
 
                 <div className="mt-5 rounded-[24px] border border-emerald-300/15 bg-emerald-200/8 p-4 text-sm leading-7 text-emerald-100">
                   <span className="font-semibold">Main takeaway: </span>
