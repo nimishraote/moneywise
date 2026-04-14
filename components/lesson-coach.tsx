@@ -34,13 +34,14 @@ export default function LessonCoach({
 
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
+  const hasConversation = Boolean(answer || errorMessage || loading || lastQuestion);
+  const compactInput = hasConversation;
+
   const placeholder = useMemo(() => {
-    return answer || errorMessage
+    return compactInput
       ? "Ask a follow-up question"
       : "Ask about this lesson in simple language";
-  }, [answer, errorMessage]);
-
-  const compactInput = Boolean(answer || errorMessage);
+  }, [compactInput]);
 
   function scrollToBottom() {
     requestAnimationFrame(() => {
@@ -134,30 +135,29 @@ export default function LessonCoach({
             transition={{ duration: 0.18 }}
             className="fixed bottom-44 right-5 z-40 w-[calc(100vw-2.5rem)] max-w-[390px] md:bottom-44 md:right-8"
           >
-            <div className="flex h-[70vh] max-h-[680px] min-h-[520px] flex-col overflow-hidden rounded-[28px] border border-white/10 bg-[#171327]/95 shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl">
-              <div className="border-b border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.25),transparent_35%),linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] p-5">
+            <div className="flex h-[72vh] max-h-[700px] min-h-[520px] flex-col overflow-hidden rounded-[28px] border border-white/10 bg-[#171327]/95 shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+              <div className="shrink-0 border-b border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.22),transparent_35%),linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] px-5 py-4">
                 <div className="flex items-start justify-between gap-4">
-                  <div>
+                  <div className="min-w-0">
                     <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-violet-100">
                       <Sparkles className="h-3.5 w-3.5" />
                       Lesson Coach
                     </div>
                     <div
-                      className="mt-3 text-2xl font-semibold tracking-tight text-white"
+                      className="mt-3 text-[22px] font-semibold tracking-tight text-white"
                       style={{ fontFamily: "Georgia, serif" }}
                     >
                       Ask for help
                     </div>
-                    <p className="mt-2 text-sm leading-7 text-slate-300">
-                      I can explain this lesson in simpler words, give examples,
-                      or help with the next action.
+                    <p className="mt-2 max-w-[280px] text-sm leading-7 text-slate-300">
+                      Simpler words, examples, or the next step.
                     </p>
                   </div>
 
                   <button
                     type="button"
                     onClick={() => setOpen(false)}
-                    className="rounded-full border border-white/10 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10 hover:text-white"
+                    className="shrink-0 rounded-full border border-white/10 bg-white/5 p-2 text-slate-300 transition hover:bg-white/10 hover:text-white"
                     aria-label="Close lesson coach"
                   >
                     <X className="h-4.5 w-4.5" />
@@ -165,24 +165,24 @@ export default function LessonCoach({
                 </div>
               </div>
 
-              <div className="flex min-h-0 flex-1 flex-col">
-                <div
-                  ref={scrollAreaRef}
-                  className="min-h-0 flex-1 overflow-y-auto p-5"
-                >
-                  <div className="rounded-[22px] border border-white/10 bg-slate-950/25 p-4">
-                    <div className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                      Current lesson
+              <div
+                ref={scrollAreaRef}
+                className="min-h-0 flex-1 overflow-y-auto px-5 py-4"
+              >
+                {!hasConversation ? (
+                  <>
+                    <div className="rounded-[22px] border border-white/10 bg-slate-950/25 p-4">
+                      <div className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+                        Current lesson
+                      </div>
+                      <div className="mt-2 text-sm font-semibold text-white">
+                        {lessonTitle}
+                      </div>
+                      <div className="mt-2 text-sm leading-7 text-slate-300">
+                        {personaLead}
+                      </div>
                     </div>
-                    <div className="mt-2 text-sm font-semibold text-white">
-                      {lessonTitle}
-                    </div>
-                    <div className="mt-2 text-sm leading-7 text-slate-300">
-                      {personaLead}
-                    </div>
-                  </div>
 
-                  {!compactInput && (
                     <div className="mt-4">
                       <div className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
                         Suggested prompts
@@ -203,95 +203,97 @@ export default function LessonCoach({
                         ))}
                       </div>
                     </div>
-                  )}
 
-                  {!loading && !answer && !errorMessage ? (
                     <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 p-4 text-sm leading-7 text-slate-400">
                       Ask a question or tap one of the suggested prompts.
                     </div>
-                  ) : null}
-
-                  {loading ? (
-                    <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 p-4">
-                      <div className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-100">
-                        Thinking
-                      </div>
-                      {lastQuestion ? (
-                        <div className="mt-2 text-sm leading-7 text-slate-300">
-                          Question: {lastQuestion}
+                  </>
+                ) : (
+                  <div className="space-y-4">
+                    {loading ? (
+                      <div className="rounded-[22px] border border-white/10 bg-white/5 p-4">
+                        <div className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-100">
+                          Thinking
                         </div>
-                      ) : null}
-                      <div className="mt-2 text-sm leading-7 text-slate-200">
-                        Working on a clear answer for this lesson...
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {errorMessage ? (
-                    <div className="mt-4 rounded-[22px] border border-red-300/20 bg-red-300/10 p-4 text-sm leading-7 text-red-100">
-                      {errorMessage}
-                    </div>
-                  ) : null}
-
-                  {answer ? (
-                    <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 p-4">
-                      <div className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-100">
-                        Coach answer
-                      </div>
-                      {lastQuestion ? (
-                        <div className="mt-2 text-sm leading-7 text-slate-400">
-                          Question: {lastQuestion}
+                        {lastQuestion ? (
+                          <div className="mt-2 text-sm leading-7 text-slate-300">
+                            Question: {lastQuestion}
+                          </div>
+                        ) : null}
+                        <div className="mt-2 text-sm leading-7 text-slate-200">
+                          Working on a clear answer for this lesson...
                         </div>
-                      ) : null}
-                      <div className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-200">
-                        {answer}
                       </div>
+                    ) : null}
+
+                    {errorMessage ? (
+                      <div className="rounded-[22px] border border-red-300/20 bg-red-300/10 p-4 text-sm leading-7 text-red-100">
+                        {errorMessage}
+                      </div>
+                    ) : null}
+
+                    {answer ? (
+                      <div className="rounded-[22px] border border-white/10 bg-white/5 p-4">
+                        <div className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-100">
+                          Coach answer
+                        </div>
+                        {lastQuestion ? (
+                          <div className="mt-2 text-sm leading-7 text-slate-400">
+                            Question: {lastQuestion}
+                          </div>
+                        ) : null}
+                        <div className="mt-3 whitespace-pre-wrap text-sm leading-7 text-slate-200">
+                          {answer}
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                )}
+              </div>
+
+              <div className="shrink-0 border-t border-white/10 bg-[#171327]/98 px-5 py-3">
+                <form onSubmit={handleSubmit}>
+                  <div className="rounded-[22px] border border-white/10 bg-slate-950/25 p-3">
+                    <textarea
+                      value={question}
+                      onChange={(event) => setQuestion(event.target.value)}
+                      rows={compactInput ? 1 : 3}
+                      placeholder={placeholder}
+                      className={`w-full resize-none bg-transparent text-sm leading-7 text-white outline-none placeholder:text-slate-500 ${
+                        compactInput ? "min-h-[36px]" : "min-h-[96px]"
+                      }`}
+                    />
+                    <div className="mt-2 flex justify-between gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setQuestion("");
+                          setAnswer("");
+                          setErrorMessage("");
+                          setLastQuestion("");
+                        }}
+                        className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
+                      >
+                        Clear
+                      </button>
+
+                      <button
+                        type="submit"
+                        disabled={loading || !question.trim()}
+                        className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        <Send className="h-4 w-4" />
+                        {loading ? "Thinking..." : "Ask"}
+                      </button>
+                    </div>
+                  </div>
+
+                  {compactInput ? (
+                    <div className="mt-2 text-xs leading-6 text-slate-500">
+                      Ask a follow-up question for more detail.
                     </div>
                   ) : null}
-                </div>
-
-                <div className="border-t border-white/10 bg-[#171327]/95 p-4">
-                  <form onSubmit={handleSubmit}>
-                    <div className="rounded-[22px] border border-white/10 bg-slate-950/25 p-3">
-                      <textarea
-                        value={question}
-                        onChange={(event) => setQuestion(event.target.value)}
-                        rows={compactInput ? 2 : 3}
-                        placeholder={placeholder}
-                        className="w-full resize-none bg-transparent text-sm leading-7 text-white outline-none placeholder:text-slate-500"
-                      />
-                      <div className="mt-2 flex justify-between gap-3">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setQuestion("");
-                            setAnswer("");
-                            setErrorMessage("");
-                            setLastQuestion("");
-                          }}
-                          className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-white/10"
-                        >
-                          Clear
-                        </button>
-
-                        <button
-                          type="submit"
-                          disabled={loading || !question.trim()}
-                          className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
-                        >
-                          <Send className="h-4 w-4" />
-                          {loading ? "Thinking..." : "Ask"}
-                        </button>
-                      </div>
-                    </div>
-
-                    {compactInput && (
-                      <div className="mt-3 text-xs leading-6 text-slate-500">
-                        Ask a follow-up question if you want more detail.
-                      </div>
-                    )}
-                  </form>
-                </div>
+                </form>
               </div>
             </div>
           </motion.div>
