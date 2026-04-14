@@ -35,8 +35,12 @@ export default function LessonCoach({
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
   const placeholder = useMemo(() => {
-    return "Ask about this lesson in simple language";
-  }, []);
+    return answer || errorMessage
+      ? "Ask a follow-up question"
+      : "Ask about this lesson in simple language";
+  }, [answer, errorMessage]);
+
+  const compactInput = Boolean(answer || errorMessage);
 
   function scrollToBottom() {
     requestAnimationFrame(() => {
@@ -178,26 +182,28 @@ export default function LessonCoach({
                     </div>
                   </div>
 
-                  <div className="mt-4">
-                    <div className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                      Suggested prompts
+                  {!compactInput && (
+                    <div className="mt-4">
+                      <div className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
+                        Suggested prompts
+                      </div>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {suggestedPrompts.map((prompt) => (
+                          <button
+                            key={prompt}
+                            type="button"
+                            onClick={() => {
+                              setQuestion(prompt);
+                              void askCoach(prompt);
+                            }}
+                            className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-left text-xs font-medium text-slate-200 transition hover:bg-white/10"
+                          >
+                            {prompt}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {suggestedPrompts.map((prompt) => (
-                        <button
-                          key={prompt}
-                          type="button"
-                          onClick={() => {
-                            setQuestion(prompt);
-                            void askCoach(prompt);
-                          }}
-                          className="rounded-full border border-white/10 bg-white/5 px-3 py-2 text-left text-xs font-medium text-slate-200 transition hover:bg-white/10"
-                        >
-                          {prompt}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                  )}
 
                   {!loading && !answer && !errorMessage ? (
                     <div className="mt-4 rounded-[22px] border border-white/10 bg-white/5 p-4 text-sm leading-7 text-slate-400">
@@ -250,7 +256,7 @@ export default function LessonCoach({
                       <textarea
                         value={question}
                         onChange={(event) => setQuestion(event.target.value)}
-                        rows={3}
+                        rows={compactInput ? 2 : 3}
                         placeholder={placeholder}
                         className="w-full resize-none bg-transparent text-sm leading-7 text-white outline-none placeholder:text-slate-500"
                       />
@@ -278,6 +284,12 @@ export default function LessonCoach({
                         </button>
                       </div>
                     </div>
+
+                    {compactInput && (
+                      <div className="mt-3 text-xs leading-6 text-slate-500">
+                        Ask a follow-up question if you want more detail.
+                      </div>
+                    )}
                   </form>
                 </div>
               </div>
