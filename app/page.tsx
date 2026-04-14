@@ -7,21 +7,6 @@ import EditorialPhotoBand from "@/components/ui/editorial-photo-band";
 import { resetMoneywiseSession } from "@/lib/storage/moneywise-storage";
 import { getCurrentAuthUser, subscribeToAuthChanges } from "@/lib/supabase/auth";
 
-function BenefitCard({
-  title,
-  body,
-}: {
-  title: string;
-  body: string;
-}) {
-  return (
-    <div className="rounded-[24px] border border-white/10 bg-white/6 p-5">
-      <div className="text-sm font-semibold text-white">{title}</div>
-      <div className="mt-2 text-sm leading-7 text-slate-300">{body}</div>
-    </div>
-  );
-}
-
 function EntryModal({
   open,
   onClose,
@@ -54,7 +39,7 @@ function EntryModal({
         </h2>
 
         <p className="mt-4 text-sm leading-7 text-slate-300 md:text-base">
-          You can explore first, or create an account so your plan and progress stay with you.
+          Explore first, or create an account so your plan and progress stay with you.
         </p>
 
         <div className="mt-8 space-y-3">
@@ -64,7 +49,7 @@ function EntryModal({
           >
             Continue without account
             <div className="mt-1 text-xs font-normal text-slate-600">
-              Good if you just want to look around first
+              Good if you just want to try it first
             </div>
           </button>
 
@@ -74,7 +59,7 @@ function EntryModal({
           >
             Create account
             <div className="mt-1 text-xs font-normal text-slate-400">
-              Save your plan, lessons, and progress
+              Save your plan and progress
             </div>
           </button>
 
@@ -159,7 +144,7 @@ export default function HomePage() {
 
         <div className="relative px-6 py-10 md:px-10 md:py-12 lg:px-14 lg:py-14">
           <div className="mx-auto max-w-7xl">
-            <div className="grid items-stretch gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10">
+            <div className="grid items-stretch gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
               <div className="flex flex-col justify-center">
                 <div className="inline-flex w-fit rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-amber-200">
                   Built for young adults
@@ -187,21 +172,6 @@ export default function HomePage() {
                   <div className="text-sm text-slate-400">
                     Short check-in, personal plan, simple next steps
                   </div>
-                </div>
-
-                <div className="mt-8 grid gap-4 md:grid-cols-3">
-                  <BenefitCard
-                    title="Understand your money style"
-                    body="A short check-in helps the app see what feels easy, confusing, or stressful right now."
-                  />
-                  <BenefitCard
-                    title="Get a starting plan"
-                    body="You get a clearer place to begin, instead of generic advice that does not fit your situation."
-                  />
-                  <BenefitCard
-                    title="Build progress over time"
-                    body="Track lessons, simple actions, and the next step that matters most."
-                  />
                 </div>
               </div>
 

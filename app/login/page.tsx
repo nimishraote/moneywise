@@ -112,21 +112,6 @@ export default function LoginPage() {
             Log in to reconnect your plan, lessons, and progress.
           </p>
 
-          <div className="mt-5 rounded-[24px] border border-white/10 bg-slate-950/25 p-4">
-            <div className="text-sm font-semibold text-white">What comes back when you log in</div>
-            <div className="mt-3 grid gap-3 md:grid-cols-3">
-              <div className="rounded-[18px] border border-white/10 bg-white/5 p-3 text-sm text-slate-300">
-                Your plan
-              </div>
-              <div className="rounded-[18px] border border-white/10 bg-white/5 p-3 text-sm text-slate-300">
-                Lesson progress
-              </div>
-              <div className="rounded-[18px] border border-white/10 bg-white/5 p-3 text-sm text-slate-300">
-                Next best step
-              </div>
-            </div>
-          </div>
-
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             <div>
               <label className="text-sm font-semibold text-white">Email</label>
@@ -140,7 +125,16 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-white">Password</label>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-semibold text-white">Password</label>
+                <a
+                  href={email.trim() ? `/forgot-password?email=${encodeURIComponent(email.trim())}` : "/forgot-password"}
+                  className="text-sm font-semibold text-slate-300 underline underline-offset-4"
+                >
+                  Forgot password?
+                </a>
+              </div>
+
               <input
                 type="password"
                 value={password}
