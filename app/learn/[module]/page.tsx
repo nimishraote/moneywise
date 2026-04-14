@@ -28,26 +28,12 @@ import {
 } from "@/lib/content/lesson-content";
 import { getCurrentAuthUser, subscribeToAuthChanges } from "@/lib/supabase/auth";
 
-function buildConceptParagraphs(concept: {
-  summary: string;
-  narrative?: string[];
-  takeaway: string;
-}) {
-  const source = [concept.summary, ...(concept.narrative ?? [])].filter(Boolean);
-
-  const longText = source.join(" ");
-  const sentences = longText
-    .split(/(?<=[.!?])\s+/)
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  const paragraphOne = sentences.slice(0, 3).join(" ");
-  const paragraphTwo = sentences.slice(3, 7).join(" ");
-
-  return {
-    paragraphOne: paragraphOne || concept.summary,
-    paragraphTwo: paragraphTwo || concept.takeaway,
-  };
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-100">
+      {children}
+    </div>
+  );
 }
 
 export default function DynamicLearnPage() {
@@ -107,6 +93,7 @@ export default function DynamicLearnPage() {
   }, [activeModule]);
 
   const progress = useMemo(() => getProgressState(), [progressTick]);
+
   const moduleIndex = plan.recommendedPath.modules.findIndex(
     (module) => module === activeModule
   );
@@ -121,27 +108,21 @@ export default function DynamicLearnPage() {
 
   const completed = isLessonCompleted(activeModule);
 
-  const totalActionSteps = content.steps.reduce((count, step) => {
-    return (
-      count +
-      step.concepts.reduce((innerCount, concept) => {
-        return innerCount + (concept.actionSteps?.length ?? 0);
-      }, 0)
-    );
+  const allConcepts = content.steps.flatMap((step) => step.concepts);
+  const primaryConcept = allConcepts[0];
+  const supportingConcept = allConcepts[1];
+
+  const totalActionSteps = allConcepts.reduce((count, concept) => {
+    return count + (concept.actionSteps?.length ?? 0);
   }, 0);
 
-  const completedActionSteps = content.steps.reduce((count, step) => {
+  const completedActionSteps = allConcepts.reduce((count, concept) => {
     return (
       count +
-      step.concepts.reduce((innerCount, concept) => {
-        return (
-          innerCount +
-          (concept.actionSteps?.filter((_, index) => {
-            const actionKey = buildLessonActionKey(activeModule, concept.id, index);
-            return Boolean(progress.actions[actionKey]);
-          }).length ?? 0)
-        );
-      }, 0)
+      (concept.actionSteps?.filter((_, index) => {
+        const actionKey = buildLessonActionKey(activeModule, concept.id, index);
+        return Boolean(progress.actions[actionKey]);
+      }).length ?? 0)
     );
   }, 0);
 
@@ -156,14 +137,79 @@ export default function DynamicLearnPage() {
     setProgressTick((value) => value + 1);
   }
 
-  const firstConcept = content.steps[0]?.concepts[0];
-  const secondConcept = content.steps[0]?.concepts[1] ?? content.steps[1]?.concepts[0];
+  function renderConceptCard(
+    concept: (typeof allConcepts)[number],
+    label: string
+  ) {
+    const actionSteps = concept.actionSteps ?? [];
 
-  const firstConceptActions = firstConcept?.actionSteps ?? [];
-  const secondConceptActions = secondConcept?.actionSteps ?? [];
+    return (
+      <div className="rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
+        <div className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-200">
+          {label}
+        </div>
 
-  const firstConceptText = firstConcept ? buildConceptParagraphs(firstConcept) : null;
-  const secondConceptText = secondConcept ? buildConceptParagraphs(secondConcept) : null;
+        <h2 className="mt-3 text-2xl font-semibold text-white">{concept.title}</h2>
+
+        <div className="mt-4 space-y-4">
+          <p className="text-sm leading-8 text-slate-300">{concept.summary}</p>
+          {concept.narrative.map((paragraph, index) => (
+            <p key={`${concept.id}-${index}`} className="text-sm leading-8 text-slate-300">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+
+        <div className="mt-5 rounded-[24px] border border-emerald-300/15 bg-emerald-200/8 p-4 text-sm leading-7 text-emerald-100">
+          <span className="font-semibold">Main takeaway: </span>
+          {concept.takeaway}
+        </div>
+
+        {actionSteps.length > 0 && (
+          <div className="mt-5">
+            <SectionLabel>Do this now</SectionLabel>
+
+            <div className="mt-3 space-y-3">
+              {actionSteps.map((action, index) => {
+                const actionKey = buildLessonActionKey(activeModule, concept.id, index);
+                const checked = Boolean(progress.actions[actionKey]);
+
+                return (
+                  <button
+                    key={`${concept.id}-action-${index}`}
+                    onClick={() => handleToggleAction(concept.id, index, !checked)}
+                    className={`w-full rounded-2xl border p-4 text-left text-sm leading-7 ${
+                      checked
+                        ? "border-emerald-300/20 bg-emerald-200/8 text-emerald-100"
+                        : "border-white/10 bg-white/5 text-slate-200"
+                    }`}
+                  >
+                    <span className="font-semibold">
+                      {checked ? "Done: " : `${index + 1}. `}
+                    </span>
+                    {action}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {concept.extraReadingLabel && concept.extraReadingUrl && (
+          <div className="mt-5">
+            <a
+              href={concept.extraReadingUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="text-sm font-semibold text-white underline underline-offset-4"
+            >
+              {concept.extraReadingLabel}
+            </a>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <AppShell>
@@ -192,7 +238,7 @@ export default function DynamicLearnPage() {
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 <div className="rounded-[24px] border border-white/10 bg-slate-950/25 p-4">
                   <div className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-                    Why this matters
+                    Why this matters for you
                   </div>
                   <div className="mt-2 text-sm leading-7 text-slate-200">{personaLead}</div>
                 </div>
@@ -226,109 +272,15 @@ export default function DynamicLearnPage() {
               )}
             </div>
 
-            {firstConcept && firstConceptText && (
-              <div className="mt-6 rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
-                <div className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-200">
-                  Main idea
-                </div>
+            {primaryConcept ? (
+              <div className="mt-6">{renderConceptCard(primaryConcept, "Main idea")}</div>
+            ) : null}
 
-                <h2 className="mt-3 text-2xl font-semibold text-white">{firstConcept.title}</h2>
-
-                <div className="mt-4 space-y-4">
-                  <p className="text-sm leading-8 text-slate-300">{firstConceptText.paragraphOne}</p>
-                  <p className="text-sm leading-8 text-slate-300">{firstConceptText.paragraphTwo}</p>
-                </div>
-
-                <div className="mt-5 rounded-[24px] border border-emerald-300/15 bg-emerald-200/8 p-4 text-sm leading-7 text-emerald-100">
-                  <span className="font-semibold">Main takeaway: </span>
-                  {firstConcept.takeaway}
-                </div>
-
-                {firstConceptActions.length > 0 && (
-                  <div className="mt-5">
-                    <div className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-100">
-                      Try this now
-                    </div>
-
-                    <div className="mt-3 space-y-3">
-                      {firstConceptActions.map((action, index) => {
-                        const actionKey = buildLessonActionKey(activeModule, firstConcept.id, index);
-                        const checked = Boolean(progress.actions[actionKey]);
-
-                        return (
-                          <button
-                            key={`${firstConcept.id}-action-${index}`}
-                            onClick={() => handleToggleAction(firstConcept.id, index, !checked)}
-                            className={`w-full rounded-2xl border p-4 text-left text-sm leading-7 ${
-                              checked
-                                ? "border-emerald-300/20 bg-emerald-200/8 text-emerald-100"
-                                : "border-white/10 bg-white/5 text-slate-200"
-                            }`}
-                          >
-                            <span className="font-semibold">
-                              {checked ? "Done: " : `${index + 1}. `}
-                            </span>
-                            {action}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
+            {supportingConcept ? (
+              <div className="mt-6">
+                {renderConceptCard(supportingConcept, "One more useful concept")}
               </div>
-            )}
-
-            {secondConcept && secondConceptText && (
-              <div className="mt-6 rounded-[30px] border border-white/10 bg-white/8 p-6 shadow-2xl backdrop-blur md:p-8">
-                <div className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-100">
-                  One more useful concept
-                </div>
-
-                <h2 className="mt-3 text-2xl font-semibold text-white">{secondConcept.title}</h2>
-
-                <div className="mt-4 space-y-4">
-                  <p className="text-sm leading-8 text-slate-300">{secondConceptText.paragraphOne}</p>
-                  <p className="text-sm leading-8 text-slate-300">{secondConceptText.paragraphTwo}</p>
-                </div>
-
-                <div className="mt-5 rounded-[24px] border border-emerald-300/15 bg-emerald-200/8 p-4 text-sm leading-7 text-emerald-100">
-                  <span className="font-semibold">Main takeaway: </span>
-                  {secondConcept.takeaway}
-                </div>
-
-                {secondConceptActions.length > 0 && (
-                  <div className="mt-5">
-                    <div className="text-sm font-semibold uppercase tracking-[0.18em] text-violet-100">
-                      Try this now
-                    </div>
-
-                    <div className="mt-3 space-y-3">
-                      {secondConceptActions.map((action, index) => {
-                        const actionKey = buildLessonActionKey(activeModule, secondConcept.id, index);
-                        const checked = Boolean(progress.actions[actionKey]);
-
-                        return (
-                          <button
-                            key={`${secondConcept.id}-action-${index}`}
-                            onClick={() => handleToggleAction(secondConcept.id, index, !checked)}
-                            className={`w-full rounded-2xl border p-4 text-left text-sm leading-7 ${
-                              checked
-                                ? "border-emerald-300/20 bg-emerald-200/8 text-emerald-100"
-                                : "border-white/10 bg-white/5 text-slate-200"
-                            }`}
-                          >
-                            <span className="font-semibold">
-                              {checked ? "Done: " : `${index + 1}. `}
-                            </span>
-                            {action}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
+            ) : null}
 
             <div className="mt-6 sticky bottom-4 z-10">
               <div className="rounded-[24px] border border-white/10 bg-[#171327]/95 p-4 shadow-2xl backdrop-blur">
@@ -338,7 +290,7 @@ export default function DynamicLearnPage() {
                       Keep the path moving
                     </div>
                     <div className="mt-1 text-sm text-slate-400">
-                      Mark this lesson complete, then keep going.
+                      Finish this lesson, then go to the next step.
                     </div>
                   </div>
 

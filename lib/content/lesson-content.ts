@@ -55,34 +55,35 @@ export type LearnPageContent = {
 
 function money101Content(): LearnPageContent {
   return {
-    heroTitle: "Start with the real basics of money.",
+    heroTitle: "Start with the basic money ideas people use every day.",
     heroBody:
-      "This lesson is for beginners who want the 101 first. It starts with everyday money ideas before moving into harder topics.",
+      "This lesson is for someone who wants the real beginner version first. No finance voice, no complicated setup, just the things that make daily money feel less confusing.",
     steps: [
       {
         id: "step-1",
-        title: "Step 1: Learn the everyday basics",
+        title: "Step 1: Understand where money sits and how it gets used",
         intro:
-          "Start with the things most people use first in real life.",
+          "Before budgets, investing, or credit, it helps to understand the basic tools most people use first.",
         concepts: [
           {
             id: "bank-account",
-            title: "What is a bank account?",
-            shortLabel: "A place to store and use your money",
+            title: "What a bank account actually does",
+            shortLabel: "Where your money lives",
             summary:
-              "A bank account is where your money can be stored, received, and used.",
+              "A bank account is usually the main place where your money sits, comes in, and goes out.",
             narrative: [
-              "A bank account is a place where your money can be stored and tracked. It also makes it easier to receive money and pay for things.",
-              "For many people, it becomes the center of everyday money life. Paychecks can go in. Spending can go out. Balances can be checked there.",
-              "A simple example is getting paid from a job or receiving money from family. Instead of holding everything as cash, the money can sit in the account and be used as needed.",
-              "This matters because a lot of money habits start with understanding where your money actually lives and how you see it clearly.",
+              "A lot of money confusion starts because people use a bank account without really understanding what role it plays. A bank account is not just a place where money sits. It is usually the center of your everyday money life.",
+              "Money can come into it from work, family, transfers, or refunds. Money can go out from debit card spending, subscriptions, bills, ATM withdrawals, or bank transfers. If you do not know what is happening in the account, money starts to feel vague very quickly.",
+              "The useful way to think about it is simple: this is the place where your money gets collected, stored, and used. Once you understand that, it becomes easier to notice whether you actually have enough, where the money is going, and what keeps happening again and again.",
+              "For a beginner, the goal is not to become an expert on banking. The goal is just to stop treating your account like a black box and start treating it like a dashboard.",
             ],
             takeaway:
-              "A bank account helps you store, receive, use, and track your money in one place.",
+              "A bank account is not just where money sits. It is the main place where you can see your money life clearly.",
             actionSteps: [
-              "Check whether you already have a bank account, or ask a parent or trusted adult what account you currently use.",
-              "Look at your current balance and say out loud how much money is there right now.",
-              "Write down one sentence on where your money usually comes from and where it usually goes.",
+              "Open your banking app or ask to see the account you usually use.",
+              "Say out loud how much money is in there right now.",
+              "Write down the last 3 ways money came into the account.",
+              "Write down the last 3 ways money went out.",
             ],
             extraReadingLabel: "Read more about bank accounts",
             extraReadingUrl:
@@ -90,51 +91,26 @@ function money101Content(): LearnPageContent {
           },
           {
             id: "debit-vs-credit",
-            title: "Debit card versus credit card",
-            shortLabel: "They are not the same thing",
+            title: "Why debit and credit are not the same thing",
+            shortLabel: "Your money versus borrowed money",
             summary:
-              "A debit card uses your money. A credit card uses borrowed money.",
+              "A debit card usually spends your own money. A credit card usually means you are borrowing first and paying later.",
             narrative: [
-              "A debit card usually uses money that is already in your bank account. A credit card usually means the card company pays first and you pay them back later.",
-              "They can feel similar when you tap or swipe, but the money behind them works differently.",
-              "For example, if you use a debit card for a $20 purchase, the money usually comes from your own account. If you use a credit card for that same purchase, it creates money you owe back later.",
-              "This matters because a lot of beginners mix them together and do not realize that one spends what you have while the other creates a bill you still need to pay.",
+              "Debit and credit can feel identical when you tap or swipe, which is exactly why people mix them up. But behind the scenes they work very differently, and that difference matters a lot.",
+              "With debit, the purchase usually comes out of money you already have in your bank account. With credit, the card company covers the purchase first and you owe them back later. That means the purchase can feel easy in the moment even though the real cost has not hit you yet.",
+              "This is where beginners often get tripped up. They think a card working means they can afford the purchase. But a working card does not always mean the money is really yours to spend without consequences.",
+              "The useful mental rule is this: debit checks what you have now. Credit can create a bill for later. Once you understand that clearly, a lot of future confusion gets avoided.",
             ],
             takeaway:
-              "Debit usually uses your own money. Credit usually means borrowed money that must be paid back.",
+              "Debit usually uses your own money now. Credit can create money you owe later.",
             actionSteps: [
-              "Look at the cards you already use and identify whether they are debit or credit.",
-              "Write down one sentence explaining the difference in your own words.",
+              "Look at the cards you use now and label each one debit or credit.",
+              "Write one sentence explaining the difference in your own words.",
+              "Next time you use a card, pause and ask: is this my money now, or a bill later?",
             ],
             extraReadingLabel: "Read more about debit and credit",
             extraReadingUrl:
               "https://consumer.gov/managing-your-money/using-debit-cards",
-          },
-        ],
-      },
-      {
-        id: "step-2",
-        title: "Step 2: Learn where money goes",
-        intro:
-          "Once you understand the basics, the next thing is noticing where money actually ends up.",
-        concepts: [
-          {
-            id: "spending-awareness",
-            title: "Why tracking money matters",
-            shortLabel: "You cannot improve what you cannot see",
-            summary:
-              "Seeing where your money goes is the first step toward better decisions.",
-            narrative: [
-              "A lot of people feel confused about money not because they are careless, but because they do not have a simple view of where money is going.",
-              "Even a quick review of recent spending can show patterns. It can show what is necessary, what is flexible, and what keeps repeating in the background.",
-              "This matters because money often feels stressful when it is vague. It usually feels more manageable once it becomes visible.",
-            ],
-            takeaway:
-              "Tracking spending creates clarity, and clarity usually lowers stress.",
-            actionSteps: [
-              "Look at your last 10 purchases and group them into 3 simple buckets.",
-              "Circle one thing that surprised you.",
-            ],
           },
         ],
       },
@@ -144,76 +120,55 @@ function money101Content(): LearnPageContent {
 
 function budgetingContent(): LearnPageContent {
   return {
-    heroTitle: "Take control of money as it moves through the month.",
+    heroTitle: "Budgeting should make money feel clearer, not stricter.",
     heroBody:
-      "This lesson is for people who need more control, visibility, or consistency in day-to-day money flow.",
+      "This lesson is for someone who feels like money comes in, then somehow disappears. The goal is not a perfect spreadsheet. The goal is understanding the pattern.",
     steps: [
       {
         id: "step-1",
-        title: "Step 1: Understand cash flow",
+        title: "Step 1: See the pattern first",
         intro:
-          "Budgeting works best when it feels like a clear map, not a punishment.",
+          "A budget works better when it starts from your real life, not from a random rule online.",
         concepts: [
           {
             id: "cash-flow",
             title: "What cash flow really means",
-            shortLabel: "Money in, money out, and what stays",
+            shortLabel: "When money comes in, when it leaves, and whether it lasts",
             summary:
-              "Cash flow is the timing and movement of money into and out of your life.",
+              "Cash flow is the pattern of your money through the month.",
             narrative: [
-              "Cash flow is not just how much money you earn. It is also when money comes in, when it leaves, and what remains after bills and spending.",
-              "Two people can earn the same amount and still feel very different because one has clear timing and structure while the other does not.",
-              "This matters because a lot of money stress comes from timing problems, not only from low income.",
+              "If you are 16 or 20, 'cash flow' can sound like a finance word meant for adults. But the idea is actually very basic. It just means this: when does money come in for you, when does it go out, and how long does it last.",
+              "A lot of people think they have a money problem only because the total is low. Sometimes that is true. But sometimes the bigger problem is timing. Money comes in on one day, a bunch of spending happens fast, and then the rest of the month feels tight or stressful.",
+              "That is why two people with the same amount of money can feel very different. One person knows what usually hits first and plans around it. The other person just reacts in the moment and gets surprised again and again.",
+              "So before you try to 'budget,' you want to see the pattern. Not every detail. Just the main flow. Once that becomes visible, your money starts to feel less random.",
             ],
             takeaway:
-              "Budgeting becomes easier when you understand timing, not just totals.",
+              "Before you control money better, you need to see its pattern more clearly.",
             actionSteps: [
-              "Write down when money usually comes in for you.",
-              "Write down the biggest 3 things it goes toward first.",
+              "Open your notes app.",
+              "Write the last 3 times money came in for you.",
+              "Next to each one, write how much it was.",
+              "Under that, write the first 3 things that money usually goes toward.",
             ],
           },
           {
             id: "needs-vs-flex",
-            title: "Needs versus flexible spending",
-            shortLabel: "Not every purchase is equal",
+            title: "What spending can move and what cannot",
+            shortLabel: "Not every dollar works the same way",
             summary:
-              "Some spending keeps life running. Other spending is more flexible.",
+              "Some spending is harder to avoid. Other spending is easier to change.",
             narrative: [
-              "A useful early budgeting step is to separate what you truly need from what changes more easily.",
-              "For example, rent, transportation, or required bills may be needs. Eating out, impulse shopping, or some subscriptions may be more flexible.",
-              "This matters because control often starts by changing just one or two flexible categories rather than trying to cut everything.",
+              "A lot of people fail at budgeting because they try to control everything at once. That usually does not last. A better approach is to separate spending into two groups: the stuff that is harder to change, and the stuff that is easier to adjust.",
+              "For a young person, harder-to-change spending might be transit, lunch at school, a phone bill someone expects you to help with, or basic supplies. Easier-to-adjust spending might be snacks, hanging out, random online shopping, subscriptions, or extra food delivery.",
+              "The reason this matters is simple. Control usually comes from one or two flexible categories, not from trying to become a completely different person overnight.",
+              "Once you know which spending is fixed and which spending is movable, you stop feeling like budgeting means cutting everything. It becomes more like choosing where you want your money to have room.",
             ],
             takeaway:
-              "You do not need to control every dollar perfectly. You need to know which dollars are easier to move.",
+              "The first useful budget is not about cutting everything. It is about finding what you can move.",
             actionSteps: [
-              "List your top 5 spending areas.",
-              "Mark each one as either essential or flexible.",
-            ],
-          },
-        ],
-      },
-      {
-        id: "step-2",
-        title: "Step 2: Build a simple budget that can actually last",
-        intro:
-          "The best budget is one you can repeat, not the most impressive one on paper.",
-        concepts: [
-          {
-            id: "simple-budget",
-            title: "How to make a first working budget",
-            shortLabel: "Simple is stronger than perfect",
-            summary:
-              "A first budget should be simple enough to use regularly.",
-            narrative: [
-              "Many people quit budgeting because they try to make it too detailed too quickly.",
-              "A stronger starting point is using a few simple buckets such as essentials, flexible spending, and what you want to keep or save.",
-              "This matters because consistency usually creates more progress than complexity.",
-            ],
-            takeaway:
-              "A budget should help you make decisions more easily, not make life feel more complicated.",
-            actionSteps: [
-              "Create 3 categories for your money this month.",
-              "Put rough numbers next to each one.",
+              "List your top 5 places money went recently.",
+              "Mark each one as harder to change or easier to change.",
+              "Circle one easier-to-change category you want to watch this week.",
             ],
           },
         ],
@@ -224,72 +179,54 @@ function budgetingContent(): LearnPageContent {
 
 function savingContent(): LearnPageContent {
   return {
-    heroTitle: "Saving is where stability begins to build.",
+    heroTitle: "Saving matters because life feels easier when not every surprise becomes a problem.",
     heroBody:
-      "This lesson helps users move from good intentions to a saving habit that is realistic and repeatable.",
+      "This lesson is for someone who knows saving is good, but has never made it feel real or consistent.",
     steps: [
       {
         id: "step-1",
-        title: "Step 1: Understand why saving matters",
+        title: "Step 1: Understand what saving is really doing for you",
         intro:
-          "Saving is not only about being disciplined. It is about reducing future pressure.",
+          "Saving is not just about future wealth. It is also about present calm.",
         concepts: [
           {
             id: "saving-why",
-            title: "Why saving changes your money life",
-            shortLabel: "It gives you room to breathe",
+            title: "Why saving changes how money feels",
+            shortLabel: "Less panic, more room to think",
             summary:
-              "Saving creates choice, flexibility, and less panic when something unexpected happens.",
+              "Saving gives you breathing room when something unexpected happens.",
             narrative: [
-              "Even small savings can make money feel less fragile.",
-              "Without savings, a small surprise can become a major problem. With savings, the same event can feel manageable.",
-              "This matters because saving is often less about getting rich and more about creating space between you and constant stress.",
+              "People often talk about saving like it is a moral achievement, as if good people save and careless people do not. That is not the most useful way to think about it. A better way is to see saving as protection against pressure.",
+              "When you have no savings at all, even a small problem can feel huge. A late ride home, a broken charger, school expenses, an unexpected meal, or a bill you forgot about can suddenly feel stressful because there is no cushion.",
+              "When you do have some savings, the same problem may still be annoying, but it does not hit with the same level of panic. That is the real value early on. Not perfection. Not a giant number. Just a little more space between you and every surprise.",
+              "So saving is not only about 'being responsible.' It is about making your future self less boxed in.",
             ],
             takeaway:
-              "Saving gives you more stability, flexibility, and emotional relief.",
+              "Saving helps life feel less fragile because small problems stop becoming full money emergencies.",
             actionSteps: [
-              "Write down one reason saving would help your life feel easier right now.",
+              "Write down one recent money surprise that felt annoying or stressful.",
+              "Write down how even a small savings cushion could have helped.",
+              "Choose one reason saving would matter to you personally, not just in theory.",
             ],
           },
           {
             id: "small-starts",
-            title: "Why small starts still matter",
-            shortLabel: "Small habits can still compound",
+            title: "Why small saving still counts",
+            shortLabel: "A tiny habit is better than a fake big plan",
             summary:
-              "A small saving habit can matter more than a big plan you never sustain.",
+              "You do not need a big amount to start building a real saving habit.",
             narrative: [
-              "A lot of people assume there is no point in saving unless the amount is large.",
-              "In reality, small repeated habits often matter more because they are what people actually maintain.",
-              "This matters because the goal is to start building the pattern first. The amount can grow later.",
+              "A lot of young people quietly assume saving does not count unless the amount is large. That idea is one of the biggest reasons people never begin. They think, 'I only have a little money, so what is the point?'",
+              "The point is that habits come before scale. Someone who can save a small amount consistently is building a system. Someone who waits until they have 'real money' often never gets around to building that system at all.",
+              "Small saving also teaches you something important: money does not have to be spent immediately just because it showed up. That shift in mindset matters more than most people realize.",
+              "So the first win is not hitting a huge number. The first win is proving to yourself that some money can stay with you instead of disappearing right away.",
             ],
             takeaway:
-              "A saving habit starts with repeatability, not perfection.",
+              "A small saving habit matters because it changes your behavior before it changes your total.",
             actionSteps: [
-              "Choose one small amount you could save weekly or monthly without breaking the system.",
-            ],
-          },
-        ],
-      },
-      {
-        id: "step-2",
-        title: "Step 2: Make saving real",
-        intro:
-          "A saving goal becomes more useful when it has a purpose and a home.",
-        concepts: [
-          {
-            id: "saving-purpose",
-            title: "Save for something specific",
-            shortLabel: "Purpose makes saving easier",
-            summary:
-              "Saving usually works better when it is tied to a clear reason.",
-            narrative: [
-              "Saving for 'the future' can feel vague. Saving for a buffer, a trip, an emergency fund, or a first investing step feels clearer.",
-              "Specific goals make it easier to stay engaged because the money has a job.",
-            ],
-            takeaway:
-              "Giving savings a purpose often makes the habit easier to keep.",
-            actionSteps: [
-              "Name one short-term saving goal and one longer-term saving goal.",
+              "Pick one amount you could realistically save this week or month.",
+              "Make it small enough that you would actually do it again.",
+              "Name what that saved money is for, even if the goal is small.",
             ],
           },
         ],
@@ -300,72 +237,54 @@ function savingContent(): LearnPageContent {
 
 function creditContent(): LearnPageContent {
   return {
-    heroTitle: "Understand credit before it quietly shapes your future.",
+    heroTitle: "Credit is easier to handle when you understand it before you need it.",
     heroBody:
-      "This lesson helps users understand what credit is, why it matters, and how to avoid common early mistakes.",
+      "This lesson is for someone who has heard about credit cards and credit scores, but does not want to learn the hard way.",
     steps: [
       {
         id: "step-1",
-        title: "Step 1: Learn what credit really is",
+        title: "Step 1: Understand what credit really is",
         intro:
-          "Credit is not free money. It is a system that tracks how you handle borrowed money.",
+          "Credit is not free money. It is borrowed money plus a record of how you handle it.",
         concepts: [
           {
             id: "credit-basics",
-            title: "What credit means",
-            shortLabel: "Borrowing plus reputation",
+            title: "What credit actually means",
+            shortLabel: "Borrowing plus trust",
             summary:
-              "Credit is about borrowing money and how reliably you pay it back.",
+              "Credit is a system that lets you borrow now and shows whether you pay back responsibly later.",
             narrative: [
-              "A credit card lets you borrow within a limit and then pay that amount back later.",
-              "Over time, your behavior with borrowed money helps shape your credit history and credit score.",
-              "This matters because credit can affect more than cards. It can influence later access to loans, apartments, and other financial options.",
+              "A lot of people first hear about credit through credit cards, but the deeper idea is bigger than the card itself. Credit is really about borrowed money and your track record with it.",
+              "If a company lets you borrow, they want to know whether you pay on time, whether you borrow too much, and whether you handle that responsibility well. Over time, that behavior becomes part of your credit history.",
+              "That is why credit matters later for more than shopping. It can affect how lenders, landlords, or other institutions see your reliability.",
+              "The useful beginner mindset is this: credit is not extra spending power to play with. It is a system that remembers how you handle borrowed money.",
             ],
             takeaway:
-              "Credit is not just a card. It is part of your long-term financial reputation.",
+              "Credit is less about the card in your hand and more about the habits attached to it.",
             actionSteps: [
-              "Write down what you think happens if a credit card bill is paid late or not in full.",
+              "Write one sentence explaining what you think credit is now.",
+              "Underline the word borrowed in your sentence.",
+              "Ask yourself whether that changes how you think about using a credit card.",
             ],
           },
           {
             id: "interest",
-            title: "Why interest matters so much",
-            shortLabel: "Borrowing can get expensive fast",
+            title: "Why interest gets people in trouble",
+            shortLabel: "The purchase can end up costing more",
             summary:
-              "Interest is the extra cost of carrying borrowed money.",
+              "Interest is one of the main reasons borrowed money becomes expensive.",
             narrative: [
-              "When a credit card balance is not paid in full, interest can be added on top of what you already owe.",
-              "That means a purchase becomes more expensive than the original price.",
-              "This matters because a lot of early credit problems do not come from one huge mistake. They come from small balances that quietly grow.",
+              "Interest sounds technical, but the basic idea is simple. If you do not fully pay back what you borrowed, you may be charged extra for carrying that balance.",
+              "That means a purchase is no longer just the original price. It can quietly become more expensive over time. This is one of the biggest reasons people get into avoidable credit stress.",
+              "What makes this tricky for beginners is that the original purchase still feels normal. The extra cost shows up later, which makes it easier to ignore until the bill feels bigger than expected.",
+              "So the real lesson is not 'credit is bad.' The lesson is that borrowed money has rules, and interest is one of the rules that makes careless use expensive.",
             ],
             takeaway:
-              "Interest is one of the biggest reasons credit can become expensive if not handled carefully.",
+              "If you carry borrowed money too long, the price can grow beyond the original purchase.",
             actionSteps: [
-              "Explain in one sentence why carrying a balance can cost more than the purchase itself.",
-            ],
-          },
-        ],
-      },
-      {
-        id: "step-2",
-        title: "Step 2: Avoid common early mistakes",
-        intro:
-          "The goal is not fear. It is understanding.",
-        concepts: [
-          {
-            id: "credit-mistakes",
-            title: "Common early credit mistakes",
-            shortLabel: "Small mistakes can follow you",
-            summary:
-              "Credit mistakes often come from misunderstanding how repayment works.",
-            narrative: [
-              "Common mistakes include treating the credit limit like available spending money, missing payments, or only focusing on the minimum without understanding the bigger cost.",
-              "The earlier you understand the system, the easier it is to avoid those patterns.",
-            ],
-            takeaway:
-              "The best use of credit starts with clarity, not confidence.",
-            actionSteps: [
-              "List 2 things you would want to understand before ever applying for a first credit card.",
+              "Write down one purchase you would not want to become more expensive later.",
+              "Under it, write: borrowing does not remove the cost, it can increase it.",
+              "Keep that sentence as your reminder if you ever use credit.",
             ],
           },
         ],
@@ -376,73 +295,53 @@ function creditContent(): LearnPageContent {
 
 function investingContent(): LearnPageContent {
   return {
-    heroTitle: "Learn investing from a grounded and practical starting point.",
+    heroTitle: "Investing starts making sense once you stop treating it like a mystery topic.",
     heroBody:
-      "This lesson helps users understand what investing is, how it differs from saving, and why time matters so much.",
+      "This lesson is for someone who hears words like stocks, index funds, and investing, but wants the grounded version first.",
     steps: [
       {
         id: "step-1",
-        title: "Step 1: Understand the role of investing",
+        title: "Step 1: Learn what investing is for",
         intro:
-          "Investing is about long-term growth, not fast excitement.",
+          "Investing is usually about long-term growth, not fast excitement.",
         concepts: [
           {
             id: "saving-vs-investing",
-            title: "Saving versus investing",
-            shortLabel: "They are related but not the same",
+            title: "Saving and investing are not the same job",
+            shortLabel: "Safety versus growth",
             summary:
-              "Saving is usually for safety and shorter-term needs. Investing is usually for longer-term growth.",
+              "Saving usually protects money you may need sooner. Investing usually gives money a chance to grow over longer periods.",
             narrative: [
-              "Saving and investing both matter, but they serve different purposes.",
-              "Saving is often where you keep money for safety, emergencies, or shorter-term goals. Investing is usually about giving money a chance to grow over a longer period of time.",
-              "This matters because people often jump into investing before understanding what role it should play in the bigger picture.",
+              "A lot of beginners hear 'you should invest' before anyone explains what investing is actually for. That creates confusion because investing and saving can sound like the same thing even though they do different jobs.",
+              "Saving is usually where money goes when you want safety, quicker access, or a buffer against surprises. Investing is usually what you do with money you do not need immediately and want to grow over time.",
+              "This matters because if you skip the distinction, you can end up putting emergency money in the wrong place or expecting investing to behave like a savings account.",
+              "So the useful first map is simple: saving is about stability and access. Investing is about time and growth.",
             ],
             takeaway:
-              "Saving and investing work best when you know what each one is for.",
+              "Saving and investing both matter, but they solve different problems.",
             actionSteps: [
-              "Write one short sentence explaining how saving and investing feel different to you right now.",
+              "Write one short sentence explaining what saving is for.",
+              "Write one short sentence explaining what investing is for.",
+              "Check whether your two sentences sound meaningfully different.",
             ],
           },
           {
             id: "time",
-            title: "Why starting early matters",
-            shortLabel: "Time can do more than big amounts",
+            title: "Why starting early matters so much",
+            shortLabel: "Time can matter more than size",
             summary:
-              "Time gives money more opportunity to grow.",
+              "One of the biggest investing advantages young people have is time.",
             narrative: [
-              "One of the biggest advantages younger people have is time.",
-              "Even modest amounts can matter more when they are given longer to grow.",
-              "This matters because people often think they need a lot of money to begin learning. In reality, understanding time early can be more valuable than waiting until later.",
+              "People often think investing is mostly about having a lot of money. That is not the full story. One of the biggest advantages younger people have is not money, but time.",
+              "When money has more time to grow, even smaller amounts can have more opportunity to build. That does not mean growth is guaranteed or that investing is risk-free. It means time gives your money more chances to work.",
+              "This matters because many people delay learning about investing until much later, assuming they can wait until they earn more. But learning the idea of time early is valuable even before you ever invest a large amount.",
+              "The early win is not becoming an expert. It is understanding that waiting has a cost too, especially when time is one of the strongest things you already have.",
             ],
             takeaway:
-              "Starting earlier can matter because time helps growth compound.",
+              "You do not need to start big to understand why starting earlier can matter.",
             actionSteps: [
-              "Write down one reason time may matter even more than starting with a big amount.",
-            ],
-          },
-        ],
-      },
-      {
-        id: "step-2",
-        title: "Step 2: Learn the beginner terms",
-        intro:
-          "You do not need deep jargon. You need basic clarity.",
-        concepts: [
-          {
-            id: "basic-terms",
-            title: "Stocks, funds, and diversification",
-            shortLabel: "A gentle intro to key terms",
-            summary:
-              "A stock is a piece of a company. Funds group many investments together.",
-            narrative: [
-              "A stock generally represents a small ownership stake in one company.",
-              "Funds such as index funds or ETFs usually hold many investments together in one package.",
-              "This matters because a lot of beginners hear the words without understanding the practical difference between owning one thing and owning a broader mix.",
-            ],
-            takeaway:
-              "You do not need to memorize everything. You just need a clear first map of the main terms.",
-            actionSteps: [
-              "Write down which term feels least clear right now: stock, ETF, index fund, mutual fund, bond, or CD.",
+              "Write one reason time may help money grow more than people expect.",
+              "Then write one reason someone might still need savings before investing.",
             ],
           },
         ],
@@ -476,21 +375,21 @@ export function getPersonaLead(
 ): string {
   if (persona === "teen-supported" || persona === "student-dependent") {
     return module === "money-101-foundations"
-      ? "You are starting in the right place. This lesson is meant to make everyday money feel much clearer before you move into harder topics."
-      : "Even if you are still supported right now, learning this early can make later decisions feel much less confusing.";
+      ? "You do not need to know everything yet. This lesson is here to make the basics feel normal and usable."
+      : "Even if you are still supported right now, learning this early can save you a lot of confusion later.";
   }
 
   if (persona === "student-earning") {
-    return "Because you are already dealing with some real money decisions, this lesson is meant to connect directly to day-to-day life rather than stay theoretical.";
+    return "Because you already have some real money decisions, this lesson is meant to connect directly to daily life, not stay theoretical.";
   }
 
   if (persona === "working-tight" || persona === "between-jobs") {
-    return "This lesson is designed to lower confusion and help you find a more practical next step, not overwhelm you with too much at once.";
+    return "This lesson is meant to lower confusion, show you the pattern, and help you take one practical next step.";
   }
 
   if (persona === "working-steady") {
-    return "This lesson is meant to help you turn your current position into a stronger system, not just give you more information.";
+    return "This lesson is here to help you turn your current position into a stronger system, not just give you more information.";
   }
 
-  return "This lesson is here to make the topic feel clear, practical, and easier to act on.";
+  return "This lesson is meant to make the topic feel clearer, more practical, and easier to act on.";
 }
