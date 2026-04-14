@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import AppShell from "@/components/layout/app-shell";
-import EditorialPhotoBand from "@/components/ui/editorial-photo-band";
 import JourneyNav from "@/components/ui/journey-nav";
 import type { AssessmentInput } from "@/lib/types/assessment";
 import type { PersonalizedPlan } from "@/lib/types/personalized-plan";
@@ -63,7 +62,6 @@ export default function PlanPage() {
   const recommendedTopModuleTitle = moduleTitles[recommendedTopModule];
   const startLessonHref = getLessonHref(recommendedTopModule);
   const accountHref = `/signup?next=${encodeURIComponent("/plan")}`;
-  const loginHref = `/login?next=${encodeURIComponent("/plan")}`;
 
   return (
     <AppShell>
@@ -129,38 +127,49 @@ export default function PlanPage() {
                   </div>
                 </div>
 
-                <div className="mt-5 rounded-[24px] border border-white/10 bg-white/5 p-4">
-                  <div className="text-sm font-semibold text-white">
-                    {isLoggedIn ? "Saved to your account" : "Saved on this device only"}
-                  </div>
-                  <div className="mt-2 text-sm leading-7 text-slate-300">
-                    {isLoggedIn
-                      ? authEmail || "Your progress can follow you when you come back."
-                      : "Create an account if you want to keep your plan and progress across visits."}
-                  </div>
-
-                  {!isLoggedIn && (
-                    <div className="mt-4 flex flex-wrap gap-3">
+                <div className="mt-5 text-sm leading-7 text-slate-300">
+                  {isLoggedIn ? (
+                    <span>
+                      Saved to your account{authEmail ? `, ${authEmail}` : ""}.
+                    </span>
+                  ) : (
+                    <span>
+                      Saved on this device only for now.{" "}
                       <a
                         href={accountHref}
-                        className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950"
+                        className="font-semibold text-white underline underline-offset-4"
                       >
-                        Create account
-                      </a>
-                      <a
-                        href={loginHref}
-                        className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white"
-                      >
-                        Log in
-                      </a>
-                    </div>
+                        Create an account
+                      </a>{" "}
+                      if you want to keep your plan and progress across visits.
+                    </span>
                   )}
                 </div>
               </div>
 
-              <div className="overflow-hidden rounded-[30px] border border-white/10">
-                <div className="h-full">
-                  <EditorialPhotoBand imageKey="plan" />
+              <div className="overflow-hidden rounded-[30px] border border-white/10 bg-[#161226] min-h-[320px] lg:min-h-full">
+                <div
+                  className="relative h-full min-h-[320px] w-full bg-cover bg-center"
+                  style={{
+                    backgroundImage:
+                      "url('https://images.unsplash.com/photo-1516321165247-4aa89a48be28?auto=format&fit=crop&w=2400&q=80')",
+                  }}
+                >
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,10,24,0.06)_0%,rgba(13,10,24,0.20)_38%,rgba(13,10,24,0.52)_100%)]" />
+
+                  <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+                    <div className="max-w-xl rounded-[24px] border border-white/10 bg-black/20 p-5 backdrop-blur-sm">
+                      <div className="text-xs font-semibold uppercase tracking-[0.18em] text-amber-200">
+                        Personal direction
+                      </div>
+                      <div
+                        className="mt-2 text-2xl font-semibold tracking-tight text-white"
+                        style={{ fontFamily: "Georgia, serif" }}
+                      >
+                        Start with one useful next step
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -188,29 +197,13 @@ export default function PlanPage() {
                 ))}
               </div>
 
-              <div className="mt-6 flex flex-wrap items-center gap-4">
+              <div className="mt-6">
                 <a
                   href={startLessonHref}
                   className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950"
                 >
                   Continue learning
                 </a>
-
-                {isLoggedIn ? (
-                  <a
-                    href="/dashboard"
-                    className="text-sm font-semibold text-white underline underline-offset-4"
-                  >
-                    View dashboard
-                  </a>
-                ) : (
-                  <a
-                    href={accountHref}
-                    className="text-sm font-semibold text-white underline underline-offset-4"
-                  >
-                    Create account to save
-                  </a>
-                )}
               </div>
             </div>
           </div>
