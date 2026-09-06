@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import MoneywiseSyncProvider from "@/components/providers/moneywise-sync-provider";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://moneywise-mzo6.vercel.app";
+const siteUrl = "https://moneywise.nimishraote.com";
 const description = "MoneyWise by Nimish Raote is an AI-powered financial literacy app for young adults, with simple explanations, personalized starting plans, and guided money lessons.";
 
 export const metadata: Metadata = {
